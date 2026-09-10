@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic D&D Verification Code</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #e0e0e0;
+    }
+    .email-wrapper {
+      width: 100%;
+      background-color: #121212;
+      padding: 40px 0;
+    }
+    .email-card {
+      max-width: 480px;
+      margin: 0 auto;
+      background-color: #1e1e1e;
+      border: 1px solid #333333;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      background: linear-gradient(135deg, #d95c14 0%, #8c2e0b 100%);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .content {
+      padding: 32px 28px;
+    }
+    .content p {
+      margin: 0 0 16px;
+      color: #bbbbbb;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .otp-box {
+      margin: 24px 0;
+      padding: 16px;
+      background-color: #2a2a2a;
+      border: 1px dashed #d95c14;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .otp-code {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: #ffffff;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .footer {
+      padding: 20px 28px;
+      background-color: #181818;
+      border-top: 1px solid #282828;
+      text-align: center;
+    }
+    .footer p {
+      margin: 0;
+      color: #777777;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-card">
+      <div class="header">
+        <h1>Agentic D&amp;D Realm</h1>
+      </div>
+      <div class="content">
+        <p>Greetings Adventurer,</p>
+        <p>Use the one-time verification code below to verify your identity and enter the realm:</p>
+        <div class="otp-box">
+          <div class="otp-code">{{code}}</div>
+        </div>
+        <p>This code will expire in <strong>10 minutes</strong>. If you did not request this verification code, please ignore this email.</p>
+      </div>
+      <div class="footer">
+        <p>&copy; Agentic D&amp;D. Automated System Notification.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
