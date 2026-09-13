@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { campaignApi } from '@/api';
 import useNotification from '@/hooks/global/useNotification';
 import useStaticModal from '@/hooks/global/useStaticModal';
+import { CampaignLanguageEnum } from '@/utils/enums';
 import type { CampaignDataReturn } from '@/models/campaignInterfaces';
 
 export interface CreateCampaignFormValues {
   name: string;
   prompt: string;
+  language: string;
 }
 
 export default function useGenerateCampaignModal(
@@ -19,7 +21,7 @@ export default function useGenerateCampaignModal(
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { successNotification } = useNotification();
   const { serverErrorModal, errorModal } = useStaticModal();
 
@@ -37,7 +39,7 @@ export default function useGenerateCampaignModal(
       const [err, data] = await campaignApi.createCampaign({
         name: values.name.trim(),
         themePrompt: values.prompt.trim(),
-        language: i18n.language || 'en',
+        language: values.language || CampaignLanguageEnum.EN,
       });
 
       if (err) {

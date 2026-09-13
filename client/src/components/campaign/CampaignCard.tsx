@@ -5,6 +5,7 @@ import {
   FireOutlined,
   CalendarOutlined,
   ReadOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons';
 import type { CampaignDataReturn } from '@/models/campaignInterfaces';
 
@@ -42,6 +43,12 @@ export default function CampaignCard({ campaign, onSelect }: CampaignCardProps) 
               <FireOutlined style={{ marginRight: 4 }} />
               {t('campaigns.statusActive')}
             </Tag>
+            {campaign.language && (
+              <Tag color="gold" style={styles.statusTag}>
+                <GlobalOutlined style={{ marginRight: 4 }} />
+                {campaign.language.toUpperCase()}
+              </Tag>
+            )}
           </div>
           <Title level={3} style={styles.campaignTitle} ellipsis={{ rows: 1 }}>
             {campaign.name}

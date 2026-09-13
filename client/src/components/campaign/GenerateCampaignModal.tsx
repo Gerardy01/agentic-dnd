@@ -1,13 +1,16 @@
-import { Modal, Form, Input, Button, Alert, Typography, Tag } from 'antd';
+import { Modal, Form, Input, Button, Alert, Typography, Tag, Select, Row, Col } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   FireOutlined,
   CompassOutlined,
   BookOutlined,
+  GlobalOutlined,
   InfoCircleOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
 import useGenerateCampaignModal from '@/hooks/campaign/useGenerateCampaignModal';
+import { CAMPAIGN_LANGUAGE_OPTIONS } from '@/constants/selections';
+import { CampaignLanguageEnum } from '@/utils/enums';
 import type { CampaignDataReturn } from '@/models/campaignInterfaces';
 
 const { Title, Text, Paragraph } = Typography;
@@ -79,31 +82,58 @@ export default function GenerateCampaignModal({
           form={form}
           layout="vertical"
           onFinish={submitGenerateCampaign}
+          initialValues={{ language: CampaignLanguageEnum.EN }}
           requiredMark={false}
           style={styles.form}
         >
-          {/* Campaign Name Field */}
-          <Form.Item
-            name="name"
-            label={
-              <span style={styles.label}>
-                <BookOutlined style={styles.labelIcon} />
-                {t('campaigns.nameLabel')}
-              </span>
-            }
-            rules={[
-              { required: true, message: t('campaigns.nameRequired') },
-              { max: 255, message: t('campaigns.nameMax') },
-            ]}
-          >
-            <Input
-              placeholder={t('campaigns.namePlaceholder')}
-              size="large"
-              maxLength={255}
-              disabled={loading}
-              style={styles.input}
-            />
-          </Form.Item>
+          {/* Name & Language Row */}
+          <Row gutter={[16, 0]}>
+            <Col xs={24} md={15}>
+              <Form.Item
+                name="name"
+                label={
+                  <span style={styles.label}>
+                    <BookOutlined style={styles.labelIcon} />
+                    {t('campaigns.nameLabel')}
+                  </span>
+                }
+                rules={[
+                  { required: true, message: t('campaigns.nameRequired') },
+                  { max: 255, message: t('campaigns.nameMax') },
+                ]}
+              >
+                <Input
+                  placeholder={t('campaigns.namePlaceholder')}
+                  size="large"
+                  maxLength={255}
+                  disabled={loading}
+                  style={styles.input}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} md={9}>
+              <Form.Item
+                name="language"
+                label={
+                  <span style={styles.label}>
+                    <GlobalOutlined style={styles.labelIcon} />
+                    {t('campaigns.languageLabel')}
+                  </span>
+                }
+                rules={[
+                  { required: true, message: t('campaigns.languageRequired') },
+                ]}
+              >
+                <Select
+                  options={CAMPAIGN_LANGUAGE_OPTIONS}
+                  size="large"
+                  disabled={loading}
+                  style={styles.select}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
           {/* Guide Card Explaining The Prompt Purpose */}
           <div style={styles.guideCard}>
