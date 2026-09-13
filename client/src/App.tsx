@@ -12,6 +12,7 @@ import Register from '@/pages/Register';
 import Login from '@/pages/Login';
 import Verification from '@/pages/Verification';
 import Dashboard from '@/pages/Dashboard';
+import Campaigns from '@/pages/Campaigns';
 import NotFound from '@/pages/NotFound';
 
 export default function App() {
@@ -30,7 +31,7 @@ export default function App() {
               <Route element={<GlobalLogic />}>
                 <Route element={<MainCommonWrap />}>
                   <Route path="/" element={<Dashboard />} />
-                  <Route path="/campaigns" element={<Dashboard />} />
+                  <Route path="/campaigns" element={<Campaigns />} />
                   <Route path="/workshop" element={<Dashboard />} />
                   <Route path="/settings" element={<Dashboard />} />
                 </Route>

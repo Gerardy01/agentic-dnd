@@ -6,6 +6,8 @@ class Campaign extends Model {
   declare public id: number;
   declare public account_id: string;
   declare public name: string;
+  declare public theme_prompt: string | null;
+  declare public language: string;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }
@@ -30,6 +32,15 @@ Campaign.init(
     name: {
       type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    theme_prompt: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    language: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      defaultValue: 'en',
     },
   },
   {

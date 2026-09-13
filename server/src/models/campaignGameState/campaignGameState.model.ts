@@ -2,6 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import Campaign from '@/models/campaign/campaign.model';
 import POI from '@/models/poi/poi.model';
+import { GameStatePositionItem } from '@/interfaces/ICampaign';
+import { CampaignModeEnum } from '@/utils/enums';
 
 class CampaignGameState extends Model {
   declare public id: number;
@@ -13,7 +15,7 @@ class CampaignGameState extends Model {
   declare public in_game_weather: string | null;
   declare public current_poi_id: number | null;
   declare public chapter_summary: string | null;
-  declare public locations: any;
+  declare public position: GameStatePositionItem[] | null;
   declare public readonly updated_at: Date;
 }
 
@@ -38,7 +40,7 @@ CampaignGameState.init(
     mode: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      defaultValue: 'narrative',
+      defaultValue: CampaignModeEnum.NARRATIVE,
     },
     party_level: {
       type: DataTypes.INTEGER,
@@ -48,19 +50,22 @@ CampaignGameState.init(
     short_rest_count: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
+      defaultValue: 2,
     },
     in_game_time: {
       type: DataTypes.STRING(100),
       allowNull: true,
+      defaultValue: null,
     },
     in_game_weather: {
       type: DataTypes.STRING(100),
       allowNull: true,
+      defaultValue: null,
     },
     current_poi_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      defaultValue: null,
       references: {
         model: POI,
         key: 'id',
@@ -70,10 +75,12 @@ CampaignGameState.init(
     chapter_summary: {
       type: DataTypes.TEXT,
       allowNull: true,
+      defaultValue: null,
     },
-    locations: {
+    position: {
       type: DataTypes.JSONB,
-      defaultValue: [],
+      allowNull: true,
+      defaultValue: null,
     },
   },
   {

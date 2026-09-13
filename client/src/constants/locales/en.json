@@ -80,5 +80,35 @@
     "campaigns": "Campaigns",
     "workshop": "Workshop",
     "settings": "Settings"
+  },
+  "campaigns": {
+    "pageTitle": "Campaign Chronicles",
+    "pageSubtitle": "Step into your persistent, AI-steered adventures or forge an entirely new living realm",
+    "badge": "Active Chronicles",
+    "generateBtn": "Forge New Campaign",
+    "emptyTitle": "No Chronicles Written Yet",
+    "emptySubtitle": "The archives are silent. Forge your first campaign to awaken the autonomous AI Dungeon Master, generate a unique world map, starting factions, classes, races, and lore.",
+    "emptyAction": "Forge Your First Campaign",
+    "modalBadge": "World Genesis",
+    "modalTitle": "Forge New Campaign",
+    "modalSubtitle": "Provide a name and describe the realm you envision. The AI Dungeon Master will dynamically construct its geography, factions, classes, races, and lore.",
+    "nameLabel": "Campaign Name",
+    "namePlaceholder": "e.g. Chronicles of the Shattered Crown",
+    "nameRequired": "Campaign name is required",
+    "nameMax": "Campaign name cannot exceed 255 characters",
+    "promptLabel": "World Theme & Vision",
+    "promptPlaceholder": "e.g. A grimdark fantasy realm where ancient celestial titans fell and their decaying essence warps the land. Arcane magic is strictly forbidden by the zealot Sunlit Inquisition. Remote mountain tribes cling to primal blood-rites...",
+    "promptRequired": "World theme prompt is required",
+    "promptGuideTitle": "Guiding Your World's Creation",
+    "promptGuideDesc": "Describe what kind of world this campaign should be. Detail the mood (e.g. grimdark, high magic, gothic horror, cosmic mystery), magic density, dominant factions, geography, conflicts, or mythological roots. The AI DM will weave these details into your world map, starting factions, classes, races, and lore.",
+    "submitBtn": "Forge Campaign",
+    "submittingBtn": "Weaving Realm & Lore...",
+    "cardEnter": "Enter Realm",
+    "cardCreated": "Inscribed",
+    "cardTheme": "World Vision",
+    "statusActive": "Active Saga",
+    "createSuccessTitle": "Campaign Forged!",
+    "createSuccessMessage": "The realm of {{name}} has been woven into existence. Your adventure awaits!"
   }
 }
+
