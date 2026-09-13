@@ -64,8 +64,26 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       const campaign = await this.campaignService.create({ name, themePrompt, language }, accountId, transaction);
       this.logger.success(`Campaign record created with ID: ${campaign.id}`);
 
-      // --- Step 2: Create World → Map (AI-generated)
-      this.logger.step('2/4', 'Generating World & Map via AI...');
+      // --- Step 2: Initialize CampaignGameState ---
+      this.logger.step('2/4', 'Initializing Campaign Game State...');
+      await this.campaignService.createGameState(
+        {
+          campaignId: campaign.id,
+          mode: CampaignModeEnum.NARRATIVE,
+          partyLevel: 1,
+          shortRestCount: 2,
+          inGameTime: null,
+          inGameWeather: null,
+          currentPoiId: null,
+          chapterSummary: null,
+          position: null,
+        },
+        transaction
+      );
+      this.logger.success('Campaign Game State initialized');
+
+      // --- Step 3: Create World → Map (AI-generated)
+      this.logger.step('3/4', 'Generating World & Map via AI...');
       const world = await this.worldService.generateWorld(
         { campaignName: name, themePrompt, language },
         campaign.id,
@@ -83,8 +101,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       );
       this.logger.success(`World and Map created (World ID: ${world.id}, Map ID: ${map.id})`);
 
-      // --- Step 3: Create Factions (AI-generated) ---
-      this.logger.step('3/4', 'Generating Factions via AI (Brief list + Detail loop)...');
+      // --- Step 4: Create Factions (AI-generated) ---
+      this.logger.step('4/4', 'Generating Factions via AI (Brief list + Detail loop)...');
       const factions = await this.factionService.generateFactions(
         {
           themePrompt,
@@ -102,24 +120,6 @@ export class CampaignOrchestration implements ICampaignOrchestration {
         transaction
       );
       this.logger.success(`Successfully generated and saved ${factions.length} factions`);
-
-      // --- Step 4: Initialize CampaignGameState ---
-      this.logger.step('4/4', 'Initializing Campaign Game State...');
-      await this.campaignService.createGameState(
-        {
-          campaignId: campaign.id,
-          mode: CampaignModeEnum.NARRATIVE,
-          partyLevel: 1,
-          shortRestCount: 2,
-          inGameTime: null,
-          inGameWeather: null,
-          currentPoiId: null,
-          chapterSummary: null,
-          position: null,
-        },
-        transaction
-      );
-      this.logger.success('Campaign Game State initialized');
 
       await transaction.commit();
       this.logger.success(`Campaign creation complete! Transaction committed for campaign ID: ${campaign.id}`);
