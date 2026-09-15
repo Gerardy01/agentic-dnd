@@ -7,13 +7,13 @@ import {
   ReadOutlined,
   GlobalOutlined,
 } from '@ant-design/icons';
-import type { CampaignDataReturn } from '@/models/campaignInterfaces';
+import type { CampaignListReturn } from '@/models/campaignInterfaces';
 
 const { Title, Text, Paragraph } = Typography;
 
 interface CampaignCardProps {
-  campaign: CampaignDataReturn;
-  onSelect: (campaign: CampaignDataReturn) => void;
+  campaign: CampaignListReturn;
+  onSelect: (campaign: CampaignListReturn) => void;
 }
 
 export default function CampaignCard({ campaign, onSelect }: CampaignCardProps) {
@@ -59,13 +59,15 @@ export default function CampaignCard({ campaign, onSelect }: CampaignCardProps) 
       <div style={styles.promptSection}>
         <div style={styles.promptHeader}>
           <ReadOutlined style={styles.promptIcon} />
-          <Text style={styles.promptLabel}>{t('campaigns.cardTheme')}</Text>
+          <Text style={styles.promptLabel}>
+            {campaign.worldDescription ? t('campaigns.cardWorld') : t('campaigns.cardTheme')}
+          </Text>
         </div>
         <Paragraph
           style={styles.promptText}
           ellipsis={{ rows: 3, expandable: false }}
         >
-          {campaign.themePrompt || 'A custom crafted world awaiting discovery.'}
+          {campaign.worldDescription || campaign.themePrompt || 'A custom crafted world awaiting discovery.'}
         </Paragraph>
       </div>
 

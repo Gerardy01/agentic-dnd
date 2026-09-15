@@ -13,6 +13,16 @@ export type CampaignDataReturn = {
   createdAt: string;
 };
 
+export type CampaignListReturn = {
+  id: number;
+  accountId: string;
+  name: string;
+  themePrompt: string | null;
+  language: string;
+  worldDescription: string | null;
+  createdAt: string;
+};
+
 export type Campaign = {
   id: number;
   accountId: string;

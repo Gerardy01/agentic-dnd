@@ -109,12 +109,58 @@
     "cardEnter": "Enter Realm",
     "cardCreated": "Inscribed",
     "cardTheme": "World Vision",
+    "cardWorld": "World Codex",
+    "loadingCampaigns": "Summoning your Campaign Chronicles...",
     "statusActive": "Active Saga",
     "createSuccessTitle": "Campaign Forged!",
     "createSuccessMessage": "The realm of {{name}} has been woven into existence. Your adventure awaits!",
     "progressTitle": "Weaving Campaign Realm",
     "progressSubtitle": "Please keep this window open while the Realm and its geography are being constructed.",
     "progressInitial": "Awakening the Genesis Engine..."
+  },
+  "campaignDetail": {
+    "backToCampaigns": "Back to Chronicles",
+    "tabOverview": "Overview",
+    "tabMap": "World Map",
+    "tabFactions": "Factions",
+    "themePromptTitle": "Campaign Theme & Vision",
+    "worldDescriptionTitle": "World Geography & Lore Codex",
+    "stats": {
+      "areas": "Discovered Areas",
+      "pois": "Points of Interest",
+      "factions": "Active Factions",
+      "language": "Narrative Language",
+      "created": "Inscribed Date"
+    },
+    "actions": {
+      "launchSession": "Enter Active Adventure",
+      "manageLore": "Explore Lore"
+    },
+    "map": {
+      "explorerTitle": "World & Area Hierarchy",
+      "explorerSubtitle": "Navigate through realms, districts, and notable locations",
+      "searchPlaceholder": "Search areas or POIs...",
+      "emptySelectTitle": "Select a Location or Point of Interest",
+      "emptySelectSubtitle": "Choose any realm, settlement, or POI from the left navigation tree to inspect its geography, lore, and cartographic layout.",
+      "asciiTitle": "Cartographic Layout (ASCII)",
+      "copyAscii": "Copy Map",
+      "copied": "Copied to parchment!",
+      "loreBadge": "Arcane Lore",
+      "factionsPresent": "Present Factions",
+      "containedPOIs": "Visitable Points of Interest",
+      "noPOIs": "No Points of Interest recorded yet in this area.",
+      "overview": "Overview",
+      "location": "Location Details"
+    },
+    "factions": {
+      "title": "Campaign Factions & Guilds",
+      "subtitle": "Organizations and factions vying for dominion and survival",
+      "influenceLabel": "Realm Influence",
+      "reputationLabel": "Standing",
+      "searchPlaceholder": "Filter factions by name...",
+      "emptyTitle": "No Factions Inscribed",
+      "emptySubtitle": "This campaign does not currently feature any recorded factions."
+    }
   }
 }
 

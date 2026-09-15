@@ -36,6 +36,7 @@ export interface ICampaignOrchestration {
   ): Promise<CampaignDataReturn>;
 
   getCampaigns(accountId: string): Promise<CampaignListReturn[]>;
+  getCampaignById(campaignId: number, accountId: string): Promise<CampaignListReturn>;
 }
 
 export class CampaignOrchestration implements ICampaignOrchestration {
@@ -315,5 +316,21 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       worldDescription: worldMap.get(campaign.id) ?? null,
       createdAt: campaign.createdAt,
     }));
+  }
+
+  async getCampaignById(campaignId: number, accountId: string): Promise<CampaignListReturn> {
+    const campaign = await this.campaignService.getById(campaignId, accountId);
+    const worlds = await this.worldService.getWorldsByCampaignIds([campaign.id]);
+    const world = worlds[0];
+
+    return {
+      id: campaign.id,
+      accountId: campaign.accountId,
+      name: campaign.name,
+      themePrompt: campaign.themePrompt,
+      language: campaign.language,
+      worldDescription: world?.description ?? null,
+      createdAt: campaign.createdAt,
+    };
   }
 }

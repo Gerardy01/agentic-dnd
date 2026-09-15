@@ -13,6 +13,7 @@ import Login from '@/pages/Login';
 import Verification from '@/pages/Verification';
 import Dashboard from '@/pages/Dashboard';
 import Campaigns from '@/pages/Campaigns';
+import CampaignDetail from '@/pages/CampaignDetail';
 import NotFound from '@/pages/NotFound';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
                 <Route element={<MainCommonWrap />}>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/campaigns" element={<Campaigns />} />
+                  <Route path="/campaigns/:id" element={<CampaignDetail />} />
                   <Route path="/workshop" element={<Dashboard />} />
                   <Route path="/settings" element={<Dashboard />} />
                 </Route>

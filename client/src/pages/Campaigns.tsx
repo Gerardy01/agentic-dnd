@@ -1,4 +1,4 @@
-import { Typography, Button, Tag, Row, Col, Card } from 'antd';
+import { Typography, Button, Tag, Row, Col, Card, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   FireOutlined,
@@ -14,6 +14,7 @@ const { Title, Paragraph } = Typography;
 export default function Campaigns() {
   const {
     campaigns,
+    loading,
     isGenerateModalOpen,
     handleOpenGenerateModal,
     handleCloseGenerateModal,
@@ -57,8 +58,15 @@ export default function Campaigns() {
         </div>
       </div>
 
-      {/* Campaigns Listing or Atmospheric Empty State */}
-      {campaigns.length > 0 ? (
+      {/* Campaigns Listing, Loading, or Empty State */}
+      {loading ? (
+        <div style={styles.loadingContainer}>
+          <Spin size="large" />
+          <Paragraph style={styles.loadingText}>
+            {t('campaigns.loadingCampaigns')}
+          </Paragraph>
+        </div>
+      ) : campaigns.length > 0 ? (
         <Row gutter={[20, 20]} style={styles.grid}>
           {campaigns.map((campaign) => (
             <Col xs={24} sm={12} lg={8} key={campaign.id}>
@@ -219,5 +227,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '44px',
     padding: '0 24px',
     boxShadow: '0 4px 16px rgba(217, 92, 20, 0.4)',
+  },
+  loadingContainer: {
+    padding: '80px 0',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '16px',
+  },
+  loadingText: {
+    color: '#8D98AA',
+    fontSize: '14px',
+    fontFamily: "'Cinzel', serif",
+    letterSpacing: '0.5px',
+    margin: 0,
   },
 };

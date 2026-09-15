@@ -24,4 +24,10 @@ campaignRoutes.get(
   CampaignController.getCampaignProgress,
 );
 
+campaignRoutes.get(
+  '/:id',
+  authenticate,
+  CampaignController.getCampaignById,
+);
+
 export default campaignRoutes;
