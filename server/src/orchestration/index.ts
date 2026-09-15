@@ -1,12 +1,13 @@
 import { AuthOrchestration } from '@/orchestration/authOrchestration';
 import { AccountOrchestration } from '@/orchestration/accountOrchestration';
 import { CampaignOrchestration } from '@/orchestration/campaignOrchestration';
+import { FactionOrchestration } from '@/orchestration/factionOrchestration';
+import { WorldOrchestration } from '@/orchestration/worldOrchestration';
 import { accountService, authService } from '@/services';
 import {
   campaignService,
   factionService,
   worldService,
-  loreService,
   classService,
   raceService,
   npcService,
@@ -31,11 +32,21 @@ export const campaignOrchestration = new CampaignOrchestration(
   campaignService,
   factionService,
   worldService,
-  loreService,
   classService,
   raceService,
   npcService,
   itemService,
   spellService,
-  questService,
+  questService
 );
+
+export const factionOrchestration = new FactionOrchestration(
+  factionService,
+  campaignService
+);
+
+export const worldOrchestration = new WorldOrchestration(
+  worldService,
+  campaignService
+);
+

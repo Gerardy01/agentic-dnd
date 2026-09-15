@@ -4,6 +4,7 @@ import { ValidatorProvider } from '@/provider/validatorProvider';
 import { EventEmitterPublisherProvider } from '@/provider/eventPublisherProvider';
 import { NodemailerEmailProvider } from '@/provider/emailProvider';
 import { OpenAIProvider } from '@/provider/aiProvider';
+import { NodeCryptoProvider } from '@/provider/cryptProvider';
 
 export const bcryptHashProvider = new BcryptHashProvider();
 export const jwtProvider = new JsonWebTokenProvider();
@@ -11,3 +12,4 @@ export const validatorProvider = new ValidatorProvider();
 export const eventPublisherProvider = new EventEmitterPublisherProvider();
 export const emailProvider = new NodemailerEmailProvider();
 export const aiProvider = new OpenAIProvider();
+export const cryptProvider = new NodeCryptoProvider();

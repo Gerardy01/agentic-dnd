@@ -1,6 +1,8 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import Map from '@/models/map/map.model';
+import type POI from '@/models/poi/poi.model';
+import { AreaFactionItem } from '@/interfaces/IWorld';
 
 class Area extends Model {
   declare public id: number;
@@ -13,7 +15,8 @@ class Area extends Model {
   declare public description: string | null;
   declare public descriptive_overview: string | null;
   declare public descriptive_location: string | null;
-  declare public factions: any;
+  declare public factions: AreaFactionItem[];
+  declare public pois?: POI[];
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

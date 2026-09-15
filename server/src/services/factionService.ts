@@ -42,6 +42,7 @@ export interface IFactionService {
   generateFactions(data: GenerateFactionDTO, campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]>;
   create(data: CreateFactionDTO, campaignId: number, transaction?: Transaction): Promise<FactionDataReturn>;
   createBulk(data: CreateFactionDTO[], campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]>;
+  getByCampaignId(campaignId: number): Promise<FactionDataReturn[]>;
 }
 
 // ==========================================
@@ -202,7 +203,16 @@ export class FactionService implements IFactionService {
     return results;
   }
 
-  private toReturn(faction: any): FactionDataReturn {
+  async getByCampaignId(campaignId: number): Promise<FactionDataReturn[]> {
+    const factions = await Faction.findAll({
+      where: { campaign_id: campaignId },
+      order: [['created_at', 'ASC']],
+    });
+
+    return factions.map((faction) => this.toReturn(faction));
+  }
+
+  private toReturn(faction: Faction): FactionDataReturn {
     return {
       id: faction.id,
       campaignId: faction.campaign_id,
@@ -210,7 +220,7 @@ export class FactionService implements IFactionService {
       description: faction.description,
       reputation: faction.reputation,
       influence: faction.influence,
-      createdAt: faction.createdAt,
+      createdAt: faction.created_at,
     };
   }
 }

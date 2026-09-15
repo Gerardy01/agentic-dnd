@@ -61,3 +61,14 @@ export type CampaignGameStateDataReturn = {
   position: GameStatePositionItem[] | null;
   updatedAt: Date;
 };
+
+export type CampaignListReturn = {
+  id: number;
+  accountId: string;
+  name: string;
+  themePrompt: string | null;
+  language: string;
+  worldDescription: string | null;
+  createdAt: Date;
+};
+

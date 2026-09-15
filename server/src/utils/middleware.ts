@@ -34,16 +34,21 @@ export const validateRequest = (schema: ZodSchema) => {
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+  let token: string | undefined;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (req.query?.token && typeof req.query.token === 'string') {
+    token = req.query.token;
+  }
+
+  if (!token) {
     return res.status(401).json({
       status: 'failed',
       message: 'Unauthorized: No token provided',
       userMessage: 'AUTH001',
     });
   }
-
-  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = jwtProvider.verify<AccessTokenBody>(token);

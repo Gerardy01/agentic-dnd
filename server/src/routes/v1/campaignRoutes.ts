@@ -12,4 +12,16 @@ campaignRoutes.post(
   CampaignController.createCampaign,
 );
 
+campaignRoutes.get(
+  '/',
+  authenticate,
+  CampaignController.getCampaigns,
+);
+
+campaignRoutes.get(
+  '/progress/:processId',
+  authenticate,
+  CampaignController.getCampaignProgress,
+);
+
 export default campaignRoutes;

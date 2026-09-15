@@ -22,3 +22,32 @@ export type Campaign = {
   createdAt: string;
   status?: string;
 };
+
+export type InitiateCampaignReturn = {
+  processId: string;
+};
+
+export interface CampaignSSEStepEvent {
+  type: 'step';
+  step: string;
+  message: string;
+  current: number;
+  total: number;
+}
+
+export interface CampaignSSECompleteEvent {
+  type: 'complete';
+  message: string;
+  data: CampaignDataReturn;
+}
+
+export interface CampaignSSEErrorEvent {
+  type: 'error';
+  message: string;
+}
+
+export type CampaignSSEEvent =
+  | CampaignSSEStepEvent
+  | CampaignSSECompleteEvent
+  | CampaignSSEErrorEvent;
+

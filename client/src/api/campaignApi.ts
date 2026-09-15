@@ -1,14 +1,14 @@
 import { axiosPrivate } from '@/config/axiosConfig';
 import { catchFetchError } from '@/utils/utility';
 import type { FetchResponse, ErrorResponse } from '@/models/globalInterfaces';
-import type { CreateCampaignDTO, CampaignDataReturn } from '@/models/campaignInterfaces';
+import type { CreateCampaignDTO, InitiateCampaignReturn } from '@/models/campaignInterfaces';
 
 export class CampaignApi {
   async createCampaign(
     data: CreateCampaignDTO
-  ): Promise<[undefined, CampaignDataReturn] | [ErrorResponse]> {
+  ): Promise<[undefined, InitiateCampaignReturn] | [ErrorResponse]> {
     const [error, res] = await catchFetchError(
-      axiosPrivate.post<FetchResponse<CampaignDataReturn>>('/campaign', data)
+      axiosPrivate.post<FetchResponse<InitiateCampaignReturn>>('/campaign', data)
     );
 
     if (error) return [error];

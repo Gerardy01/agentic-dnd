@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Button, Alert, Typography, Tag, Select, Row, Col } from 'antd';
+import { Modal, Form, Input, Button, Alert, Typography, Tag, Select, Row, Col, Progress } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   FireOutlined,
@@ -7,6 +7,7 @@ import {
   GlobalOutlined,
   InfoCircleOutlined,
   CloseOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import useGenerateCampaignModal from '@/hooks/campaign/useGenerateCampaignModal';
 import { CAMPAIGN_LANGUAGE_OPTIONS } from '@/constants/selections';
@@ -27,8 +28,16 @@ export default function GenerateCampaignModal({
   onClose,
   onSuccess,
 }: GenerateCampaignModalProps) {
-  const { form, loading, errorMsg, submitGenerateCampaign, handleCloseModal } =
-    useGenerateCampaignModal(onClose, onSuccess);
+  const {
+    form,
+    loading,
+    errorMsg,
+    progressStep,
+    progressPercent,
+    submitGenerateCampaign,
+    handleCloseModal,
+  } = useGenerateCampaignModal(onClose, onSuccess);
+
   const { t } = useTranslation();
 
   return (
@@ -167,6 +176,49 @@ export default function GenerateCampaignModal({
             />
           </Form.Item>
 
+          {/* Progress Section when Loading */}
+          {loading && (
+            <div style={styles.progressCard}>
+              <div style={styles.progressHeader}>
+                <div style={styles.progressSpinnerWrapper}>
+                  <LoadingOutlined style={styles.progressSpinner} spin />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Text style={styles.progressTitle}>
+                    {t('campaigns.progressTitle')}
+                  </Text>
+                  <Paragraph style={styles.progressSubtitle}>
+                    {t('campaigns.progressSubtitle')}
+                  </Paragraph>
+                </div>
+              </div>
+
+              <div style={styles.progressBarWrapper}>
+                <Progress
+                  percent={progressPercent}
+                  strokeColor={{
+                    '0%': '#D95C14',
+                    '70%': '#C29B38',
+                    '100%': '#2ECC71',
+                  }}
+                  trailColor="#1A1F2B"
+                  size={['100%', 8]}
+                  status="active"
+                  showInfo={false}
+                />
+              </div>
+
+              <div style={styles.stepBadge}>
+                <Text style={styles.stepText}>
+                  {progressStep || t('campaigns.progressInitial')}
+                </Text>
+                <Text style={styles.stepPercentText}>
+                  {progressPercent}%
+                </Text>
+              </div>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div style={styles.buttonGroup}>
             <Button
@@ -282,6 +334,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '14px',
     color: '#FFFFFF',
   },
+  select: {
+    width: '100%',
+  },
   textArea: {
     borderRadius: '8px',
     background: '#0E1117',
@@ -306,7 +361,6 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   guideIcon: {
     color: '#C29B38',
-    fontSize: '14px',
   },
   guideTitle: {
     fontFamily: "'Cinzel', serif",
@@ -321,11 +375,78 @@ const styles: { [key: string]: React.CSSProperties } = {
     lineHeight: 1.6,
     margin: 0,
   },
+  progressCard: {
+    background: 'linear-gradient(135deg, rgba(30, 22, 16, 0.85) 0%, rgba(15, 18, 24, 0.95) 100%)',
+    border: '1px solid rgba(217, 92, 20, 0.5)',
+    borderRadius: '12px',
+    padding: '16px',
+    marginBottom: '16px',
+    boxShadow: '0 0 20px rgba(217, 92, 20, 0.15)',
+  },
+  progressHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '12px',
+  },
+  progressSpinnerWrapper: {
+    width: '36px',
+    height: '36px',
+    borderRadius: '10px',
+    background: 'rgba(217, 92, 20, 0.2)',
+    border: '1px solid rgba(217, 92, 20, 0.6)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  progressSpinner: {
+    fontSize: '18px',
+    color: '#D95C14',
+  },
+  progressTitle: {
+    fontFamily: "'Cinzel', serif",
+    fontSize: '14px',
+    fontWeight: 700,
+    color: '#EDE6D6',
+    letterSpacing: '0.5px',
+    display: 'block',
+  },
+  progressSubtitle: {
+    fontSize: '11px',
+    color: '#8D98AA',
+    margin: '2px 0 0',
+    lineHeight: 1.4,
+  },
+  progressBarWrapper: {
+    marginBottom: '10px',
+  },
+  stepBadge: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    background: 'rgba(14, 17, 23, 0.8)',
+    border: '1px solid #283040',
+  },
+  stepText: {
+    fontSize: '12px',
+    color: '#C29B38',
+    fontFamily: "'Cinzel', monospace, serif",
+    fontWeight: 600,
+    letterSpacing: '0.3px',
+  },
+  stepPercentText: {
+    fontSize: '12px',
+    color: '#8D98AA',
+    fontWeight: 700,
+  },
   buttonGroup: {
     display: 'flex',
     justifyContent: 'flex-end',
     gap: '12px',
-    marginTop: '24px',
+    marginTop: '20px',
     paddingTop: '16px',
     borderTop: '1px solid #232936',
   },

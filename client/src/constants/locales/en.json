@@ -111,7 +111,10 @@
     "cardTheme": "World Vision",
     "statusActive": "Active Saga",
     "createSuccessTitle": "Campaign Forged!",
-    "createSuccessMessage": "The realm of {{name}} has been woven into existence. Your adventure awaits!"
+    "createSuccessMessage": "The realm of {{name}} has been woven into existence. Your adventure awaits!",
+    "progressTitle": "Weaving Campaign Realm",
+    "progressSubtitle": "Please keep this window open while the Realm and its geography are being constructed.",
+    "progressInitial": "Awakening the Genesis Engine..."
   }
 }
 
