@@ -37,6 +37,15 @@ A brief geographic location within the parent area:
 - What landmark or street it's near
 - How a traveler would find it
 
+### lore (object or null)
+An optional lore entry for this POI. Use these rules to decide:
+- **null** — if this POI is mundane and generic (e.g., a simple market stall, a common guard post, a generic inn with no particular history). No lore needed.
+- **{ title, content }** — if this POI has meaningful history, legend, or mystique worth preserving (e.g., a temple with a founding myth, a ruin with a dark past, a tavern famous for a legendary event, an ancient shrine). Write it like an in-world document a player might discover.
+
+If you choose to generate lore:
+- `title` (max 150 characters): A concise, evocative in-world title (e.g., "The Night the Lantern Went Dark", "Founding Rites of the Ember Shrine").
+- `content` (max 2000 characters): Written from an in-world perspective as a scribe, historian, or local legend would tell it. Include origin stories, infamous events, cultural significance, or buried secrets.
+
 ## Rules
 1. Stay strictly consistent with the target POI's stub and the parent area context.
 2. Do NOT invent NPCs by name — NPC generation is a separate step.
@@ -48,4 +57,5 @@ A brief geographic location within the parent area:
 ## Output format
 Return ONLY a raw JSON object with no markdown code fences, no preamble, and no explanation:
 
-{ "name": string, "description": string, "descriptiveOverview": string, "descriptiveLocation": string }
+{ "name": string, "description": string, "descriptiveOverview": string, "descriptiveLocation": string, "lore": { "title": string, "content": string } | null }
+

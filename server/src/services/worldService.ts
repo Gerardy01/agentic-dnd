@@ -95,13 +95,36 @@ const POIBriefListSchema = z.object({
   pois: z.array(POIStubSchema).min(1),
 });
 
+// POI lore (same structure as area lore)
+const POILoreSchema = z.object({
+  title: z.string().min(1).max(150),
+  content: z.string().min(1).max(2000),
+});
+
 // POI detail
 const POIDetailSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   descriptiveOverview: z.string().default(''),
   descriptiveLocation: z.string().default(''),
+  lore: POILoreSchema.nullable().default(null),
 });
+
+// POI ASCII map (JSON-structured output from the AI)
+// Rows may come back as plain strings ("##..##") or as string arrays (["#","#",...]).
+// Both are accepted and normalised to string[][] after parsing.
+const POIAsciiLegendEntrySchema = z.object({
+  symbol: z.string().min(1),
+  name: z.string().min(1),
+});
+
+const POIAsciiSchema = z.object({
+  // Each row is either a plain string or an array of strings
+  map: z.array(z.union([z.string(), z.array(z.string())])),
+  legend: z.array(POIAsciiLegendEntrySchema).min(1),
+});
+
+type POIAsciiAIResponse = z.infer<typeof POIAsciiSchema>;
 
 // Context type for area DFS expansion
 type AreaExpansionContext = {
@@ -812,12 +835,39 @@ export class WorldService implements IWorldService {
 
       this.logger.success(`[POI ${ctx.poiIndex}] Saved "${saved.name}" (ID: ${saved.id}) in area "${area.name}"`);
       ctx.savedPOIs.push(saved);
+
+      // Persist lore if the AI decided this POI warrants one
+      if (detail.lore) {
+        await this._savePOILore(saved.id, detail.lore, ctx);
+      }
     }
   }
 
   /**
-   * Calls AI to generate a raw ASCII map for a single POI.
-   * Uses chat() (not chatJSON) since the response is plain text, not JSON.
+   * Persists a single lore entry for the given POI.
+   * Mirrors _saveAreaLore — extracted to keep the POI expansion loop focused.
+   */
+  private async _savePOILore(
+    poiId: number,
+    lore: { title: string; content: string },
+    ctx: POIExpansionContext
+  ): Promise<void> {
+    await Lore.create(
+      {
+        campaign_id: ctx.campaignId,
+        source_id: poiId,
+        source_type: 'poi',
+        title: lore.title,
+        content: lore.content,
+      },
+      { transaction: ctx.transaction ?? undefined }
+    );
+    this.logger.success(`[POI ${ctx.poiIndex}] Saved lore "${lore.title}" for POI ID ${poiId}`);
+  }
+
+  /**
+   * Calls AI to generate a structured ASCII map (JSON) for a single POI.
+   * Returns the validated JSON serialised as a string for storage in poi.map.
    */
   private async _generatePOIAscii(
     type: string,
@@ -835,12 +885,27 @@ export class WorldService implements IWorldService {
       detail.descriptiveOverview,
     ].join('\n');
 
-    const ascii = await this.aiProvider.chat([
+    const raw = await this.aiProvider.chatJSON<POIAsciiAIResponse>([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userMessage },
     ]);
 
-    return ascii.trim();
+    const parsed = POIAsciiSchema.parse(raw);
+
+    // Normalise rows: split plain-string rows into char arrays, then take
+    // only the first character of every cell (guards against multi-char output).
+    const normalizedMap: string[][] = parsed.map.map((row) => {
+      const chars: string[] = typeof row === 'string' ? row.split('') : row;
+      return chars.map((cell) => (cell.length > 0 ? cell[0] : ' '));
+    });
+
+    // Normalise legend symbols the same way.
+    const normalizedLegend = parsed.legend.map((entry) => ({
+      ...entry,
+      symbol: entry.symbol.length > 0 ? entry.symbol[0] : '?',
+    }));
+
+    return JSON.stringify({ map: normalizedMap, legend: normalizedLegend });
   }
 
   async getWorldsByCampaignIds(campaignIds: number[]): Promise<WorldDataReturn[]> {

@@ -6,6 +6,16 @@ export interface AreaFactionItem {
   influence?: number;
 }
 
+export interface POIAsciiLegendItem {
+  symbol: string;
+  name: string;
+}
+
+export interface POIAsciiMapData {
+  map: string[][];
+  legend: POIAsciiLegendItem[];
+}
+
 export type POIDataReturn = {
   id: number;
   areaId: number;
