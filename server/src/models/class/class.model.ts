@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import Campaign from '@/models/campaign/campaign.model';
+import { ClassFeature, SpellcastingProperties } from '@/interfaces/IClass';
 
 class ClassModel extends Model {
   declare public id: number;
@@ -8,8 +9,8 @@ class ClassModel extends Model {
   declare public name: string;
   declare public description: string | null;
   declare public hit_die: number;
-  declare public features: any;
-  declare public spellcasting_properties: any;
+  declare public features: ClassFeature[];
+  declare public spellcasting_properties: SpellcastingProperties | null;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

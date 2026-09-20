@@ -132,12 +132,12 @@ export class CampaignOrchestration implements ICampaignOrchestration {
 
     try {
       // --- Step 1: Create Campaign ---
-      emitStep('1/11', 'Creating campaign DB record...');
+      emitStep('1/13', 'Creating campaign DB record...');
       const campaign = await this.campaignService.create({ name, themePrompt, language }, accountId, transaction);
       this.logger.success(`Campaign record created with ID: ${campaign.id}`);
 
       // --- Step 2: Initialize CampaignGameState ---
-      emitStep('2/11', 'Initializing Campaign Game State...');
+      emitStep('2/13', 'Initializing Campaign Game State...');
       await this.campaignService.createGameState(
         {
           campaignId: campaign.id,
@@ -155,7 +155,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       this.logger.success('Campaign Game State initialized');
 
       // --- Step 3: Create World → Map (AI-generated)
-      emitStep('3/11', 'Generating World & Map via AI...');
+      emitStep('3/13', 'Generating World & Map via AI...');
       const world = await this.worldService.generateWorld(
         { campaignName: name, themePrompt, language },
         campaign.id,
@@ -174,7 +174,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       this.logger.success(`World and Map created (World ID: ${world.id}, Map ID: ${map.id})`);
 
       // --- Step 4: Create Factions (AI-generated) ---
-      emitStep('4/11', 'Generating Factions via AI (Brief list + Detail loop)...');
+      emitStep('4/13', 'Generating Factions via AI (Brief list + Detail loop)...');
       const factions = await this.factionService.generateFactions(
         {
           themePrompt,
@@ -282,6 +282,40 @@ export class CampaignOrchestration implements ICampaignOrchestration {
         transaction
       );
       this.logger.success(`Successfully generated and saved ${pois.length} starting POIs`);
+
+      // --- Step 8: Generate Classes via AI (Brief list + Detail loop) ---
+      emitStep('8/13', 'Generating Classes via AI (Brief list + Detail loop)...');
+      const classes = await this.classService.generateClasses(
+        {
+          themePrompt,
+          language,
+          world: {
+            name: world.name,
+            description: world.description,
+            currencyName: world.currencyName,
+          },
+        },
+        campaign.id,
+        transaction
+      );
+      this.logger.success(`Successfully generated and saved ${classes.length} classes`);
+
+      // --- Step 9: Create Races via AI (Brief list + Detail loop) ---
+      emitStep('9/13', 'Generating Races via AI (Brief list + Detail loop)...');
+      const races = await this.raceService.generateRaces(
+        {
+          themePrompt,
+          language,
+          world: {
+            name: world.name,
+            description: world.description,
+            currencyName: world.currencyName,
+          },
+        },
+        campaign.id,
+        transaction
+      );
+      this.logger.success(`Successfully generated and saved ${races.length} races`);
 
       await transaction.commit();
       this.logger.success(`Campaign creation complete! Transaction committed for campaign ID: ${campaign.id}`);

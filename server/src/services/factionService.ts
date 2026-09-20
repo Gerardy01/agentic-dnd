@@ -123,7 +123,7 @@ export class FactionService implements IFactionService {
       `Generated ${listParsed.factions.length} brief factions: ${listParsed.factions.map((f) => `"${f.name}"`).join(', ')}`
     );
 
-    const results: FactionDataReturn[] = [];
+    const factionsToCreate: CreateFactionDTO[] = [];
 
     for (let i = 0; i < listParsed.factions.length; i++) {
       const stub = listParsed.factions[i];
@@ -155,23 +155,16 @@ export class FactionService implements IFactionService {
 
       const detailParsed = FactionDetailAISchema.parse(detailRaw);
 
-      const faction = await this.create(
-        {
-          name: detailParsed.name,
-          description: detailParsed.description,
-          reputation: detailParsed.reputation,
-          influence: detailParsed.influence,
-        },
-        campaignId,
-        transaction
-      );
-
-      this.logger.success(
-        `[${i + 1}/${listParsed.factions.length}] Saved "${faction.name}" (Reputation: ${faction.reputation}, Influence: ${faction.influence})`
-      );
-
-      results.push(faction);
+      factionsToCreate.push({
+        name: detailParsed.name,
+        description: detailParsed.description,
+        reputation: detailParsed.reputation,
+        influence: detailParsed.influence,
+      });
     }
+
+    const results = await this.createBulk(factionsToCreate, campaignId, transaction);
+    this.logger.success(`Successfully saved ${results.length} factions in bulk`);
 
     return results;
   }
@@ -193,14 +186,20 @@ export class FactionService implements IFactionService {
   }
 
   async createBulk(data: CreateFactionDTO[], campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]> {
-    const results: FactionDataReturn[] = [];
+    if (data.length === 0) return [];
 
-    for (const factionData of data) {
-      const faction = await this.create(factionData, campaignId, transaction);
-      results.push(faction);
-    }
+    const factions = await Faction.bulkCreate(
+      data.map(d => ({
+        campaign_id: campaignId,
+        name: d.name,
+        description: d.description ?? null,
+        reputation: d.reputation ?? 'neutral',
+        influence: d.influence ?? 50,
+      })),
+      { transaction: transaction ?? undefined, returning: true }
+    );
 
-    return results;
+    return factions.map(f => this.toReturn(f));
   }
 
   async getByCampaignId(campaignId: number): Promise<FactionDataReturn[]> {

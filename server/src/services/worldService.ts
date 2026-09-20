@@ -154,6 +154,7 @@ type POIExpansionContext = {
   totalPOIs: number;
   poiIndex: number;
   savedPOIs: POIDataReturn[];
+  poisToCreate: (CreatePOIDTO & { lore?: { title: string; content: string } | null })[];
 };
 
 // ==========================================
@@ -508,11 +509,38 @@ export class WorldService implements IWorldService {
       totalPOIs: 0,
       poiIndex: 0,
       savedPOIs: [],
+      poisToCreate: [],
     };
 
     for (let i = 0; i < leafAreas.length; i++) {
       const area = leafAreas[i];
       await this._expandPOIsForArea(area, i, leafAreas.length, ctx);
+    }
+
+    // -- Bulk insert POIs --
+    if (ctx.poisToCreate.length > 0) {
+      const savedPOIs = await this.createPOIBulk(ctx.poisToCreate, transaction);
+      ctx.savedPOIs = savedPOIs;
+
+      // -- Bulk insert Lore for those POIs --
+      const loresToCreate = [];
+      for (let i = 0; i < savedPOIs.length; i++) {
+        const lore = ctx.poisToCreate[i].lore;
+        if (!lore) continue;
+
+        loresToCreate.push({
+          campaign_id: ctx.campaignId,
+          source_id: savedPOIs[i].id,
+          source_type: 'poi',
+          title: lore.title,
+          content: lore.content,
+        });
+      }
+
+      if (loresToCreate.length > 0) {
+        await Lore.bulkCreate(loresToCreate, { transaction: transaction ?? undefined });
+        this.logger.success(`Saved ${loresToCreate.length} lore entries for POIs in bulk`);
+      }
     }
 
     this.logger.success(`POI generation complete — ${ctx.savedPOIs.length} POIs created across ${leafAreas.length} areas`);
@@ -610,14 +638,21 @@ export class WorldService implements IWorldService {
   }
 
   async createPOIBulk(data: CreatePOIDTO[], transaction?: Transaction): Promise<POIDataReturn[]> {
-    const results: POIDataReturn[] = [];
+    if (data.length === 0) return [];
 
-    for (const poiData of data) {
-      const poi = await this.createPOI(poiData, transaction);
-      results.push(poi);
-    }
+    const pois = await POI.bulkCreate(
+      data.map(d => ({
+        area_id: d.areaId,
+        name: d.name,
+        description: d.description ?? null,
+        descriptive_overview: d.descriptiveOverview ?? null,
+        descriptive_location: d.descriptiveLocation ?? null,
+        map: d.map ?? null,
+      })),
+      { transaction: transaction ?? undefined, returning: true }
+    );
 
-    return results;
+    return pois.map(p => this.poiToReturn(p));
   }
 
   // ------------------------------------------
@@ -821,25 +856,17 @@ export class WorldService implements IWorldService {
       const asciiMap = await this._generatePOIAscii(stub.type, detail, ctx.asciiSystemPrompt);
 
       // -- Persist --
-      const saved = await this.createPOI(
-        {
-          areaId: area.id,
-          name: detail.name,
-          description: detail.description,
-          descriptiveOverview: detail.descriptiveOverview,
-          descriptiveLocation: detail.descriptiveLocation,
-          map: asciiMap,
-        },
-        ctx.transaction
-      );
+      ctx.poisToCreate.push({
+        areaId: area.id,
+        name: detail.name,
+        description: detail.description,
+        descriptiveOverview: detail.descriptiveOverview,
+        descriptiveLocation: detail.descriptiveLocation,
+        map: asciiMap,
+        lore: detail.lore,
+      });
 
-      this.logger.success(`[POI ${ctx.poiIndex}] Saved "${saved.name}" (ID: ${saved.id}) in area "${area.name}"`);
-      ctx.savedPOIs.push(saved);
-
-      // Persist lore if the AI decided this POI warrants one
-      if (detail.lore) {
-        await this._savePOILore(saved.id, detail.lore, ctx);
-      }
+      this.logger.success(`[POI ${ctx.poiIndex}] Processed "${detail.name}" in area "${area.name}"`);
     }
   }
 
@@ -966,14 +993,14 @@ export class WorldService implements IWorldService {
 
     const lores = areaIds.length > 0
       ? await Lore.findAll({
-          where: {
-            campaign_id: campaignId,
-            source_type: 'area',
-            source_id: {
-              [Op.in]: areaIds,
-            },
+        where: {
+          campaign_id: campaignId,
+          source_type: 'area',
+          source_id: {
+            [Op.in]: areaIds,
           },
-        })
+        },
+      })
       : [];
 
     const loreMap = new globalThis.Map<number, LoreDataReturn>();

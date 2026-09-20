@@ -46,11 +46,6 @@ export default function CampaignMapTab({
   // Convert AreaTreeNode to Ant Design DataNode
   const treeData = useMemo(() => {
     const convertNode = (node: AreaTreeNode): DataNode => {
-      const isMatch =
-        !searchQuery ||
-        node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        node.pois.some((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
-
       const childrenNodes: DataNode[] = [];
 
       // Add sub-areas

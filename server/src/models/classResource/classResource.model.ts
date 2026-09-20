@@ -1,14 +1,15 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import ClassModel from '@/models/class/class.model';
+import { ResourceMaxPerLevel, ResourceRecovery } from '@/interfaces/IClass';
 
 class ClassResource extends Model {
   declare public id: number;
   declare public class_id: number;
   declare public name: string;
   declare public description: string | null;
-  declare public max_per_level: any;
-  declare public resource_recovery: any;
+  declare public max_per_level: ResourceMaxPerLevel[];
+  declare public resource_recovery: ResourceRecovery | null;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

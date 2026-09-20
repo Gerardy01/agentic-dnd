@@ -6,12 +6,14 @@ import {
   ReadOutlined,
   TeamOutlined,
   FireOutlined,
+  BookOutlined,
 } from '@ant-design/icons';
 import useCampaignDetail from '@/hooks/campaign/useCampaignDetail';
 import PageLoading from '@/components/global/PageLoading';
 import CampaignOverviewTab from '@/components/campaign/detail/CampaignOverviewTab';
 import CampaignMapTab from '@/components/campaign/detail/CampaignMapTab';
 import CampaignFactionsTab from '@/components/campaign/detail/CampaignFactionsTab';
+import CampaignClassesTab from '@/components/campaign/detail/CampaignClassesTab';
 
 const { Title, Paragraph } = Typography;
 
@@ -20,6 +22,7 @@ export default function CampaignDetail() {
     campaign,
     areas,
     factions,
+    classes,
     totalPOIs,
     areaTree,
     loading,
@@ -52,8 +55,10 @@ export default function CampaignDetail() {
           areasCount={areas.length}
           poisCount={totalPOIs}
           factionsCount={factions.length}
+          classesCount={classes.length}
           onNavigateToMap={() => setActiveTab('map')}
           onNavigateToFactions={() => setActiveTab('factions')}
+          onNavigateToClasses={() => setActiveTab('classes')}
         />
       ),
     },
@@ -90,6 +95,19 @@ export default function CampaignDetail() {
         </span>
       ),
       children: <CampaignFactionsTab factions={factions} />,
+    },
+    {
+      key: 'classes',
+      label: (
+        <span style={styles.tabLabel}>
+          <BookOutlined style={styles.tabIcon} />
+          {t('campaignDetail.tabClasses')}
+          <Tag color="cyan" style={styles.tabBadge}>
+            {classes.length}
+          </Tag>
+        </span>
+      ),
+      children: <CampaignClassesTab classes={classes} />,
     },
   ];
 

@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { campaignApi, worldApi, factionApi } from '@/api';
+import { campaignApi, worldApi, factionApi, classApi } from '@/api';
 import type { CampaignListReturn } from '@/models/campaignInterfaces';
 import type { AreaWithDetailsReturn, POIDataReturn } from '@/models/worldInterfaces';
 import type { FactionDataReturn } from '@/models/factionInterfaces';
+import type { ClassDataReturn } from '@/models/classInterfaces';
 
 export type SelectedMapNode =
   | { type: 'area'; data: AreaWithDetailsReturn }
@@ -27,6 +28,7 @@ export default function useCampaignDetail() {
   const [campaign, setCampaign] = useState<CampaignListReturn | null>(null);
   const [areas, setAreas] = useState<AreaWithDetailsReturn[]>([]);
   const [factions, setFactions] = useState<FactionDataReturn[]>([]);
+  const [classes, setClasses] = useState<ClassDataReturn[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [selectedNode, setSelectedNode] = useState<SelectedMapNode | null>(null);
@@ -46,10 +48,12 @@ export default function useCampaignDetail() {
         [campaignErr, campaignData],
         [areasErr, areasData],
         [factionsErr, factionsData],
+        [classesErr, classesData],
       ] = await Promise.all([
         campaignApi.getCampaignById(campaignId),
         worldApi.getAreas(campaignId),
         factionApi.getFactions(campaignId),
+        classApi.getClasses(campaignId),
       ]);
 
       if (campaignErr || !campaignData) {
@@ -64,6 +68,9 @@ export default function useCampaignDetail() {
 
       const loadedFactions = !factionsErr && factionsData ? factionsData : [];
       setFactions(loadedFactions);
+
+      const loadedClasses = !classesErr && classesData ? classesData : [];
+      setClasses(loadedClasses);
 
       // Auto-select first area if available
       if (loadedAreas.length > 0) {
@@ -133,6 +140,7 @@ export default function useCampaignDetail() {
     campaign,
     areas,
     factions,
+    classes,
     totalPOIs,
     areaTree,
     loading,

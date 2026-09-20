@@ -3,6 +3,7 @@ import { AccountOrchestration } from '@/orchestration/accountOrchestration';
 import { CampaignOrchestration } from '@/orchestration/campaignOrchestration';
 import { FactionOrchestration } from '@/orchestration/factionOrchestration';
 import { WorldOrchestration } from '@/orchestration/worldOrchestration';
+import { ClassOrchestration } from '@/orchestration/classOrchestration';
 import { accountService, authService } from '@/services';
 import {
   campaignService,
@@ -49,4 +50,10 @@ export const worldOrchestration = new WorldOrchestration(
   worldService,
   campaignService
 );
+
+export const classOrchestration = new ClassOrchestration(
+  classService,
+  campaignService
+);
+
 

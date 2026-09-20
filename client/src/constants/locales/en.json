@@ -123,6 +123,7 @@
     "tabOverview": "Overview",
     "tabMap": "World Map",
     "tabFactions": "Factions",
+    "tabClasses": "Classes",
     "themePromptTitle": "Campaign Theme & Vision",
     "worldDescriptionTitle": "World Geography & Lore Codex",
     "stats": {
@@ -168,6 +169,41 @@
       "searchPlaceholder": "Filter factions by name...",
       "emptyTitle": "No Factions Inscribed",
       "emptySubtitle": "This campaign does not currently feature any recorded factions."
+    },
+    "classes": {
+      "title": "Campaign Classes & Disciplines",
+      "subtitle": "Archetypes, martial training, and arcane arts available in this realm",
+      "searchPlaceholder": "Filter classes by name, hit die, or features...",
+      "emptyTitle": "No Classes Inscribed",
+      "emptySubtitle": "This campaign does not currently feature any recorded classes.",
+      "hitDie": "Hit Die",
+      "featuresCount": "Features",
+      "resourcesCount": "Resources",
+      "spellcaster": "Spellcaster",
+      "inspectCodex": "Inspect Class Codex",
+      "modal": {
+        "title": "Class Codex",
+        "descriptionTitle": "Lore & Role",
+        "hitDieLabel": "Hit Die Progression",
+        "spellcastingTitle": "Spellcasting Properties",
+        "spellcastingAbility": "Spellcasting Ability",
+        "preparationType": "Preparation Style",
+        "spellcastingType": "Caster Type",
+        "preparedBonus": "Prepared Level Bonus",
+        "cantripsProgression": "Cantrips Known by Level",
+        "spellsProgression": "Spells Known by Level",
+        "resourcesTitle": "Unique Class Resources",
+        "resourceRecovery": "Recovery Rates",
+        "shortRest": "Short Rest",
+        "longRest": "Long Rest",
+        "maxProgression": "Maximum Pool per Level",
+        "featuresTitle": "Progression Features",
+        "levelPrefix": "Level",
+        "passive": "Passive",
+        "active": "Active",
+        "noFeatures": "No progression features inscribed for this class.",
+        "noResources": "This class does not utilize dedicated resource pools."
+      }
     }
   }
 }

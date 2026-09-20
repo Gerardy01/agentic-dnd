@@ -9,6 +9,7 @@ import {
   CalendarOutlined,
   GlobalOutlined,
   RightOutlined,
+  BookOutlined,
 } from '@ant-design/icons';
 import type { CampaignListReturn } from '@/models/campaignInterfaces';
 
@@ -19,8 +20,10 @@ interface CampaignOverviewTabProps {
   areasCount: number;
   poisCount: number;
   factionsCount: number;
+  classesCount?: number;
   onNavigateToMap: () => void;
   onNavigateToFactions: () => void;
+  onNavigateToClasses?: () => void;
 }
 
 export default function CampaignOverviewTab({
@@ -28,8 +31,10 @@ export default function CampaignOverviewTab({
   areasCount,
   poisCount,
   factionsCount,
+  classesCount = 0,
   onNavigateToMap,
   onNavigateToFactions,
+  onNavigateToClasses,
 }: CampaignOverviewTabProps) {
   const { t } = useTranslation();
 
@@ -184,6 +189,18 @@ export default function CampaignOverviewTab({
               >
                 {t('campaignDetail.tabFactions')} ({factionsCount} Factions)
               </Button>
+
+              {onNavigateToClasses && (
+                <Button
+                  size="large"
+                  icon={<BookOutlined />}
+                  style={styles.classesBtn}
+                  onClick={onNavigateToClasses}
+                  block
+                >
+                  {t('campaignDetail.tabClasses')} ({classesCount} Classes)
+                </Button>
+              )}
             </Space>
 
             <div style={styles.inscribedMeta}>
@@ -348,6 +365,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '46px',
     background: 'rgba(255, 255, 255, 0.04)',
     borderColor: '#374151',
+    color: '#EDE6D6',
+  },
+  classesBtn: {
+    fontFamily: "'Cinzel', serif",
+    letterSpacing: '0.5px',
+    fontWeight: 600,
+    height: '46px',
+    background: 'rgba(217, 92, 20, 0.08)',
+    borderColor: 'rgba(217, 92, 20, 0.3)',
     color: '#EDE6D6',
   },
   inscribedMeta: {
