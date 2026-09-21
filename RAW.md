@@ -138,7 +138,7 @@ area
 - depth : 0 = continent, 1 = kingdom, 2 = duchy, etc. 
 - path : materialized path, e.g. "1/4/9" (ancestor ids)
 - level_type : "continent" | "kingdom" | "duchy" | "region" | ... (flexible label, not enforced)
-- nam
+- name
 - description
 - descriptive_overview
 - descriptive_location
@@ -284,6 +284,7 @@ npc
 - id
 - campaign_id
 - name
+- race_id
 - alignment
 - appearance
 - personality

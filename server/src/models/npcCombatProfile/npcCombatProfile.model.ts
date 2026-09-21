@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import NPC from '@/models/npc/npc.model';
+import { NpcStat, NpcAction } from '@/interfaces/INpc';
 
 class NPCCombatProfile extends Model {
   declare public id: number;
@@ -8,9 +9,9 @@ class NPCCombatProfile extends Model {
   declare public ac: number;
   declare public max_hp: number;
   declare public hp: number;
-  declare public stat: any;
+  declare public stat: NpcStat;
   declare public speed: number;
-  declare public actions: any;
+  declare public actions: NpcAction[];
   declare public cr_equivalent: number | null;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;

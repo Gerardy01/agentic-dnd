@@ -143,6 +143,9 @@ Inventory.belongsTo(Item, { foreignKey: 'item_id', as: 'item' });
 Campaign.hasMany(NPC, { foreignKey: 'campaign_id', as: 'npcs', onDelete: 'CASCADE' });
 NPC.belongsTo(Campaign, { foreignKey: 'campaign_id', as: 'campaign' });
 
+NPC.belongsTo(Race, { foreignKey: 'race_id', as: 'race' });
+Race.hasMany(NPC, { foreignKey: 'race_id', as: 'npcs', onDelete: 'SET NULL' });
+
 NPC.hasOne(NPCCombatProfile, { foreignKey: 'npc_id', as: 'combatProfile', onDelete: 'CASCADE' });
 NPCCombatProfile.belongsTo(NPC, { foreignKey: 'npc_id', as: 'npc' });
 

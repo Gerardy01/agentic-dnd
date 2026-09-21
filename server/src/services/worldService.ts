@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Transaction, Op } from 'sequelize';
-import { World, Map, Area, POI, Lore } from '@/models';
+import { World, Map, Area, POI, Lore, POINPC } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
@@ -183,6 +183,8 @@ export interface IWorldService {
   createPOIBulk(data: CreatePOIDTO[], transaction?: Transaction): Promise<POIDataReturn[]>;
   getWorldsByCampaignIds(campaignIds: number[]): Promise<WorldDataReturn[]>;
   getAreasByCampaignId(campaignId: number): Promise<AreaWithDetailsReturn[]>;
+  linkNpcToPOI(npcId: number, poiId: number, position?: string | null, transaction?: Transaction): Promise<void>;
+  linkNpcsToPOIs(links: { npcId: number; poiId: number; position?: string | null }[], transaction?: Transaction): Promise<void>;
 }
 
 // ==========================================
@@ -1057,5 +1059,28 @@ export class WorldService implements IWorldService {
       map: poi.map,
       createdAt: poi.created_at,
     };
+  }
+
+  async linkNpcToPOI(npcId: number, poiId: number, position?: string | null, transaction?: Transaction): Promise<void> {
+    await POINPC.create(
+      {
+        npc_id: npcId,
+        poi_id: poiId,
+        position: position ?? null,
+      },
+      { transaction: transaction ?? undefined }
+    );
+  }
+
+  async linkNpcsToPOIs(links: { npcId: number; poiId: number; position?: string | null }[], transaction?: Transaction): Promise<void> {
+    if (links.length === 0) return;
+    await POINPC.bulkCreate(
+      links.map((link) => ({
+        npc_id: link.npcId,
+        poi_id: link.poiId,
+        position: link.position ?? null,
+      })),
+      { transaction: transaction ?? undefined }
+    );
   }
 }

@@ -317,6 +317,45 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       );
       this.logger.success(`Successfully generated and saved ${races.length} races`);
 
+      // --- Step 10: Generate NPCs via AI (Brief list + Detail loop) ---
+      emitStep('10/13', 'Generating NPCs via AI (Brief list + Detail loop)...');
+      const generatedNpcs = await this.npcService.generateNpcs(
+        {
+          themePrompt,
+          language,
+          world: {
+            name: world.name,
+            description: world.description,
+            currencyName: world.currencyName,
+          },
+          races: races.map((r) => ({
+            id: r.id,
+            name: r.name,
+            description: r.description,
+          })),
+          pois: pois.map((p) => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            map: p.map,
+          })),
+        },
+        campaign.id,
+        transaction
+      );
+      this.logger.success(`Successfully generated and saved ${generatedNpcs.length} NPCs`);
+
+      emitStep('10/13', 'Assigning NPCs to Points of Interest...');
+      await this.worldService.linkNpcsToPOIs(
+        generatedNpcs.map((item) => ({
+          npcId: item.npc.id,
+          poiId: item.poiId,
+          position: JSON.stringify(item.position),
+        })),
+        transaction
+      );
+      this.logger.success(`Successfully assigned ${generatedNpcs.length} NPCs to their POIs`);
+
       await transaction.commit();
       this.logger.success(`Campaign creation complete! Transaction committed for campaign ID: ${campaign.id}`);
 
