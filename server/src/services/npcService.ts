@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Transaction } from 'sequelize';
-import { NPC, NPCCombatProfile } from '@/models';
+import { NPC, NPCCombatProfile, Race, POINPC, POI } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
@@ -10,6 +10,7 @@ import {
   GeneratedNpcWithPoiReturn,
   NpcPosition,
   NpcDataReturn,
+  NpcWithDetailsReturn,
   NpcBriefListAIResponse,
   NpcDetailAIResponse,
   CreateNpcCombatProfileDTO,
@@ -31,7 +32,7 @@ const NpcBriefItemAISchema = z.object({
   raceId: z.number().int(),
   poiId: z.number().int(),
   alignment: z.string().min(1).max(50),
-  personality: z.string().min(1).max(300),
+  personality: z.string().min(1).max(500),
   position: NpcPositionAISchema.default({ x: 0, y: 0 }),
   isCombatNpc: z.boolean().default(false),
 });
@@ -137,6 +138,7 @@ export interface INpcService {
     data: CreateNpcCombatProfileDTO[],
     transaction?: Transaction
   ): Promise<NpcCombatProfileDataReturn[]>;
+  getByCampaignId(campaignId: number): Promise<NpcWithDetailsReturn[]>;
 }
 
 // ==========================================
@@ -475,5 +477,38 @@ export class NpcService implements INpcService {
       crEquivalent: profile.cr_equivalent !== null ? Number(profile.cr_equivalent) : null,
       createdAt: profile.created_at,
     };
+  }
+
+  async getByCampaignId(campaignId: number): Promise<NpcWithDetailsReturn[]> {
+    const npcs = await NPC.findAll({
+      where: { campaign_id: campaignId },
+      include: [
+        { model: Race, as: 'race', attributes: ['id', 'name'] },
+        { model: NPCCombatProfile, as: 'combatProfile' },
+        {
+          model: POINPC,
+          as: 'poiNpcs',
+          include: [{ model: POI, as: 'poi', attributes: ['id', 'name'] }],
+        },
+      ],
+      order: [['created_at', 'ASC']],
+    });
+
+    return npcs.map((npc: any) => {
+      const base = this.toReturn(npc);
+      const poiEntry = npc.poiNpcs?.[0];
+      return {
+        ...base,
+        race: npc.race ? { id: npc.race.id, name: npc.race.name } : null,
+        combatProfile: npc.combatProfile ? this.toCombatProfileReturn(npc.combatProfile) : null,
+        location: poiEntry?.poi
+          ? {
+              poiId: poiEntry.poi.id,
+              poiName: poiEntry.poi.name,
+              position: poiEntry.position,
+            }
+          : null,
+      };
+    });
   }
 }

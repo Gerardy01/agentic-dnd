@@ -4,6 +4,21 @@ export interface CreateCampaignDTO {
   language?: string;
 }
 
+export interface ContinueCampaignDTO {
+  successParameter: CampaignSuccessParameter;
+}
+
+export type CampaignSuccessParameter = {
+  world: boolean;
+  factions: boolean;
+  areas: boolean;
+  pois: boolean;
+  classes: boolean;
+  races: boolean;
+  npcs: boolean;
+  items: boolean;
+};
+
 export type CampaignDataReturn = {
   id: number;
   accountId: string;
@@ -11,6 +26,7 @@ export type CampaignDataReturn = {
   themePrompt: string | null;
   language: string;
   createdAt: string;
+  successParameter?: CampaignSuccessParameter;
 };
 
 export type CampaignListReturn = {
@@ -21,6 +37,7 @@ export type CampaignListReturn = {
   language: string;
   worldDescription: string | null;
   createdAt: string;
+  successParameter?: CampaignSuccessParameter;
 };
 
 export type Campaign = {

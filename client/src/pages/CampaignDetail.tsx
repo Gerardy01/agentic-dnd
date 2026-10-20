@@ -7,15 +7,22 @@ import {
   TeamOutlined,
   FireOutlined,
   BookOutlined,
+  UserOutlined,
+  SmileOutlined,
+  GiftOutlined,
 } from '@ant-design/icons';
 import useCampaignDetail from '@/hooks/campaign/useCampaignDetail';
 import PageLoading from '@/components/global/PageLoading';
+import CampaignStatusBanner from '@/components/campaign/detail/CampaignStatusBanner';
 import CampaignOverviewTab from '@/components/campaign/detail/CampaignOverviewTab';
 import CampaignMapTab from '@/components/campaign/detail/CampaignMapTab';
 import CampaignFactionsTab from '@/components/campaign/detail/CampaignFactionsTab';
 import CampaignClassesTab from '@/components/campaign/detail/CampaignClassesTab';
+import CampaignRacesTab from '@/components/campaign/detail/CampaignRacesTab';
+import CampaignNpcsTab from '@/components/campaign/detail/CampaignNpcsTab';
+import CampaignItemsTab from '@/components/campaign/detail/CampaignItemsTab';
 
-const { Title, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 export default function CampaignDetail() {
   const {
@@ -23,6 +30,9 @@ export default function CampaignDetail() {
     areas,
     factions,
     classes,
+    races,
+    npcs,
+    items,
     totalPOIs,
     areaTree,
     loading,
@@ -32,6 +42,7 @@ export default function CampaignDetail() {
     handleSelectArea,
     handleSelectPOI,
     handleBackToCampaigns,
+    refreshCampaignData,
   } = useCampaignDetail();
 
   const { t } = useTranslation();
@@ -56,9 +67,15 @@ export default function CampaignDetail() {
           poisCount={totalPOIs}
           factionsCount={factions.length}
           classesCount={classes.length}
+          racesCount={races.length}
+          npcsCount={npcs.length}
+          itemsCount={items.length}
           onNavigateToMap={() => setActiveTab('map')}
           onNavigateToFactions={() => setActiveTab('factions')}
           onNavigateToClasses={() => setActiveTab('classes')}
+          onNavigateToRaces={() => setActiveTab('races')}
+          onNavigateToNpcs={() => setActiveTab('npcs')}
+          onNavigateToItems={() => setActiveTab('items')}
         />
       ),
     },
@@ -109,6 +126,45 @@ export default function CampaignDetail() {
       ),
       children: <CampaignClassesTab classes={classes} />,
     },
+    {
+      key: 'races',
+      label: (
+        <span style={styles.tabLabel}>
+          <UserOutlined style={styles.tabIcon} />
+          {t('campaignDetail.tabRaces')}
+          <Tag color="volcano" style={styles.tabBadge}>
+            {races.length}
+          </Tag>
+        </span>
+      ),
+      children: <CampaignRacesTab races={races} />,
+    },
+    {
+      key: 'npcs',
+      label: (
+        <span style={styles.tabLabel}>
+          <SmileOutlined style={styles.tabIcon} />
+          {t('campaignDetail.tabNpcs')}
+          <Tag color="blue" style={styles.tabBadge}>
+            {npcs.length}
+          </Tag>
+        </span>
+      ),
+      children: <CampaignNpcsTab npcs={npcs} />,
+    },
+    {
+      key: 'items',
+      label: (
+        <span style={styles.tabLabel}>
+          <GiftOutlined style={styles.tabIcon} />
+          {t('campaignDetail.tabItems')}
+          <Tag color="magenta" style={styles.tabBadge}>
+            {items.length}
+          </Tag>
+        </span>
+      ),
+      children: <CampaignItemsTab items={items} />,
+    },
   ];
 
   return (
@@ -125,32 +181,38 @@ export default function CampaignDetail() {
         </Button>
       </div>
 
-      {/* Campaign Detail Banner */}
-      <div style={styles.banner}>
-        <div style={styles.bannerContent}>
-          <div style={styles.badgeRow}>
-            <Tag color="orange" style={styles.statusTag}>
-              <FireOutlined style={{ marginRight: 4 }} />
-              {t('campaigns.statusActive')}
-            </Tag>
-            <Tag color="gold" style={styles.langTag}>
-              {campaign.language.toUpperCase()}
-            </Tag>
+      {/* Main Campaign Header Banner */}
+      <div style={styles.headerBanner}>
+        <div style={styles.headerLeft}>
+          <div style={styles.logoBadge}>
+            <FireOutlined style={styles.logoIcon} />
           </div>
-
-          <Title level={1} style={styles.title}>
-            {campaign.name}
-          </Title>
-
-          {campaign.themePrompt && (
-            <Paragraph style={styles.subtitle} ellipsis={{ rows: 2 }}>
-              {campaign.themePrompt}
-            </Paragraph>
-          )}
+          <div style={styles.headerTextGroup}>
+            <div style={styles.statusRow}>
+              <Tag color="orange" style={styles.statusTag}>
+                {t('campaigns.statusActive')}
+              </Tag>
+              <Text style={styles.langText}>
+                {campaign.language.toUpperCase()}
+              </Text>
+            </div>
+            <Title level={1} style={styles.campaignName}>
+              {campaign.name}
+            </Title>
+          </div>
         </div>
       </div>
 
-      {/* Tab Navigation */}
+      {/* Campaign Status Banner - shows if campaign generation is incomplete */}
+      {campaign.successParameter && (
+        <CampaignStatusBanner
+          campaignId={campaign.id}
+          successParameter={campaign.successParameter}
+          onContinuationComplete={refreshCampaignData}
+        />
+      )}
+
+      {/* Navigation Tabs */}
       <div style={styles.tabsWrapper}>
         <Tabs
           activeKey={activeTab}
@@ -165,85 +227,114 @@ export default function CampaignDetail() {
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    padding: '4px 0 32px',
+    padding: '24px 32px',
+    maxWidth: '1440px',
+    margin: '0 auto',
+    width: '100%',
   },
   topBar: {
-    marginBottom: '14px',
+    marginBottom: '16px',
   },
   backBtn: {
-    padding: 0,
     color: '#8D98AA',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    letterSpacing: '0.5px',
+    padding: '0 8px',
+    height: '32px',
     display: 'inline-flex',
     alignItems: 'center',
     gap: '6px',
+    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    transition: 'color 0.2s',
   },
-  banner: {
-    padding: '24px 28px',
+  headerBanner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    gap: '20px',
+    padding: '24px',
     borderRadius: '16px',
-    background: 'linear-gradient(135deg, #171D27 0%, #101319 100%)',
-    border: '1px solid #283244',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
-    marginBottom: '20px',
+    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
+    border: '1px solid #232936',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+    marginBottom: '24px',
   },
-  bannerContent: {
-    maxWidth: '900px',
+  headerLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
   },
-  badgeRow: {
+  logoBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '56px',
+    height: '56px',
+    borderRadius: '14px',
+    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.25) 0%, rgba(194, 155, 56, 0.1) 100%)',
+    border: '1px solid rgba(217, 92, 20, 0.6)',
+    boxShadow: '0 0 20px rgba(217, 92, 20, 0.3)',
+    flexShrink: 0,
+  },
+  logoIcon: {
+    fontSize: '28px',
+    color: '#D95C14',
+    filter: 'drop-shadow(0 0 6px rgba(217, 92, 20, 0.8))',
+  },
+  headerTextGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  statusRow: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    marginBottom: '10px',
+    marginBottom: '4px',
   },
   statusTag: {
     fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontWeight: 600,
+    fontSize: '11px',
+    letterSpacing: '0.8px',
     borderRadius: '4px',
-    padding: '2px 8px',
+    padding: '1px 8px',
+    textTransform: 'uppercase',
   },
-  langTag: {
+  langText: {
+    color: '#707C91',
+    fontSize: '12px',
     fontFamily: "'Cinzel', serif",
     fontWeight: 600,
-    borderRadius: '4px',
-    padding: '2px 8px',
   },
-  title: {
-    margin: '0 0 8px',
+  campaignName: {
+    margin: 0,
     color: '#EDE6D6',
     fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '28px',
+    fontSize: '26px',
     letterSpacing: '1px',
-  },
-  subtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
-    lineHeight: 1.6,
-    margin: 0,
+    lineHeight: 1.2,
   },
   tabsWrapper: {
-    marginTop: '8px',
+    background: 'transparent',
   },
   tabs: {
-    color: '#EDE6D6',
+    color: '#8D98AA',
   },
   tabLabel: {
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontSize: '14px',
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '6px',
+    gap: '8px',
+    fontFamily: "'Cinzel', serif",
+    fontSize: '14px',
+    letterSpacing: '0.5px',
   },
   tabIcon: {
     fontSize: '15px',
   },
   tabBadge: {
-    marginLeft: '4px',
-    fontSize: '10px',
-    padding: '0 5px',
     borderRadius: '10px',
+    fontSize: '11px',
+    padding: '0 6px',
+    lineHeight: '16px',
+    fontWeight: 600,
   },
 };

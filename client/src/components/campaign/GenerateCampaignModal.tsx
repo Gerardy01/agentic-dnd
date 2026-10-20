@@ -8,8 +8,21 @@ import {
   InfoCircleOutlined,
   CloseOutlined,
   LoadingOutlined,
+  CheckCircleFilled,
+  CloseCircleFilled,
+  ForwardOutlined,
+  ArrowRightOutlined,
+  TeamOutlined,
+  EnvironmentOutlined,
+  PushpinOutlined,
+  UserOutlined,
+  SmileOutlined,
+  GiftOutlined,
 } from '@ant-design/icons';
-import useGenerateCampaignModal from '@/hooks/campaign/useGenerateCampaignModal';
+import useGenerateCampaignModal, {
+  CAMPAIGN_MODULE_KEYS,
+  type CampaignModuleKey,
+} from '@/hooks/campaign/useGenerateCampaignModal';
 import { CAMPAIGN_LANGUAGE_OPTIONS } from '@/constants/selections';
 import { CampaignLanguageEnum } from '@/utils/enums';
 import type { CampaignDataReturn } from '@/models/campaignInterfaces';
@@ -23,6 +36,17 @@ interface GenerateCampaignModalProps {
   onSuccess: (campaign: CampaignDataReturn) => void;
 }
 
+const MODULE_ICON_MAP: Record<CampaignModuleKey, React.ReactNode> = {
+  world: <GlobalOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  factions: <TeamOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  areas: <EnvironmentOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  pois: <PushpinOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  classes: <BookOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  races: <UserOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  npcs: <SmileOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  items: <GiftOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+};
+
 export default function GenerateCampaignModal({
   isOpen,
   onClose,
@@ -34,7 +58,12 @@ export default function GenerateCampaignModal({
     errorMsg,
     progressStep,
     progressPercent,
+    creationResult,
+    isAllSuccess,
+    firstFailedModule,
     submitGenerateCampaign,
+    handleContinueCampaign,
+    handleFinishAndProceed,
     handleCloseModal,
   } = useGenerateCampaignModal(onClose, onSuccess);
 
@@ -46,7 +75,7 @@ export default function GenerateCampaignModal({
       onCancel={loading ? undefined : handleCloseModal}
       footer={null}
       centered
-      width={640}
+      width={680}
       closable={!loading}
       closeIcon={<CloseOutlined style={styles.closeIcon} />}
       styles={{
@@ -66,17 +95,18 @@ export default function GenerateCampaignModal({
             </div>
             <Tag color="orange" style={styles.tag}>
               <CompassOutlined style={{ marginRight: 4 }} />
-              {t('campaigns.modalBadge')}
+              {creationResult ? t('campaigns.moduleStatusTitle') : t('campaigns.modalBadge')}
             </Tag>
           </div>
           <Title level={2} style={styles.title}>
-            {t('campaigns.modalTitle')}
+            {creationResult ? creationResult.name : t('campaigns.modalTitle')}
           </Title>
           <Paragraph style={styles.subtitle}>
-            {t('campaigns.modalSubtitle')}
+            {creationResult ? t('campaigns.moduleStatusSubtitle') : t('campaigns.modalSubtitle')}
           </Paragraph>
         </div>
 
+        {/* Global Error Banner */}
         {errorMsg && (
           <Alert
             message={errorMsg}
@@ -86,159 +116,333 @@ export default function GenerateCampaignModal({
           />
         )}
 
-        {/* Form Section */}
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={submitGenerateCampaign}
-          initialValues={{ language: CampaignLanguageEnum.EN }}
-          requiredMark={false}
-          style={styles.form}
-        >
-          {/* Name & Language Row */}
-          <Row gutter={[16, 0]}>
-            <Col xs={24} md={15}>
-              <Form.Item
-                name="name"
-                label={
-                  <span style={styles.label}>
-                    <BookOutlined style={styles.labelIcon} />
-                    {t('campaigns.nameLabel')}
-                  </span>
-                }
-                rules={[
-                  { required: true, message: t('campaigns.nameRequired') },
-                  { max: 255, message: t('campaigns.nameMax') },
-                ]}
-              >
-                <Input
-                  placeholder={t('campaigns.namePlaceholder')}
-                  size="large"
-                  maxLength={255}
-                  disabled={loading}
-                  style={styles.input}
-                />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} md={9}>
-              <Form.Item
-                name="language"
-                label={
-                  <span style={styles.label}>
-                    <GlobalOutlined style={styles.labelIcon} />
-                    {t('campaigns.languageLabel')}
-                  </span>
-                }
-                rules={[
-                  { required: true, message: t('campaigns.languageRequired') },
-                ]}
-              >
-                <Select
-                  options={CAMPAIGN_LANGUAGE_OPTIONS}
-                  size="large"
-                  disabled={loading}
-                  style={styles.select}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          {/* Guide Card Explaining The Prompt Purpose */}
-          <div style={styles.guideCard}>
-            <div style={styles.guideHeader}>
-              <InfoCircleOutlined style={styles.guideIcon} />
-              <Text style={styles.guideTitle}>
-                {t('campaigns.promptGuideTitle')}
-              </Text>
-            </div>
-            <Paragraph style={styles.guideText}>
-              {t('campaigns.promptGuideDesc')}
-            </Paragraph>
-          </div>
-
-          {/* Prompt Multiline Textarea Field */}
-          <Form.Item
-            name="prompt"
-            label={
-              <span style={styles.label}>
-                <CompassOutlined style={styles.labelIcon} />
-                {t('campaigns.promptLabel')}
-              </span>
-            }
-            rules={[{ required: true, message: t('campaigns.promptRequired') }]}
+        {/* VIEW 1: Initial Campaign Creation Form */}
+        {!creationResult && (
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={submitGenerateCampaign}
+            initialValues={{ language: CampaignLanguageEnum.EN }}
+            requiredMark={false}
+            style={styles.form}
           >
-            <TextArea
-              placeholder={t('campaigns.promptPlaceholder')}
-              autoSize={{ minRows: 4, maxRows: 8 }}
-              disabled={loading}
-              style={styles.textArea}
-            />
-          </Form.Item>
+            {/* Name & Language Row */}
+            <Row gutter={[16, 0]}>
+              <Col xs={24} md={15}>
+                <Form.Item
+                  name="name"
+                  label={
+                    <span style={styles.label}>
+                      <BookOutlined style={styles.labelIcon} />
+                      {t('campaigns.nameLabel')}
+                    </span>
+                  }
+                  rules={[
+                    { required: true, message: t('campaigns.nameRequired') },
+                    { max: 255, message: t('campaigns.nameMax') },
+                  ]}
+                >
+                  <Input
+                    placeholder={t('campaigns.namePlaceholder')}
+                    size="large"
+                    maxLength={255}
+                    disabled={loading}
+                    style={styles.input}
+                  />
+                </Form.Item>
+              </Col>
 
-          {/* Progress Section when Loading */}
-          {loading && (
-            <div style={styles.progressCard}>
-              <div style={styles.progressHeader}>
-                <div style={styles.progressSpinnerWrapper}>
-                  <LoadingOutlined style={styles.progressSpinner} spin />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <Text style={styles.progressTitle}>
-                    {t('campaigns.progressTitle')}
-                  </Text>
-                  <Paragraph style={styles.progressSubtitle}>
-                    {t('campaigns.progressSubtitle')}
-                  </Paragraph>
-                </div>
-              </div>
+              <Col xs={24} md={9}>
+                <Form.Item
+                  name="language"
+                  label={
+                    <span style={styles.label}>
+                      <GlobalOutlined style={styles.labelIcon} />
+                      {t('campaigns.languageLabel')}
+                    </span>
+                  }
+                  rules={[
+                    { required: true, message: t('campaigns.languageRequired') },
+                  ]}
+                >
+                  <Select
+                    options={CAMPAIGN_LANGUAGE_OPTIONS}
+                    size="large"
+                    disabled={loading}
+                    style={styles.select}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
-              <div style={styles.progressBarWrapper}>
-                <Progress
-                  percent={progressPercent}
-                  strokeColor={{
-                    '0%': '#D95C14',
-                    '70%': '#C29B38',
-                    '100%': '#2ECC71',
-                  }}
-                  trailColor="#1A1F2B"
-                  size={['100%', 8]}
-                  status="active"
-                  showInfo={false}
-                />
-              </div>
-
-              <div style={styles.stepBadge}>
-                <Text style={styles.stepText}>
-                  {progressStep || t('campaigns.progressInitial')}
+            {/* Guide Card */}
+            <div style={styles.guideCard}>
+              <div style={styles.guideHeader}>
+                <InfoCircleOutlined style={styles.guideIcon} />
+                <Text style={styles.guideTitle}>
+                  {t('campaigns.promptGuideTitle')}
                 </Text>
-                <Text style={styles.stepPercentText}>
-                  {progressPercent}%
-                </Text>
               </div>
+              <Paragraph style={styles.guideText}>
+                {t('campaigns.promptGuideDesc')}
+              </Paragraph>
             </div>
-          )}
 
-          {/* Action Buttons */}
-          <div style={styles.buttonGroup}>
-            <Button
-              onClick={handleCloseModal}
-              disabled={loading}
-              style={styles.cancelButton}
+            {/* Theme Prompt */}
+            <Form.Item
+              name="prompt"
+              label={
+                <span style={styles.label}>
+                  <CompassOutlined style={styles.labelIcon} />
+                  {t('campaigns.promptLabel')}
+                </span>
+              }
+              rules={[{ required: true, message: t('campaigns.promptRequired') }]}
             >
-              {t('global.cancel')}
-            </Button>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              icon={<FireOutlined />}
-              style={styles.submitButton}
-            >
-              {loading ? t('campaigns.submittingBtn') : t('campaigns.submitBtn')}
-            </Button>
+              <TextArea
+                placeholder={t('campaigns.promptPlaceholder')}
+                autoSize={{ minRows: 4, maxRows: 8 }}
+                disabled={loading}
+                style={styles.textArea}
+              />
+            </Form.Item>
+
+            {/* Progress Section when Loading */}
+            {loading && (
+              <div style={styles.progressCard}>
+                <div style={styles.progressHeader}>
+                  <div style={styles.progressSpinnerWrapper}>
+                    <LoadingOutlined style={styles.progressSpinner} spin />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <Text style={styles.progressTitle}>
+                      {t('campaigns.progressTitle')}
+                    </Text>
+                    <Paragraph style={styles.progressSubtitle}>
+                      {t('campaigns.progressSubtitle')}
+                    </Paragraph>
+                  </div>
+                </div>
+
+                <div style={styles.progressBarWrapper}>
+                  <Progress
+                    percent={progressPercent}
+                    strokeColor={{
+                      '0%': '#D95C14',
+                      '70%': '#C29B38',
+                      '100%': '#2ECC71',
+                    }}
+                    trailColor="#1A1F2B"
+                    size={['100%', 8]}
+                    status="active"
+                    showInfo={false}
+                  />
+                </div>
+
+                <div style={styles.stepBadge}>
+                  <Text style={styles.stepText}>
+                    {progressStep || t('campaigns.progressInitial')}
+                  </Text>
+                  <Text style={styles.stepPercentText}>
+                    {progressPercent}%
+                  </Text>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div style={styles.buttonGroup}>
+              <Button
+                onClick={handleCloseModal}
+                disabled={loading}
+                style={styles.cancelButton}
+              >
+                {t('global.cancel')}
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                icon={<FireOutlined />}
+                style={styles.submitButton}
+              >
+                {loading ? t('campaigns.submittingBtn') : t('campaigns.submitBtn')}
+              </Button>
+            </div>
+          </Form>
+        )}
+
+        {/* VIEW 2: Manifest & Continuation Overview */}
+        {creationResult && (
+          <div style={styles.manifestContainer}>
+            {/* Manifest Status Banner */}
+            {isAllSuccess ? (
+              <Alert
+                type="success"
+                showIcon
+                message={t('campaigns.generationCompleteAlert')}
+                style={styles.successAlert}
+              />
+            ) : (
+              <Alert
+                type="warning"
+                showIcon
+                message={t('campaigns.generationIncompleteAlert')}
+                style={styles.warningAlert}
+              />
+            )}
+
+            {/* Live Progress Card if actively generating / continuing */}
+            {loading && (
+              <div style={styles.progressCard}>
+                <div style={styles.progressHeader}>
+                  <div style={styles.progressSpinnerWrapper}>
+                    <LoadingOutlined style={styles.progressSpinner} spin />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <Text style={styles.progressTitle}>
+                      {t('campaigns.progressTitle')}
+                    </Text>
+                    <Paragraph style={styles.progressSubtitle}>
+                      {t('campaigns.progressSubtitle')}
+                    </Paragraph>
+                  </div>
+                </div>
+
+                <div style={styles.progressBarWrapper}>
+                  <Progress
+                    percent={progressPercent}
+                    strokeColor={{
+                      '0%': '#D95C14',
+                      '70%': '#C29B38',
+                      '100%': '#2ECC71',
+                    }}
+                    trailColor="#1A1F2B"
+                    size={['100%', 8]}
+                    status="active"
+                    showInfo={false}
+                  />
+                </div>
+
+                <div style={styles.stepBadge}>
+                  <Text style={styles.stepText}>
+                    {progressStep || t('campaigns.progressInitial')}
+                  </Text>
+                  <Text style={styles.stepPercentText}>
+                    {progressPercent}%
+                  </Text>
+                </div>
+              </div>
+            )}
+
+            {/* Module Checklist */}
+            <div style={styles.moduleList}>
+              {CAMPAIGN_MODULE_KEYS.map((moduleKey) => {
+                const isGenerated = !!creationResult.successParameter?.[moduleKey];
+                const isResumePoint = moduleKey === firstFailedModule;
+
+                return (
+                  <div
+                    key={moduleKey}
+                    style={{
+                      ...styles.moduleItem,
+                      ...(isResumePoint ? styles.moduleItemHighlight : {}),
+                    }}
+                  >
+                    <div style={styles.moduleLeft}>
+                      {/* Checkmark or Cross Icon */}
+                      <div style={styles.statusIconWrap}>
+                        {isGenerated ? (
+                          <CheckCircleFilled style={styles.checkIcon} />
+                        ) : (
+                          <CloseCircleFilled style={styles.crossIcon} />
+                        )}
+                      </div>
+
+                      {/* Domain Icon & Title */}
+                      <div style={styles.moduleMeta}>
+                        <div style={styles.moduleTitleRow}>
+                          <span style={styles.moduleDomainIcon}>
+                            {MODULE_ICON_MAP[moduleKey]}
+                          </span>
+                          <Text style={styles.moduleTitle}>
+                            {t(`campaigns.modules.${moduleKey}`)}
+                          </Text>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={styles.moduleRight}>
+                      {/* Status Tag */}
+                      <Tag
+                        color={isGenerated ? 'success' : 'error'}
+                        style={styles.manifestTag}
+                      >
+                        {isGenerated ? t('campaigns.statusCompleted') : t('campaigns.statusFailed')}
+                      </Tag>
+
+                      {/* Continuation Button beside the module where it left off */}
+                      {isResumePoint && (
+                        <Button
+                          type="primary"
+                          size="small"
+                          icon={<ForwardOutlined />}
+                          loading={loading}
+                          onClick={handleContinueCampaign}
+                          style={styles.inlineContinueBtn}
+                        >
+                          {t('campaigns.continueBtn')}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Manifest Footer Action Buttons */}
+            <div style={styles.buttonGroup}>
+              <Button
+                onClick={handleCloseModal}
+                disabled={loading}
+                style={styles.cancelButton}
+              >
+                {t('global.cancel')}
+              </Button>
+
+              {!isAllSuccess && (
+                <Button
+                  onClick={handleFinishAndProceed}
+                  disabled={loading}
+                  style={styles.secondaryButton}
+                >
+                  {t('campaigns.enterCampaignBtn')}
+                </Button>
+              )}
+
+              {!isAllSuccess ? (
+                <Button
+                  type="primary"
+                  loading={loading}
+                  icon={<ForwardOutlined />}
+                  onClick={handleContinueCampaign}
+                  style={styles.submitButton}
+                >
+                  {loading ? t('campaigns.submittingBtn') : t('campaigns.continueBtn')}
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  icon={<ArrowRightOutlined />}
+                  onClick={handleFinishAndProceed}
+                  style={styles.submitButton}
+                >
+                  {t('campaigns.enterCampaignBtn')}
+                </Button>
+              )}
+            </div>
           </div>
-        </Form>
+        )}
       </div>
     </Modal>
   );
@@ -310,6 +514,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '8px',
     background: 'rgba(192, 57, 43, 0.15)',
     border: '1px solid #C0392B',
+  },
+  successAlert: {
+    marginBottom: '16px',
+    borderRadius: '8px',
+    background: 'rgba(46, 204, 113, 0.15)',
+    border: '1px solid rgba(46, 204, 113, 0.5)',
+  },
+  warningAlert: {
+    marginBottom: '16px',
+    borderRadius: '8px',
+    background: 'rgba(217, 92, 20, 0.15)',
+    border: '1px solid rgba(217, 92, 20, 0.5)',
   },
   form: {
     marginTop: '4px',
@@ -442,11 +658,102 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#8D98AA',
     fontWeight: 700,
   },
+  manifestContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+  moduleList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    maxHeight: '360px',
+    overflowY: 'auto',
+    paddingRight: '4px',
+  },
+  moduleItem: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '10px 14px',
+    background: 'rgba(18, 22, 31, 0.85)',
+    border: '1px solid #232936',
+    borderRadius: '8px',
+    transition: 'all 0.2s ease',
+  },
+  moduleItemHighlight: {
+    border: '1px solid rgba(217, 92, 20, 0.6)',
+    background: 'linear-gradient(90deg, rgba(217, 92, 20, 0.12) 0%, rgba(18, 22, 31, 0.95) 100%)',
+    boxShadow: '0 0 12px rgba(217, 92, 20, 0.2)',
+  },
+  moduleLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  statusIconWrap: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkIcon: {
+    color: '#2ECC71',
+    fontSize: '16px',
+    filter: 'drop-shadow(0 0 4px rgba(46, 204, 113, 0.5))',
+  },
+  crossIcon: {
+    color: '#E74C3C',
+    fontSize: '16px',
+    filter: 'drop-shadow(0 0 4px rgba(231, 76, 60, 0.5))',
+  },
+  moduleMeta: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  moduleTitleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  moduleDomainIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  moduleTitle: {
+    color: '#EDE6D6',
+    fontSize: '13px',
+    fontFamily: "'Cinzel', serif",
+    letterSpacing: '0.5px',
+    fontWeight: 600,
+  },
+  moduleRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  },
+  manifestTag: {
+    margin: 0,
+    fontFamily: "'Cinzel', serif",
+    fontSize: '10px',
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase',
+  },
+  inlineContinueBtn: {
+    background: 'linear-gradient(135deg, #D95C14 0%, #C29B38 100%)',
+    borderColor: '#D95C14',
+    color: '#FFFFFF',
+    fontFamily: "'Cinzel', serif",
+    fontWeight: 600,
+    fontSize: '11px',
+    letterSpacing: '0.5px',
+    boxShadow: '0 2px 8px rgba(217, 92, 20, 0.4)',
+  },
   buttonGroup: {
     display: 'flex',
     justifyContent: 'flex-end',
     gap: '12px',
-    marginTop: '20px',
+    marginTop: '16px',
     paddingTop: '16px',
     borderTop: '1px solid #232936',
   },
@@ -454,6 +761,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     background: '#151922',
     borderColor: '#303747',
     color: '#8D98AA',
+    height: '42px',
+    padding: '0 20px',
+    fontFamily: "'Cinzel', serif",
+  },
+  secondaryButton: {
+    background: '#1D2330',
+    borderColor: '#3E495E',
+    color: '#EDE6D6',
     height: '42px',
     padding: '0 20px',
     fontFamily: "'Cinzel', serif",

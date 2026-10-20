@@ -18,7 +18,7 @@ import {
 
 const RaceStubAISchema = z.object({
   name: z.string().min(1).max(100),
-  description: z.string().min(1).max(300),
+  description: z.string().min(1).max(1000),
 });
 
 const RaceBriefListAISchema = z.object({
@@ -27,13 +27,13 @@ const RaceBriefListAISchema = z.object({
 
 const RaceTraitItemAISchema = z.object({
   name: z.string().min(1).max(100),
-  description: z.string().min(1).max(1250),
+  description: z.string().min(1).max(2500),
   type: z.enum(['passive', 'active']),
 });
 
 const RaceDetailAISchema = z.object({
   name: z.string().min(1).max(100),
-  description: z.string().min(1).max(1500),
+  description: z.string().min(1).max(3000),
   speed: z.number().int().positive(),
   languages: z.array(z.string().min(1)).default(['Common']),
   traits: z.array(RaceTraitItemAISchema).default([]),
@@ -49,6 +49,7 @@ export interface IRaceService {
   generateRaces(data: GenerateRacesDTO, campaignId: number, transaction?: Transaction): Promise<RaceDataReturn[]>;
   create(data: CreateRaceDTO, campaignId: number, transaction?: Transaction): Promise<RaceDataReturn>;
   createBulk(data: CreateRaceDTO[], campaignId: number, transaction?: Transaction): Promise<RaceDataReturn[]>;
+  getByCampaignId(campaignId: number): Promise<RaceDataReturn[]>;
 }
 
 // ==========================================
@@ -198,6 +199,15 @@ export class RaceService implements IRaceService {
     );
 
     return races.map(r => this.toReturn(r));
+  }
+
+  async getByCampaignId(campaignId: number): Promise<RaceDataReturn[]> {
+    const races = await Race.findAll({
+      where: { campaign_id: campaignId },
+      order: [['created_at', 'ASC']],
+    });
+
+    return races.map((race) => this.toReturn(race));
   }
 
   private toReturn(race: any): RaceDataReturn {

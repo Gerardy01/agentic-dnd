@@ -53,6 +53,63 @@ class CampaignController {
   }
 
   /**
+   * Non-blocking campaign continuation initiation.
+   * Delegates entirely to orchestration, which generates processId and resumes streaming.
+   */
+  static async continueCampaign(req: Request, res: Response) {
+    try {
+      const accountId = req.user?.accountId || '';
+      const campaignId = Number(req.params.id);
+
+      if (!campaignId || isNaN(campaignId)) {
+        return res.status(422).json({
+          status: 'failed',
+          message: 'Valid campaign ID is required',
+          userMessage: '',
+        });
+      }
+
+      const { successParameter } = req.body;
+
+      const data = campaignOrchestration.initiateCampaignContinuation(
+        campaignId,
+        accountId,
+        successParameter
+      );
+
+      return res.status(202).json({
+        status: 'success',
+        message: 'Campaign continuation initiated',
+        userMessage: '',
+        data,
+      });
+    } catch (e) {
+      if (e instanceof WrongFormat) {
+        return res.status(422).json({
+          status: 'failed',
+          message: e.message,
+          userMessage: '',
+        });
+      }
+
+      if (e instanceof DataNotFound) {
+        return res.status(404).json({
+          status: 'failed',
+          message: e.message,
+          userMessage: e.message,
+        });
+      }
+
+      return res.status(500).json({
+        status: 'failed',
+        message: 'Internal server error',
+        userMessage: '500',
+        errors: e,
+      });
+    }
+  }
+
+  /**
    * SSE endpoint for streaming campaign generation progress.
    * Delegates stream connection to orchestration.
    */

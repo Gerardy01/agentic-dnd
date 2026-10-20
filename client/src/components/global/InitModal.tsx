@@ -13,7 +13,7 @@ export default function InitModal() {
     <Modal
       open={isOpen}
       closable={false}
-      maskClosable={false}
+      mask={{ closable: false }}
       keyboard={false}
       footer={null}
       centered

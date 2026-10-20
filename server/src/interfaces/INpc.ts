@@ -110,6 +110,16 @@ export interface GeneratedNpcWithPoiReturn {
   position: NpcPosition;
 }
 
+export type NpcWithDetailsReturn = NpcDataReturn & {
+  race?: { id: number; name: string } | null;
+  combatProfile?: NpcCombatProfileDataReturn | null;
+  location?: {
+    poiId: number;
+    poiName: string;
+    position: string | null;
+  } | null;
+};
+
 export type NpcCombatProfileDataReturn = {
   id: number;
   npcId: number;

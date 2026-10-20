@@ -4,6 +4,9 @@ import { CampaignOrchestration } from '@/orchestration/campaignOrchestration';
 import { FactionOrchestration } from '@/orchestration/factionOrchestration';
 import { WorldOrchestration } from '@/orchestration/worldOrchestration';
 import { ClassOrchestration } from '@/orchestration/classOrchestration';
+import { RaceOrchestration } from '@/orchestration/raceOrchestration';
+import { NpcOrchestration } from '@/orchestration/npcOrchestration';
+import { ItemOrchestration } from '@/orchestration/itemOrchestration';
 import { accountService, authService } from '@/services';
 import {
   campaignService,
@@ -53,6 +56,21 @@ export const worldOrchestration = new WorldOrchestration(
 
 export const classOrchestration = new ClassOrchestration(
   classService,
+  campaignService
+);
+
+export const raceOrchestration = new RaceOrchestration(
+  raceService,
+  campaignService
+);
+
+export const npcOrchestration = new NpcOrchestration(
+  npcService,
+  campaignService
+);
+
+export const itemOrchestration = new ItemOrchestration(
+  itemService,
   campaignService
 );
 

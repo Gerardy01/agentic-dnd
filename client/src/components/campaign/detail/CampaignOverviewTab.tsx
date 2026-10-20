@@ -10,6 +10,9 @@ import {
   GlobalOutlined,
   RightOutlined,
   BookOutlined,
+  UserOutlined,
+  SmileOutlined,
+  GiftOutlined,
 } from '@ant-design/icons';
 import type { CampaignListReturn } from '@/models/campaignInterfaces';
 
@@ -21,9 +24,15 @@ interface CampaignOverviewTabProps {
   poisCount: number;
   factionsCount: number;
   classesCount?: number;
+  racesCount?: number;
+  npcsCount?: number;
+  itemsCount?: number;
   onNavigateToMap: () => void;
   onNavigateToFactions: () => void;
   onNavigateToClasses?: () => void;
+  onNavigateToRaces?: () => void;
+  onNavigateToNpcs?: () => void;
+  onNavigateToItems?: () => void;
 }
 
 export default function CampaignOverviewTab({
@@ -32,9 +41,15 @@ export default function CampaignOverviewTab({
   poisCount,
   factionsCount,
   classesCount = 0,
+  racesCount = 0,
+  npcsCount = 0,
+  itemsCount = 0,
   onNavigateToMap,
   onNavigateToFactions,
   onNavigateToClasses,
+  onNavigateToRaces,
+  onNavigateToNpcs,
+  onNavigateToItems,
 }: CampaignOverviewTabProps) {
   const { t } = useTranslation();
 
@@ -49,8 +64,8 @@ export default function CampaignOverviewTab({
   return (
     <div style={styles.container}>
       {/* Metrics Row */}
-      <Row gutter={[16, 16]} style={styles.metricsRow}>
-        <Col xs={12} sm={6}>
+      <Row gutter={[12, 12]} style={styles.metricsRow}>
+        <Col xs={12} sm={6} md={3}>
           <Card style={styles.statCard}>
             <div style={styles.statHeader}>
               <div style={{ ...styles.statIconWrapper, background: 'rgba(217, 92, 20, 0.15)' }}>
@@ -64,7 +79,7 @@ export default function CampaignOverviewTab({
           </Card>
         </Col>
 
-        <Col xs={12} sm={6}>
+        <Col xs={12} sm={6} md={3}>
           <Card style={styles.statCard}>
             <div style={styles.statHeader}>
               <div style={{ ...styles.statIconWrapper, background: 'rgba(194, 155, 56, 0.15)' }}>
@@ -78,11 +93,11 @@ export default function CampaignOverviewTab({
           </Card>
         </Col>
 
-        <Col xs={12} sm={6}>
+        <Col xs={12} sm={6} md={3}>
           <Card style={styles.statCard}>
             <div style={styles.statHeader}>
-              <div style={{ ...styles.statIconWrapper, background: 'rgba(56, 142, 60, 0.15)' }}>
-                <TeamOutlined style={{ color: '#4CAF50' }} />
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(155, 89, 182, 0.15)' }}>
+                <TeamOutlined style={{ color: '#9B59B6' }} />
               </div>
               <Text style={styles.statLabel}>{t('campaignDetail.stats.factions')}</Text>
             </div>
@@ -92,11 +107,67 @@ export default function CampaignOverviewTab({
           </Card>
         </Col>
 
-        <Col xs={12} sm={6}>
+        <Col xs={12} sm={6} md={3}>
           <Card style={styles.statCard}>
             <div style={styles.statHeader}>
-              <div style={{ ...styles.statIconWrapper, background: 'rgba(33, 150, 243, 0.15)' }}>
-                <GlobalOutlined style={{ color: '#42A5F5' }} />
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(22, 160, 133, 0.15)' }}>
+                <BookOutlined style={{ color: '#16A085' }} />
+              </div>
+              <Text style={styles.statLabel}>{t('campaignDetail.stats.classes')}</Text>
+            </div>
+            <Title level={2} style={styles.statValue}>
+              {classesCount}
+            </Title>
+          </Card>
+        </Col>
+
+        <Col xs={12} sm={6} md={3}>
+          <Card style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(230, 126, 34, 0.15)' }}>
+                <UserOutlined style={{ color: '#E67E22' }} />
+              </div>
+              <Text style={styles.statLabel}>{t('campaignDetail.stats.races')}</Text>
+            </div>
+            <Title level={2} style={styles.statValue}>
+              {racesCount}
+            </Title>
+          </Card>
+        </Col>
+
+        <Col xs={12} sm={6} md={3}>
+          <Card style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(52, 152, 219, 0.15)' }}>
+                <SmileOutlined style={{ color: '#3498DB' }} />
+              </div>
+              <Text style={styles.statLabel}>{t('campaignDetail.stats.npcs')}</Text>
+            </div>
+            <Title level={2} style={styles.statValue}>
+              {npcsCount}
+            </Title>
+          </Card>
+        </Col>
+
+        <Col xs={12} sm={6} md={3}>
+          <Card style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(231, 76, 60, 0.15)' }}>
+                <GiftOutlined style={{ color: '#E74C3C' }} />
+              </div>
+              <Text style={styles.statLabel}>{t('campaignDetail.stats.items')}</Text>
+            </div>
+            <Title level={2} style={styles.statValue}>
+              {itemsCount}
+            </Title>
+          </Card>
+        </Col>
+
+        <Col xs={12} sm={6} md={3}>
+          <Card style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(46, 204, 113, 0.15)' }}>
+                <GlobalOutlined style={{ color: '#2ECC71' }} />
               </div>
               <Text style={styles.statLabel}>{t('campaignDetail.stats.language')}</Text>
             </div>
@@ -165,10 +236,10 @@ export default function CampaignOverviewTab({
               {t('campaignDetail.actions.launchSession')}
             </Title>
             <Paragraph style={styles.sideSubtitle}>
-              The AI Dungeon Master has generated the foundation of this world. Step in to begin gameplay, interact with inhabitants, and shape the storyline.
+              The AI Dungeon Master has generated the foundation of this world. Explore the roster of classes, lineages, inhabitants, and relics.
             </Paragraph>
 
-            <Space direction="vertical" style={{ width: '100%' }} size={12}>
+            <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button
                 type="primary"
                 size="large"
@@ -183,7 +254,7 @@ export default function CampaignOverviewTab({
               <Button
                 size="large"
                 icon={<TeamOutlined />}
-                style={styles.factionsBtn}
+                style={styles.navBtn}
                 onClick={onNavigateToFactions}
                 block
               >
@@ -194,11 +265,47 @@ export default function CampaignOverviewTab({
                 <Button
                   size="large"
                   icon={<BookOutlined />}
-                  style={styles.classesBtn}
+                  style={styles.navBtn}
                   onClick={onNavigateToClasses}
                   block
                 >
                   {t('campaignDetail.tabClasses')} ({classesCount} Classes)
+                </Button>
+              )}
+
+              {onNavigateToRaces && (
+                <Button
+                  size="large"
+                  icon={<UserOutlined />}
+                  style={styles.navBtn}
+                  onClick={onNavigateToRaces}
+                  block
+                >
+                  {t('campaignDetail.tabRaces')} ({racesCount} Lineages)
+                </Button>
+              )}
+
+              {onNavigateToNpcs && (
+                <Button
+                  size="large"
+                  icon={<SmileOutlined />}
+                  style={styles.navBtn}
+                  onClick={onNavigateToNpcs}
+                  block
+                >
+                  {t('campaignDetail.tabNpcs')} ({npcsCount} NPCs)
+                </Button>
+              )}
+
+              {onNavigateToItems && (
+                <Button
+                  size="large"
+                  icon={<GiftOutlined />}
+                  style={styles.navBtn}
+                  onClick={onNavigateToItems}
+                  block
+                >
+                  {t('campaignDetail.tabItems')} ({itemsCount} Relics)
                 </Button>
               )}
             </Space>
@@ -218,71 +325,77 @@ export default function CampaignOverviewTab({
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    padding: '4px 0',
+    padding: '4px 0 24px',
   },
   metricsRow: {
     marginBottom: '20px',
   },
   statCard: {
-    background: 'linear-gradient(135deg, #161A22 0%, #12151C 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
+    border: '1px solid #232936',
     borderRadius: '12px',
+    padding: '4px',
     boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
   },
   statHeader: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
+    gap: '8px',
     marginBottom: '8px',
   },
   statIconWrapper: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
+    width: '28px',
+    height: '28px',
+    borderRadius: '6px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '16px',
+    fontSize: '14px',
+    flexShrink: 0,
   },
   statLabel: {
     color: '#8D98AA',
-    fontSize: '12px',
+    fontSize: '11px',
     fontFamily: "'Cinzel', serif",
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   statValue: {
     margin: 0,
     color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '28px',
+    fontFamily: "'Cinzel', serif",
+    fontSize: '22px',
     fontWeight: 700,
   },
   statTagWrapper: {
-    marginTop: '6px',
+    marginTop: '4px',
   },
   languageTag: {
     fontSize: '12px',
     fontFamily: "'Cinzel', serif",
-    fontWeight: 600,
-    letterSpacing: '1px',
+    fontWeight: 700,
     borderRadius: '4px',
+    padding: '2px 8px',
   },
   contentRow: {
-    marginTop: '4px',
+    marginTop: '8px',
   },
   sectionCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
-    borderRadius: '14px',
-    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.25)',
-    padding: '4px',
+    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
+    border: '1px solid #232936',
+    borderRadius: '12px',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
   },
   sectionHeader: {
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: '16px',
+    alignItems: 'center',
+    marginBottom: '14px',
+    paddingBottom: '12px',
+    borderBottom: '1px solid #1E2430',
   },
   sectionTitleRow: {
     display: 'flex',
@@ -290,14 +403,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '10px',
   },
   sectionIcon: {
-    color: '#D95C14',
     fontSize: '18px',
+    color: '#D95C14',
   },
   sectionTitle: {
     margin: 0,
     color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '18px',
+    fontFamily: "'Cinzel', serif",
+    fontSize: '16px',
     letterSpacing: '0.5px',
   },
   linkButton: {
@@ -307,86 +420,78 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: 0,
   },
   descriptionBox: {
-    background: 'rgba(10, 13, 18, 0.7)',
-    border: '1px solid #242B38',
-    borderLeft: '4px solid #D95C14',
+    background: 'rgba(14, 17, 23, 0.6)',
     borderRadius: '8px',
-    padding: '16px 20px',
+    padding: '16px',
+    border: '1px solid #232936',
   },
   narrativeText: {
-    color: '#B0BAC9',
-    fontSize: '14px',
-    lineHeight: 1.8,
+    color: '#C7D0DE',
+    fontSize: '13.5px',
+    lineHeight: 1.7,
     margin: 0,
   },
   promptBox: {
-    background: 'rgba(10, 13, 18, 0.7)',
-    border: '1px solid #242B38',
-    borderLeft: '4px solid #C29B38',
+    background: 'rgba(14, 17, 23, 0.6)',
     borderRadius: '8px',
-    padding: '16px 20px',
+    padding: '16px',
+    border: '1px solid #232936',
+    borderLeft: '3px solid #D95C14',
   },
   promptText: {
-    color: '#9CA7BA',
+    color: '#D5DCDE',
     fontSize: '13px',
-    lineHeight: 1.7,
+    lineHeight: 1.6,
     margin: 0,
     fontStyle: 'italic',
   },
   sideCard: {
-    background: 'linear-gradient(135deg, #171C25 0%, #12151D 100%)',
-    border: '1px solid #2C3545',
-    borderRadius: '14px',
-    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.3)',
+    background: 'linear-gradient(135deg, rgba(24, 28, 38, 0.95) 0%, rgba(18, 22, 30, 0.98) 100%)',
+    border: '1px solid rgba(217, 92, 20, 0.3)',
+    borderRadius: '12px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
   },
   sideTitle: {
-    margin: '0 0 8px',
+    margin: '0 0 6px',
     color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '17px',
+    fontFamily: "'Cinzel', serif",
+    fontSize: '16px',
   },
   sideSubtitle: {
     color: '#8D98AA',
-    fontSize: '13px',
-    lineHeight: 1.6,
-    marginBottom: '20px',
+    fontSize: '12px',
+    lineHeight: 1.5,
+    marginBottom: '16px',
   },
   exploreMapBtn: {
+    background: 'linear-gradient(135deg, #D95C14 0%, #C29B38 100%)',
+    borderColor: '#D95C14',
+    color: '#FFFFFF',
     fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
     fontWeight: 600,
-    height: '46px',
-    boxShadow: '0 4px 16px rgba(217, 92, 20, 0.35)',
+    fontSize: '13px',
+    letterSpacing: '0.5px',
+    height: '42px',
   },
-  factionsBtn: {
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontWeight: 600,
-    height: '46px',
-    background: 'rgba(255, 255, 255, 0.04)',
-    borderColor: '#374151',
+  navBtn: {
+    background: 'rgba(14, 17, 23, 0.8)',
+    borderColor: '#2B3342',
     color: '#EDE6D6',
-  },
-  classesBtn: {
     fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontWeight: 600,
-    height: '46px',
-    background: 'rgba(217, 92, 20, 0.08)',
-    borderColor: 'rgba(217, 92, 20, 0.3)',
-    color: '#EDE6D6',
+    fontSize: '13px',
+    height: '40px',
   },
   inscribedMeta: {
-    marginTop: '20px',
-    paddingTop: '16px',
-    borderTop: '1px solid #28303F',
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    marginTop: '16px',
+    paddingTop: '12px',
+    borderTop: '1px solid #232936',
   },
   metaText: {
     color: '#707C91',
-    fontSize: '12px',
+    fontSize: '11.5px',
     fontFamily: "'Cinzel', serif",
   },
 };

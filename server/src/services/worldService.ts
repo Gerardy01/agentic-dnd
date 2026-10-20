@@ -185,6 +185,10 @@ export interface IWorldService {
   getAreasByCampaignId(campaignId: number): Promise<AreaWithDetailsReturn[]>;
   linkNpcToPOI(npcId: number, poiId: number, position?: string | null, transaction?: Transaction): Promise<void>;
   linkNpcsToPOIs(links: { npcId: number; poiId: number; position?: string | null }[], transaction?: Transaction): Promise<void>;
+  getWorldByCampaignId(campaignId: number): Promise<WorldDataReturn | null>;
+  getMapByWorldId(worldId: number): Promise<MapDataReturn | null>;
+  getAreasByMapId(mapId: number): Promise<AreaDataReturn[]>;
+  getPOIsByAreaIds(areaIds: number[]): Promise<POIDataReturn[]>;
 }
 
 // ==========================================
@@ -1082,5 +1086,46 @@ export class WorldService implements IWorldService {
       })),
       { transaction: transaction ?? undefined }
     );
+  }
+
+  async getWorldByCampaignId(campaignId: number): Promise<WorldDataReturn | null> {
+    const world = await World.findOne({ where: { campaign_id: campaignId } });
+    if (!world) return null;
+    return {
+      id: world.id,
+      campaignId: world.campaign_id,
+      name: world.name,
+      description: world.description,
+      currencyName: world.currency_name,
+      createdAt: world.created_at,
+    };
+  }
+
+  async getMapByWorldId(worldId: number): Promise<MapDataReturn | null> {
+    const map = await Map.findOne({ where: { world_id: worldId } });
+    if (!map) return null;
+    return {
+      id: map.id,
+      worldId: map.world_id,
+      descriptiveOverview: map.descriptive_overview,
+      createdAt: map.created_at,
+    };
+  }
+
+  async getAreasByMapId(mapId: number): Promise<AreaDataReturn[]> {
+    const areas = await Area.findAll({
+      where: { map_id: mapId },
+      order: [['depth', 'ASC'], ['id', 'ASC']],
+    });
+    return areas.map((a) => this.areaToReturn(a));
+  }
+
+  async getPOIsByAreaIds(areaIds: number[]): Promise<POIDataReturn[]> {
+    if (areaIds.length === 0) return [];
+    const pois = await POI.findAll({
+      where: { area_id: { [Op.in]: areaIds } },
+      order: [['id', 'ASC']],
+    });
+    return pois.map((p) => this.poiToReturn(p));
   }
 }

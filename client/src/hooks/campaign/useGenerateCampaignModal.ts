@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Form, type FormProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { campaignApi } from '@/api';
@@ -7,6 +7,9 @@ import useStaticModal from '@/hooks/global/useStaticModal';
 import useTokenStore from '@/stores/useTokenStore';
 import { CampaignLanguageEnum } from '@/utils/enums';
 import type { CampaignDataReturn, CampaignSSEEvent } from '@/models/campaignInterfaces';
+import { CAMPAIGN_MODULE_KEYS, type CampaignModuleKey } from './useCampaignContinuation';
+
+export { CAMPAIGN_MODULE_KEYS, type CampaignModuleKey };
 
 export interface CreateCampaignFormValues {
   name: string;
@@ -22,11 +25,14 @@ export default function useGenerateCampaignModal(
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
+  // Creation result & manifest tracking
+  const [creationResult, setCreationResult] = useState<CampaignDataReturn | null>(null);
+
   // SSE Progress state
   const [progressStep, setProgressStep] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [progressCurrent, setProgressCurrent] = useState<number>(0);
-  const [progressTotal, setProgressTotal] = useState<number>(11);
+  const [progressTotal, setProgressTotal] = useState<number>(13);
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -44,18 +50,87 @@ export default function useGenerateCampaignModal(
     };
   }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
     }
     form.resetFields();
+    setCreationResult(null);
     setErrorMsg('');
     setProgressStep('');
     setProgressPercent(0);
     setProgressCurrent(0);
     onClose();
-  };
+  }, [form, onClose]);
+
+  const handleFinishAndProceed = useCallback(() => {
+    if (creationResult) {
+      onSuccess(creationResult);
+    }
+    handleCloseModal();
+  }, [creationResult, onSuccess, handleCloseModal]);
+
+  const subscribeToSSE = useCallback((processId: string) => {
+    const accessToken = useTokenStore.getState().accessToken;
+    const apiBase = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+    const sseUrl = `${apiBase}/campaign/progress/${processId}?token=${encodeURIComponent(accessToken)}`;
+
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
+    const es = new EventSource(sseUrl);
+    eventSourceRef.current = es;
+
+    es.onmessage = (event) => {
+      try {
+        const payload: CampaignSSEEvent = JSON.parse(event.data);
+
+        if (payload.type === 'step') {
+          setProgressStep(payload.message);
+          setProgressCurrent(payload.current);
+          setProgressTotal(payload.total);
+          const percent = Math.min(100, Math.round((payload.current / payload.total) * 100));
+          setProgressPercent(percent);
+        } else if (payload.type === 'complete') {
+          es.close();
+          eventSourceRef.current = null;
+          setProgressPercent(100);
+          setLoading(false);
+          setCreationResult(payload.data);
+
+          const allDone = payload.data.successParameter
+            ? CAMPAIGN_MODULE_KEYS.every((mod) => payload.data.successParameter?.[mod] === true)
+            : true;
+
+          if (allDone) {
+            successNotification(
+              t('campaigns.createSuccessTitle'),
+              t('campaigns.createSuccessMessage', { name: payload.data.name })
+            );
+          }
+        } else if (payload.type === 'error') {
+          es.close();
+          eventSourceRef.current = null;
+          setLoading(false);
+          setErrorMsg(payload.message || 'Campaign generation failed');
+        }
+      } catch (parseError) {
+        console.error('Failed to parse SSE event payload:', parseError);
+      }
+    };
+
+    es.onerror = (err) => {
+      console.warn('SSE connection notice / retry:', err);
+      if (es.readyState === EventSource.CLOSED && eventSourceRef.current === es) {
+        es.close();
+        eventSourceRef.current = null;
+        setLoading(false);
+        setErrorMsg(t('global.serverError'));
+      }
+    };
+  }, [t, successNotification]);
 
   const submitGenerateCampaign: FormProps<CreateCampaignFormValues>['onFinish'] = async (values) => {
     setLoading(true);
@@ -101,61 +176,7 @@ export default function useGenerateCampaignModal(
       }
 
       if (data?.processId) {
-        // Connect to SSE stream for step-by-step progress
-        const accessToken = useTokenStore.getState().accessToken;
-        const apiBase = import.meta.env.VITE_API_BASE_URL || '/api/v1';
-        const sseUrl = `${apiBase}/campaign/progress/${data.processId}?token=${encodeURIComponent(accessToken)}`;
-
-        if (eventSourceRef.current) {
-          eventSourceRef.current.close();
-        }
-
-        const es = new EventSource(sseUrl);
-        eventSourceRef.current = es;
-
-        es.onmessage = (event) => {
-          try {
-            const payload: CampaignSSEEvent = JSON.parse(event.data);
-
-            if (payload.type === 'step') {
-              setProgressStep(payload.message);
-              setProgressCurrent(payload.current);
-              setProgressTotal(payload.total);
-              const percent = Math.min(100, Math.round((payload.current / payload.total) * 100));
-              setProgressPercent(percent);
-            } else if (payload.type === 'complete') {
-              es.close();
-              eventSourceRef.current = null;
-              setProgressPercent(100);
-              setLoading(false);
-
-              successNotification(
-                t('campaigns.createSuccessTitle'),
-                t('campaigns.createSuccessMessage', { name: payload.data.name })
-              );
-              onSuccess(payload.data);
-              handleCloseModal();
-            } else if (payload.type === 'error') {
-              es.close();
-              eventSourceRef.current = null;
-              setLoading(false);
-              setErrorMsg(payload.message || 'Campaign creation failed');
-            }
-          } catch (parseError) {
-            console.error('Failed to parse SSE event payload:', parseError);
-          }
-        };
-
-        es.onerror = (err) => {
-          console.warn('SSE connection notice / retry:', err);
-          // Only abort if closed without having completed
-          if (es.readyState === EventSource.CLOSED && eventSourceRef.current === es) {
-            es.close();
-            eventSourceRef.current = null;
-            setLoading(false);
-            setErrorMsg(t('global.serverError'));
-          }
-        };
+        subscribeToSSE(data.processId);
       }
     } catch {
       setLoading(false);
@@ -165,6 +186,58 @@ export default function useGenerateCampaignModal(
     }
   };
 
+  const handleContinueCampaign = async () => {
+    if (!creationResult || !creationResult.successParameter) return;
+
+    setLoading(true);
+    setErrorMsg('');
+    setProgressStep(t('campaigns.progressInitial'));
+    setProgressPercent(3);
+    setProgressCurrent(0);
+
+    try {
+      const [err, data] = await campaignApi.continueCampaign(creationResult.id, {
+        successParameter: creationResult.successParameter,
+      });
+
+      if (err) {
+        setLoading(false);
+        setProgressStep('');
+        setProgressPercent(0);
+
+        if (err.status === 400 || err.status === 422) {
+          setErrorMsg(err.response?.data?.message || 'Invalid parameters for campaign continuation');
+          return;
+        }
+
+        if (err.status === 404) {
+          setErrorMsg(err.response?.data?.userMessage || 'Campaign not found');
+          return;
+        }
+
+        serverErrorModal();
+        return;
+      }
+
+      if (data?.processId) {
+        subscribeToSSE(data.processId);
+      }
+    } catch {
+      setLoading(false);
+      setProgressStep('');
+      setProgressPercent(0);
+      errorModal('Campaign Continuation Disturbance', t('global.serverError'));
+    }
+  };
+
+  const isAllSuccess = creationResult?.successParameter
+    ? CAMPAIGN_MODULE_KEYS.every((mod) => creationResult.successParameter?.[mod] === true)
+    : false;
+
+  const firstFailedModule = creationResult?.successParameter
+    ? CAMPAIGN_MODULE_KEYS.find((mod) => !creationResult.successParameter?.[mod])
+    : undefined;
+
   return {
     form,
     loading,
@@ -173,7 +246,12 @@ export default function useGenerateCampaignModal(
     progressPercent,
     progressCurrent,
     progressTotal,
+    creationResult,
+    isAllSuccess,
+    firstFailedModule,
     submitGenerateCampaign,
+    handleContinueCampaign,
+    handleFinishAndProceed,
     handleCloseModal,
   };
 }

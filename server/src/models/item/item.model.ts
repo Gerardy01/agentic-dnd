@@ -1,6 +1,11 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import Campaign from '@/models/campaign/campaign.model';
+import {
+  WeaponProperties,
+  ArmorProperties,
+  StatBonus,
+} from '@/interfaces/IItem';
 
 class Item extends Model {
   declare public id: number;
@@ -15,10 +20,10 @@ class Item extends Model {
   declare public equip_slot: string | null;
   declare public cost: number;
   declare public weight: number;
-  declare public weapon_properties: any;
-  declare public armor_properties: any;
-  declare public flat_bonus: any;
-  declare public override_bonus: any;
+  declare public weapon_properties: WeaponProperties | null;
+  declare public armor_properties: ArmorProperties | null;
+  declare public flat_bonus: StatBonus[] | null;
+  declare public override_bonus: StatBonus[] | null;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

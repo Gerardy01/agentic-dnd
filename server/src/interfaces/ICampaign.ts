@@ -35,9 +35,24 @@ export interface CreateCampaignGameStateDTO {
   position?: GameStatePositionItem[] | null;
 }
 
+export interface ContinueCampaignDTO {
+  successParameter: CampaignSuccessParameter;
+}
+
 // ==========================================
 // Return Types
 // ==========================================
+
+export type CampaignSuccessParameter = {
+  world: boolean;
+  factions: boolean;
+  areas: boolean;
+  pois: boolean;
+  classes: boolean;
+  races: boolean;
+  npcs: boolean;
+  items: boolean;
+};
 
 export type CampaignDataReturn = {
   id: number;
@@ -46,6 +61,7 @@ export type CampaignDataReturn = {
   themePrompt: string | null;
   language: string;
   createdAt: Date;
+  successParameter?: CampaignSuccessParameter;
 };
 
 export type CampaignGameStateDataReturn = {
@@ -70,5 +86,6 @@ export type CampaignListReturn = {
   language: string;
   worldDescription: string | null;
   createdAt: Date;
+  successParameter?: CampaignSuccessParameter;
 };
 

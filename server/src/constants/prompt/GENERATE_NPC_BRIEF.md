@@ -20,7 +20,7 @@ Each NPC object must have:
 - `raceId`: The exact `id` of a race from the Available Races list (number).
 - `poiId`: The exact `id` of a POI from the Available POIs list where this NPC resides or operates (number).
 - `alignment`: Alignment descriptor (e.g. "Lawful Good", "Neutral", "Chaotic Neutral", etc.) (string, max 50 chars).
-- `personality`: Brief summary of their role, demeanor, and core motivation (string, max 300 chars).
+- `personality`: Brief summary of their role, demeanor, and core motivation (concise 1-2 sentences, max 300 chars).
 - `position`: Starting coordinates on the POI's ASCII map:
   - `x`: Column index (0-indexed integer).
   - `y`: Row index (0-indexed integer).
