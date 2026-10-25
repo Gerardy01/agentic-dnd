@@ -162,6 +162,7 @@ type POIExpansionContext = {
 // ==========================================
 
 export interface IWorldService {
+  getLanguageInstruction(): string;
   getCreateWorldPrompt(): string;
   getCreateMapPrompt(): string;
   getAreaBriefPrompt(): string;
@@ -205,6 +206,10 @@ export class WorldService implements IWorldService {
   // ------------------------------------------
   // Prompt methods
   // ------------------------------------------
+
+  getLanguageInstruction(): string {
+    return loadPrompt('SHARED_LANGUAGE_INSTRUCTION.md');
+  }
 
   getCreateWorldPrompt(): string {
     return loadPrompt('GENERATE_WORLD.md');
@@ -250,6 +255,8 @@ export class WorldService implements IWorldService {
     const systemPrompt = this.getCreateWorldPrompt();
 
     const userMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign name: ${data.campaignName}`,
       `Campaign language: ${data.language}`,
@@ -289,6 +296,8 @@ export class WorldService implements IWorldService {
     }, null, 2);
 
     const userMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -339,6 +348,8 @@ export class WorldService implements IWorldService {
     );
 
     const briefUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -428,6 +439,8 @@ export class WorldService implements IWorldService {
       }, null, 2);
 
       const userMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${data.themePrompt}`,
         `Campaign language: ${data.language}`,
         '',
@@ -693,6 +706,8 @@ export class WorldService implements IWorldService {
     }, null, 2);
 
     const detailUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${ctx.data.themePrompt}`,
       `Campaign language: ${ctx.data.language}`,
       '',
@@ -800,6 +815,8 @@ export class WorldService implements IWorldService {
 
     // ---- Phase 1: Brief list ----
     const briefUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${ctx.data.themePrompt}`,
       `Campaign language: ${ctx.data.language}`,
       '',
@@ -832,6 +849,8 @@ export class WorldService implements IWorldService {
 
       // -- Detail call --
       const detailUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${ctx.data.themePrompt}`,
         `Campaign language: ${ctx.data.language}`,
         '',

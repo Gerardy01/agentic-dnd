@@ -44,4 +44,15 @@ export class CampaignApi {
     if (error) return [error];
     return [undefined, res.data.data];
   }
+
+  async deleteCampaign(
+    id: number
+  ): Promise<[undefined, void] | [ErrorResponse]> {
+    const [error] = await catchFetchError(
+      axiosPrivate.delete<FetchResponse<void>>(`/campaign/${id}`)
+    );
+
+    if (error) return [error];
+    return [undefined, undefined];
+  }
 }

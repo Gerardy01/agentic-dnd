@@ -44,6 +44,7 @@ const RaceDetailAISchema = z.object({
 // ==========================================
 
 export interface IRaceService {
+  getLanguageInstruction(): string;
   getRaceBriefPrompt(): string;
   getRaceDetailPrompt(): string;
   generateRaces(data: GenerateRacesDTO, campaignId: number, transaction?: Transaction): Promise<RaceDataReturn[]>;
@@ -64,6 +65,10 @@ export class RaceService implements IRaceService {
   // ------------------------------------------
   // Prompt methods
   // ------------------------------------------
+
+  getLanguageInstruction(): string {
+    return loadPrompt('SHARED_LANGUAGE_INSTRUCTION.md');
+  }
 
   getRaceBriefPrompt(): string {
     return loadPrompt('GENERATE_RACE_BRIEF.md');
@@ -95,6 +100,8 @@ export class RaceService implements IRaceService {
     );
 
     const briefUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -128,6 +135,8 @@ export class RaceService implements IRaceService {
       );
 
       const detailUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${data.themePrompt}`,
         `Campaign language: ${data.language}`,
         '',

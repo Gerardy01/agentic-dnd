@@ -74,6 +74,7 @@ function slugify(name: string): string {
 // ==========================================
 
 export interface IItemService {
+  getLanguageInstruction(): string;
   getItemBriefPrompt(): string;
   getItemDetailPrompt(): string;
   generateItems(
@@ -98,6 +99,10 @@ export class ItemService implements IItemService {
   // ------------------------------------------
   // Prompt methods
   // ------------------------------------------
+
+  getLanguageInstruction(): string {
+    return loadPrompt('SHARED_LANGUAGE_INSTRUCTION.md');
+  }
 
   getItemBriefPrompt(): string {
     return loadPrompt('GENERATE_ITEM_BRIEF.md');
@@ -135,6 +140,8 @@ export class ItemService implements IItemService {
     );
 
     const briefUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -168,6 +175,8 @@ export class ItemService implements IItemService {
       );
 
       const detailUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${data.themePrompt}`,
         `Campaign language: ${data.language}`,
         '',

@@ -109,6 +109,7 @@ const ClassResourcesAISchema = z.object({
 // ==========================================
 
 export interface IClassService {
+  getLanguageInstruction(): string;
   getClassBriefPrompt(): string;
   getClassDetailPrompt(): string;
   getClassFeaturesPrompt(): string;
@@ -133,6 +134,10 @@ export class ClassService implements IClassService {
   // ------------------------------------------
   // Prompt methods
   // ------------------------------------------
+
+  getLanguageInstruction(): string {
+    return loadPrompt('SHARED_LANGUAGE_INSTRUCTION.md');
+  }
 
   getClassBriefPrompt(): string {
     return loadPrompt('GENERATE_CLASS_BRIEF.md');
@@ -181,6 +186,8 @@ export class ClassService implements IClassService {
     );
 
     const briefUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -214,6 +221,8 @@ export class ClassService implements IClassService {
       );
 
       const detailUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${data.themePrompt}`,
         `Campaign language: ${data.language}`,
         '',
@@ -249,6 +258,8 @@ export class ClassService implements IClassService {
       );
 
       const featuresUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Campaign language: ${data.language}`,
         '',
         'Target class data:',
@@ -278,6 +289,8 @@ export class ClassService implements IClassService {
       );
 
       const resourcesUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Campaign language: ${data.language}`,
         '',
         'Target class data (with features):',

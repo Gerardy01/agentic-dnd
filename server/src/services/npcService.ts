@@ -120,6 +120,7 @@ function formatPoisForContext(pois: GenerateNpcsDTO['pois']): FormattedPoiContex
 // ==========================================
 
 export interface INpcService {
+  getLanguageInstruction(): string;
   getNpcBriefPrompt(): string;
   getNpcDetailPrompt(): string;
   getNpcCombatProfilePrompt(): string;
@@ -153,6 +154,10 @@ export class NpcService implements INpcService {
   // ------------------------------------------
   // Prompt methods
   // ------------------------------------------
+
+  getLanguageInstruction(): string {
+    return loadPrompt('SHARED_LANGUAGE_INSTRUCTION.md');
+  }
 
   getNpcBriefPrompt(): string {
     return loadPrompt('GENERATE_NPC_BRIEF.md');
@@ -190,6 +195,8 @@ export class NpcService implements INpcService {
     const formattedPois = formatPoisForContext(data.pois);
 
     const briefUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -239,6 +246,8 @@ export class NpcService implements INpcService {
 
       const detailSystemPrompt = this.getNpcDetailPrompt();
       const detailUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${data.themePrompt}`,
         `Campaign language: ${data.language}`,
         '',
@@ -298,6 +307,8 @@ export class NpcService implements INpcService {
         this.logger.info(`Generating combat profile for NPC "${stub.name}"...`);
         const combatSystemPrompt = this.getNpcCombatProfilePrompt();
         const combatUserMessage = [
+          this.getLanguageInstruction(),
+          '',
           `Theme: ${data.themePrompt}`,
           `Campaign language: ${data.language}`,
           '',

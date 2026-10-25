@@ -314,6 +314,21 @@
         "statOverridesTitle": "Stat Overrides",
         "weightCost": "Dimensions & Value"
       }
+    },
+    "delete": {
+      "button": "Delete Campaign",
+      "modalTitle": "Delete Campaign",
+      "warningTitle": "Warning: This action cannot be undone",
+      "warningDescription": "Deleting this campaign will permanently remove all associated data including world map, factions, classes, races, NPCs, items, and all game progress.",
+      "instruction": "To confirm deletion, please type the campaign name exactly as shown below:",
+      "campaignName": "Campaign Name",
+      "confirmLabel": "Type campaign name to confirm",
+      "confirmPlaceholder": "Enter campaign name",
+      "confirmButton": "Delete Campaign",
+      "cancelButton": "Cancel",
+      "nameDoesNotMatch": "Campaign name does not match",
+      "success": "Campaign deleted successfully",
+      "failed": "Failed to delete campaign"
     }
   }
 }

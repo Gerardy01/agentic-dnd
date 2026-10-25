@@ -54,6 +54,7 @@ export interface ICampaignOrchestration {
 
   getCampaigns(accountId: string): Promise<CampaignListReturn[]>;
   getCampaignById(campaignId: number, accountId: string): Promise<CampaignListReturn>;
+  deleteCampaign(campaignId: number, accountId: string): Promise<void>;
 }
 
 export class CampaignOrchestration implements ICampaignOrchestration {
@@ -997,5 +998,14 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     }
 
     return successParameter;
+  }
+
+  /**
+   * Delete a campaign with name confirmation
+   */
+  async deleteCampaign(campaignId: number, accountId: string): Promise<void> {
+    this.logger.info(`Deleting campaign ID: ${campaignId} for account: ${accountId}`);
+    await this.campaignService.deleteCampaign(campaignId, accountId);
+    this.logger.success(`Campaign ID: ${campaignId} successfully deleted`);
   }
 }

@@ -37,6 +37,7 @@ const FactionDetailAISchema = z.object({
 // ==========================================
 
 export interface IFactionService {
+  getLanguageInstruction(): string;
   getFactionListPrompt(): string;
   getFactionDetailPrompt(): string;
   generateFactions(data: GenerateFactionDTO, campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]>;
@@ -57,6 +58,10 @@ export class FactionService implements IFactionService {
   // ------------------------------------------
   // Prompt methods (content to be filled later)
   // ------------------------------------------
+
+  getLanguageInstruction(): string {
+    return loadPrompt('SHARED_LANGUAGE_INSTRUCTION.md');
+  }
 
   getFactionListPrompt(): string {
     return loadPrompt('GENERATE_FACTION_BRIEF.md');
@@ -102,6 +107,8 @@ export class FactionService implements IFactionService {
     );
 
     const listUserMessage = [
+      this.getLanguageInstruction(),
+      '',
       `Theme: ${data.themePrompt}`,
       `Campaign language: ${data.language}`,
       '',
@@ -132,6 +139,8 @@ export class FactionService implements IFactionService {
       const detailSystemPrompt = this.getFactionDetailPrompt();
 
       const detailUserMessage = [
+        this.getLanguageInstruction(),
+        '',
         `Theme: ${data.themePrompt}`,
         `Campaign language: ${data.language}`,
         '',

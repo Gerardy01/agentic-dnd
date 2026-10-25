@@ -1,5 +1,6 @@
 import { Button, Typography, Tabs, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeftOutlined,
   CompassOutlined,
@@ -10,10 +11,13 @@ import {
   UserOutlined,
   SmileOutlined,
   GiftOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import useCampaignDetail from '@/hooks/campaign/useCampaignDetail';
+import useDeleteCampaign from '@/hooks/campaign/useDeleteCampaign';
 import PageLoading from '@/components/global/PageLoading';
 import CampaignStatusBanner from '@/components/campaign/detail/CampaignStatusBanner';
+import DeleteCampaignModal from '@/components/campaign/DeleteCampaignModal';
 import CampaignOverviewTab from '@/components/campaign/detail/CampaignOverviewTab';
 import CampaignMapTab from '@/components/campaign/detail/CampaignMapTab';
 import CampaignFactionsTab from '@/components/campaign/detail/CampaignFactionsTab';
@@ -25,6 +29,7 @@ import CampaignItemsTab from '@/components/campaign/detail/CampaignItemsTab';
 const { Title, Text } = Typography;
 
 export default function CampaignDetail() {
+  const navigate = useNavigate();
   const {
     campaign,
     areas,
@@ -45,7 +50,29 @@ export default function CampaignDetail() {
     refreshCampaignData,
   } = useCampaignDetail();
 
+  const {
+    isModalOpen,
+    confirmName,
+    isDeleting,
+    setConfirmName,
+    openModal,
+    closeModal,
+    handleDelete,
+  } = useDeleteCampaign();
+
   const { t } = useTranslation();
+
+  const onDeleteCampaign = async () => {
+    if (!campaign) return;
+    
+    const success = await handleDelete(campaign.id, campaign.name, () => {
+      navigate('/campaigns');
+    });
+
+    if (!success) {
+      // Error is already shown by the hook
+    }
+  };
 
   if (loading || !campaign) {
     return <PageLoading />;
@@ -201,7 +228,28 @@ export default function CampaignDetail() {
             </Title>
           </div>
         </div>
+        <div style={styles.headerRight}>
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={openModal}
+            style={styles.deleteBtn}
+          >
+            {t('campaignDetail.delete.button')}
+          </Button>
+        </div>
       </div>
+
+      {/* Delete Campaign Modal */}
+      <DeleteCampaignModal
+        isOpen={isModalOpen}
+        campaignName={campaign.name}
+        confirmName={confirmName}
+        isDeleting={isDeleting}
+        onConfirmNameChange={setConfirmName}
+        onDelete={onDeleteCampaign}
+        onCancel={closeModal}
+      />
 
       {/* Campaign Status Banner - shows if campaign generation is incomplete */}
       {campaign.successParameter && (
@@ -263,6 +311,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
+  },
+  headerRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  deleteBtn: {
+    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    height: '36px',
+    borderRadius: '8px',
   },
   logoBadge: {
     display: 'inline-flex',

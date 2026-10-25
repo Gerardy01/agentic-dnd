@@ -15,6 +15,7 @@ export interface ICampaignService {
   createGameState(data: CreateCampaignGameStateDTO, transaction?: Transaction): Promise<CampaignGameStateDataReturn>;
   getById(campaignId: number, accountId: string): Promise<CampaignDataReturn>;
   getCampaigns(accountId: string): Promise<CampaignDataReturn[]>;
+  deleteCampaign(campaignId: number, accountId: string): Promise<void>;
   generateProcessId(): string;
 }
 
@@ -110,6 +111,18 @@ export class CampaignService implements ICampaignService {
       language: campaign.language,
       createdAt: campaign.created_at,
     }));
+  }
+
+  async deleteCampaign(campaignId: number, accountId: string): Promise<void> {
+    const campaign = await Campaign.findOne({
+      where: { id: campaignId, account_id: accountId },
+    });
+
+    if (!campaign) {
+      throw new DataNotFound('Campaign not found');
+    }
+
+    await campaign.destroy();
   }
 }
 

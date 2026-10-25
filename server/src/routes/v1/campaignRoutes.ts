@@ -37,4 +37,10 @@ campaignRoutes.get(
   CampaignController.getCampaignById,
 );
 
+campaignRoutes.delete(
+  '/:id',
+  authenticate,
+  CampaignController.deleteCampaign,
+);
+
 export default campaignRoutes;
