@@ -10,4 +10,5 @@ export interface CharacterSkill {
 export interface SpellSlot {
   level: number;
   available: number;
+  used: number;
 }

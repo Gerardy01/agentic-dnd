@@ -3,8 +3,8 @@
 // ==========================================
 
 export interface QuestPrerequisites {
-  levelReq?: number;
-  questReq?: number[];
+  levelReq: number;
+  questReq: number[];
 }
 
 // ==========================================
