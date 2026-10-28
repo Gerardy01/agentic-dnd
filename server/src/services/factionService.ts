@@ -45,6 +45,7 @@ export interface IFactionService {
   create(data: CreateFactionDTO, campaignId: number, transaction?: Transaction): Promise<FactionDataReturn>;
   createBulk(data: CreateFactionDTO[], campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<FactionDataReturn[]>;
+  countByCampaignId(campaignId: number): Promise<number>;
 }
 
 // ==========================================
@@ -217,6 +218,10 @@ export class FactionService implements IFactionService {
     );
 
     return factions.map(f => this.toReturn(f));
+  }
+
+  async countByCampaignId(campaignId: number): Promise<number> {
+    return Faction.count({ where: { campaign_id: campaignId } });
   }
 
   async getByCampaignId(campaignId: number): Promise<FactionDataReturn[]> {

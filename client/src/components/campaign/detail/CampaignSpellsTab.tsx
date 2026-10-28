@@ -21,17 +21,17 @@ interface CampaignSpellsTabProps {
   spells: SpellDataReturn[];
 }
 
-const DEFAULT_SCHOOL_COLOR = '#8D98AA';
+const DEFAULT_SCHOOL_COLOR = '#6B5A48';
 
 const SCHOOL_COLOR_MAP: Record<string, string> = {
-  abjuration: '#3498DB',
-  conjuration: '#F39C12',
-  divination: '#1ABC9C',
-  enchantment: '#E91E8C',
-  evocation: '#E74C3C',
-  illusion: '#9B59B6',
-  necromancy: '#2ECC71',
-  transmutation: '#C29B38',
+  abjuration: '#3E6A8A',
+  conjuration: '#B7791F',
+  divination: '#2F8076',
+  enchantment: '#A8336F',
+  evocation: '#A33A2E',
+  illusion: '#7A4B8F',
+  necromancy: '#3F7D4A',
+  transmutation: '#8B5E2B',
 };
 
 const getSchoolColor = (school: string | null): string =>
@@ -66,7 +66,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
       <div style={styles.header}>
         <div style={styles.headerText}>
           <Title level={3} style={styles.title}>
-            <ThunderboltOutlined style={{ marginRight: 8, color: '#D95C14' }} />
+            <ThunderboltOutlined style={{ marginRight: 8, color: '#722B2B' }} />
             {t('campaignDetail.spells.title')}
           </Title>
           <Paragraph style={styles.subtitle}>
@@ -79,7 +79,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
           <Select value={schoolFilter} onChange={setSchoolFilter} style={styles.filterSelect} options={schoolOptions} />
           <Select value={classFilter} onChange={setClassFilter} style={styles.filterSelect} options={classOptions} />
           <Input
-            prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+            prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
             placeholder={t('campaignDetail.spells.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -132,7 +132,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
                   {/* Attack Mechanics */}
                   {spell.attackProperties && (
                     <div style={styles.propsRow}>
-                      <FireOutlined style={{ color: '#D95C14', marginRight: 4 }} />
+                      <FireOutlined style={{ color: '#722B2B', marginRight: 4 }} />
                       <Text style={styles.propValue}>
                         {spell.attackProperties.damages.join(' + ') || t('campaignDetail.spells.noDamage')}
                       </Text>
@@ -147,7 +147,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
                   {/* Saving Throw Mechanics */}
                   {spell.spellSaveProperties && (
                     <div style={styles.propsRow}>
-                      <SafetyOutlined style={{ color: '#3498DB', marginRight: 4 }} />
+                      <SafetyOutlined style={{ color: '#3E6A8A', marginRight: 4 }} />
                       <Text style={styles.propValue}>
                         {t('campaignDetail.spells.saveShort', {
                           stat: spell.spellSaveProperties.savingThrowStat.toUpperCase(),
@@ -208,7 +208,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
           styles={{
             mask: {
               backdropFilter: 'blur(8px)',
-              backgroundColor: 'rgba(7, 9, 13, 0.85)',
+              backgroundColor: 'rgba(43, 31, 23, 0.85)',
             },
             body: styles.modalBody,
           }}
@@ -256,7 +256,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
               {selectedSpell.attackProperties && (
                 <div style={styles.mechItem}>
                   <Text style={styles.mechLabel}>{t('campaignDetail.spells.modal.damage')}</Text>
-                  <Text style={{ ...styles.mechVal, color: '#D95C14' }}>
+                  <Text style={{ ...styles.mechVal, color: '#722B2B' }}>
                     {selectedSpell.attackProperties.damages.join(' + ') || '-'}
                   </Text>
                 </div>
@@ -264,7 +264,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
               {selectedSpell.spellSaveProperties && (
                 <div style={styles.mechItem}>
                   <Text style={styles.mechLabel}>{t('campaignDetail.spells.modal.savingThrow')}</Text>
-                  <Text style={{ ...styles.mechVal, color: '#3498DB' }}>
+                  <Text style={{ ...styles.mechVal, color: '#3E6A8A' }}>
                     {selectedSpell.spellSaveProperties.savingThrowStat.toUpperCase()}
                   </Text>
                 </div>
@@ -281,7 +281,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
             {selectedSpell.attackProperties && (
               <div style={styles.modalSection}>
                 <Text style={styles.modalSectionTitle}>
-                  <AimOutlined style={{ marginRight: 6, color: '#D95C14' }} />
+                  <AimOutlined style={{ marginRight: 6, color: '#722B2B' }} />
                   {t('campaignDetail.spells.modal.attackTitle')}
                 </Text>
                 <Paragraph style={styles.modalText}>
@@ -302,7 +302,7 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
             {selectedSpell.spellSaveProperties && (
               <div style={styles.modalSection}>
                 <Text style={styles.modalSectionTitle}>
-                  <SafetyOutlined style={{ marginRight: 6, color: '#3498DB' }} />
+                  <SafetyOutlined style={{ marginRight: 6, color: '#3E6A8A' }} />
                   {t('campaignDetail.spells.modal.saveTitle')}
                 </Text>
                 <Space size={[6, 6]} wrap>
@@ -364,15 +364,15 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '20px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '28px',
   },
   subtitle: {
     margin: '4px 0 0',
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     lineHeight: 1.5,
   },
   filterGroup: {
@@ -386,14 +386,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   searchInput: {
     width: '240px',
     borderRadius: '8px',
-    background: '#0E1117',
-    borderColor: '#262D3D',
-    color: '#FFFFFF',
+    background: '#F3EAD2',
+    borderColor: '#DDD0AE',
+    color: '#2B1F17',
     height: '38px',
   },
   spellCard: {
-    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
-    border: '1px solid #232936',
+    background: 'linear-gradient(135deg, rgba(250, 243, 224, 0.95) 0%, rgba(250, 243, 224, 0.98) 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     padding: '4px',
     transition: 'all 0.25s ease',
@@ -401,7 +401,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   cardHeader: {
     display: 'flex',
@@ -413,8 +413,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '42px',
     height: '42px',
     borderRadius: '10px',
-    background: 'rgba(14, 17, 23, 0.9)',
-    border: '1px solid #303747',
+    background: 'rgba(250, 243, 224, 0.9)',
+    border: '1px solid #CDBE96',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -426,10 +426,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   spellName: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   badgeRow: {
     display: 'flex',
@@ -438,22 +438,22 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   levelTag: {
     borderRadius: '4px',
-    fontSize: '10px',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
-    background: 'rgba(14, 17, 23, 0.8)',
+    background: 'rgba(250, 243, 224, 0.8)',
     margin: 0,
   },
   schoolTag: {
     borderRadius: '4px',
     fontSize: '10.5px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     margin: 0,
   },
   rangeTag: {
-    background: 'rgba(14, 17, 23, 0.6)',
-    border: '1px solid #283040',
-    color: '#8D98AA',
+    background: 'rgba(250, 243, 224, 0.6)',
+    border: '1px solid #DDD0AE',
+    color: '#6B5A48',
     borderRadius: '4px',
     fontSize: '10.5px',
     margin: 0,
@@ -466,21 +466,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   propValue: {
-    fontSize: '13px',
-    color: '#EDE6D6',
+    fontSize: '14px',
+    color: '#2B1F17',
     fontWeight: 700,
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
   },
   microTag: {
-    fontSize: '10px',
+    fontSize: '11px',
     padding: '0 4px',
     margin: 0,
-    background: '#151922',
-    border: '1px solid #2B3342',
-    color: '#C29B38',
+    background: '#FAF3E0',
+    border: '1px solid #DDD0AE',
+    color: '#8B5E2B',
   },
   description: {
-    color: '#9CA7BA',
+    color: '#5E4E3C',
     fontSize: '12.5px',
     lineHeight: 1.5,
     marginBottom: '10px',
@@ -497,42 +497,43 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '4px',
   },
   noClassText: {
-    color: '#707C91',
-    fontSize: '12px',
+    color: '#8A7A66',
+    fontSize: '13px',
   },
   cardFooter: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: '10px',
-    borderTop: '1px solid #1E2430',
+    borderTop: '1px solid #DDD0AE',
     marginTop: 'auto',
   },
   inspectText: {
-    fontSize: '12px',
-    color: '#D95C14',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    color: '#722B2B',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.3px',
     fontWeight: 600,
   },
   inspectArrow: {
-    fontSize: '11px',
-    color: '#D95C14',
+    fontSize: '12px',
+    color: '#722B2B',
   },
   emptyContainer: {
     padding: '60px 0',
     textAlign: 'center',
   },
   emptyTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
     display: 'block',
     marginBottom: '6px',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     maxWidth: '400px',
     margin: '0 auto',
   },
@@ -553,8 +554,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '56px',
     height: '56px',
     borderRadius: '14px',
-    background: 'rgba(14, 17, 23, 0.9)',
-    border: '1px solid #303747',
+    background: 'rgba(250, 243, 224, 0.9)',
+    border: '1px solid #CDBE96',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -566,31 +567,31 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   modalLevelTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     fontWeight: 700,
-    background: 'rgba(14, 17, 23, 0.8)',
+    background: 'rgba(250, 243, 224, 0.8)',
   },
   modalTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
   },
   modalTitle: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '22px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '31px',
   },
   modalDivider: {
-    borderColor: '#262D3D',
+    borderColor: '#DDD0AE',
     margin: '4px 0',
   },
   mechanicsBar: {
     display: 'flex',
     justifyContent: 'space-around',
-    background: 'rgba(14, 17, 23, 0.85)',
-    border: '1px solid #232936',
+    background: 'rgba(250, 243, 224, 0.85)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '12px',
   },
@@ -600,15 +601,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
   },
   mechLabel: {
-    fontSize: '11px',
-    color: '#8D98AA',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '12px',
+    color: '#6B5A48',
+    fontFamily: 'var(--font-body)',
     textTransform: 'uppercase',
   },
   mechVal: {
     fontSize: '16px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
   },
   modalSection: {
@@ -617,21 +618,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
   },
   modalSectionTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    color: '#EDE6D6',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
+    color: '#2B1F17',
     letterSpacing: '0.5px',
     fontWeight: 700,
   },
   modalText: {
-    color: '#C7D0DE',
-    fontSize: '13px',
+    color: '#5E4E3C',
+    fontSize: '14px',
     lineHeight: 1.6,
     margin: 0,
   },
   modalPropTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     padding: '2px 8px',
   },
 };

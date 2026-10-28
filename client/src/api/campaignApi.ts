@@ -1,7 +1,7 @@
 import { axiosPrivate } from '@/config/axiosConfig';
 import { catchFetchError } from '@/utils/utility';
 import type { FetchResponse, ErrorResponse } from '@/models/globalInterfaces';
-import type { CreateCampaignDTO, ContinueCampaignDTO, InitiateCampaignReturn, CampaignListReturn } from '@/models/campaignInterfaces';
+import type { CreateCampaignDTO, ContinueCampaignDTO, InitiateCampaignReturn, CampaignListReturn, CampaignCountsReturn } from '@/models/campaignInterfaces';
 
 export class CampaignApi {
   async getCampaigns(): Promise<[undefined, CampaignListReturn[]] | [ErrorResponse]> {
@@ -16,6 +16,15 @@ export class CampaignApi {
   async getCampaignById(id: number): Promise<[undefined, CampaignListReturn] | [ErrorResponse]> {
     const [error, res] = await catchFetchError(
       axiosPrivate.get<FetchResponse<CampaignListReturn>>(`/campaign/${id}`)
+    );
+
+    if (error) return [error];
+    return [undefined, res.data.data];
+  }
+
+  async getCampaignCounts(id: number): Promise<[undefined, CampaignCountsReturn] | [ErrorResponse]> {
+    const [error, res] = await catchFetchError(
+      axiosPrivate.get<FetchResponse<CampaignCountsReturn>>(`/campaign/${id}/counts`)
     );
 
     if (error) return [error];

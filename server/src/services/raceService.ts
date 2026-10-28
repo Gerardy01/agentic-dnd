@@ -52,6 +52,7 @@ export interface IRaceService {
   create(data: CreateRaceDTO, campaignId: number, transaction?: Transaction): Promise<RaceDataReturn>;
   createBulk(data: CreateRaceDTO[], campaignId: number, transaction?: Transaction): Promise<RaceDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<RaceDataReturn[]>;
+  countByCampaignId(campaignId: number): Promise<number>;
 }
 
 // ==========================================
@@ -216,6 +217,10 @@ export class RaceService implements IRaceService {
     );
 
     return races.map(r => this.toReturn(r));
+  }
+
+  async countByCampaignId(campaignId: number): Promise<number> {
+    return Race.count({ where: { campaign_id: campaignId } });
   }
 
   async getByCampaignId(campaignId: number): Promise<RaceDataReturn[]> {

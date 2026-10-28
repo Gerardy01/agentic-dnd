@@ -87,6 +87,7 @@ export interface ISpellService {
   create(data: CreateSpellDTO, campaignId: number, transaction?: Transaction): Promise<SpellDataReturn>;
   createBulk(data: CreateSpellDTO[], campaignId: number, transaction?: Transaction): Promise<SpellDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<SpellDataReturn[]>;
+  countByCampaignId(campaignId: number): Promise<number>;
 }
 
 // ==========================================
@@ -327,6 +328,10 @@ export class SpellService implements ISpellService {
     );
 
     return spells.map((spell) => this.toReturn(spell));
+  }
+
+  async countByCampaignId(campaignId: number): Promise<number> {
+    return Spell.count({ where: { campaign_id: campaignId } });
   }
 
   async getByCampaignId(campaignId: number): Promise<SpellDataReturn[]> {

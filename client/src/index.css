@@ -1,3 +1,15 @@
+:root {
+  --font-heading: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+  --font-display: 'Cormorant SC', 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Spectral', Georgia, 'Times New Roman', serif;
+
+  --color-page: #eee5cc;
+  --color-surface: #faf3e0;
+  --color-border: #ddd0ae;
+  --color-ink: #2b1f17;
+  --color-crimson: #722b2b;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,9 +20,10 @@ html,
 body {
   width: 100%;
   min-height: 100vh;
-  background-color: #0d0f14;
-  color: #ede6d6;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -22,23 +35,50 @@ body {
   padding: 0;
 }
 
-/* Custom scrollbars for arcane feel */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-modal-title,
+.ant-card-head-title {
+  font-family: var(--font-heading) !important;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+::selection {
+  background: rgba(114, 43, 43, 0.2);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-crimson);
+  outline-offset: 2px;
+}
+
+/* Parchment scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d0f14;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #252b38;
-  border-radius: 4px;
+  background: #cdbe96;
+  border-radius: 6px;
+  border: 2px solid var(--color-page);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d95c14;
+  background: #8b5e2b;
 }
 
 /* Ant Design Global Overrides */
@@ -47,13 +87,289 @@ body {
   margin-top: 4px !important;
 }
 
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: #4a3b2c;
+}
+
 .ant-btn-primary {
-  background: linear-gradient(135deg, #d95c14 0%, #b8490b 100%) !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(217, 92, 20, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(114, 43, 43, 0.25) !important;
 }
 
 .ant-btn-primary:hover {
-  background: linear-gradient(135deg, #ea6b23 0%, #c85310 100%) !important;
-  box-shadow: 0 6px 20px rgba(217, 92, 20, 0.6) !important;
+  box-shadow: 0 4px 14px rgba(114, 43, 43, 0.35) !important;
+}
+
+.ant-tabs-nav::before {
+  border-bottom-color: var(--color-border) !important;
+}
+
+.ant-modal .ant-modal-content {
+  border: 1px solid var(--color-border);
+  box-shadow: 0 24px 60px rgba(60, 38, 18, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Forge New Campaign layout */
+.forge-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 40px;
+  align-items: start;
+}
+
+.forge-name-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.forge-seed {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a3b2c;
+  background: #e8dfc2;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.forge-seed:hover:not(:disabled) {
+  background: #f1e8cc;
+  border-color: #8b5e2b;
+  color: var(--color-crimson);
+}
+
+.forge-seed:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1100px) {
+  .forge-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .forge-name-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+
+.campaign-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.campaign-card:hover {
+  transform: translateY(-3px);
+  border-color: #8b5e2b !important;
+  box-shadow: 0 14px 32px rgba(70, 45, 20, 0.16) !important;
+}
+
+/* Pills & badges */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #e8dfc2;
+  color: #5a4a39;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.pill-success {
+  background: #dfe8d2;
+  color: #2f5f3a;
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tab-count {
+  min-width: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #e8dfc2;
+  color: #5a4a39;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: center;
+}
+
+/* Campaign detail tabs */
+.campaign-tabs > .ant-tabs-nav {
+  margin: 0;
+  padding: 0 16px;
+}
+
+.campaign-tabs .ant-tabs-tab {
+  padding: 20px 14px;
+}
+
+.campaign-tabs .ant-tabs-tab-active .tab-count {
+  background: #722b2b;
+  color: #f4ebd3;
+}
+
+.campaign-tabs .ant-tabs-body-holder {
+  background: #faf3e0;
+}
+
+.campaign-tabs .ant-tabs-ink-bar {
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Campaign overview */
+.overview-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+}
+
+.overview-layout > aside {
+  border-left: 1px solid var(--color-border);
+}
+
+.overview-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 8px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s, padding 0.15s;
+}
+
+.overview-link:hover {
+  background: rgba(139, 94, 43, 0.08);
+  padding-left: 14px;
+}
+
+@media (max-width: 1000px) {
+  .overview-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .overview-layout > aside {
+    border-left: 0;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+.forge-prompt-item .ant-form-item-label > label {
+  width: 100%;
+}
+
+.forge-prompt-item .ant-form-item-label > label::after {
+  display: none;
+}
+
+/* Keep preset tag colours inside the parchment palette */
+.ant-tag-orange,
+.ant-tag-gold,
+.ant-tag-volcano,
+.ant-tag-yellow {
+  background: #e8dfc2 !important;
+  border-color: #d5c79e !important;
+  color: #7a4f1f !important;
+}
+
+.ant-tag-purple {
+  background: #e9dfe9 !important;
+  border-color: #d3c1d3 !important;
+  color: #6a3f78 !important;
+}
+
+.ant-tag-cyan,
+.ant-tag-geekblue,
+.ant-tag-blue {
+  background: #dce6ea !important;
+  border-color: #bfd0d8 !important;
+  color: #305c78 !important;
+}
+
+.ant-tag-magenta,
+.ant-tag-red {
+  background: #f0dcd6 !important;
+  border-color: #dfbdb3 !important;
+  color: #8f3328 !important;
+}
+
+.ant-tag-green,
+.ant-tag-success {
+  background: #dfe8d2 !important;
+  border-color: #c3d5ae !important;
+  color: #2f5f3a !important;
+}
+
+.campaign-tabs .ant-tabs-tab + .ant-tabs-tab {
+  margin-left: 0;
+}
+
+.campaign-tabs .ant-tabs-tab {
+  padding: 20px 12px;
+}
+
+@media (max-width: 1560px) {
+  .campaign-tabs .tab-icon {
+    display: none;
+  }
+}
+
+.campaign-tabs .ant-tabs-content {
+  padding: 28px 28px 32px !important;
+}
+
+.campaign-tabs .ant-tabs-content:has(.overview-layout) {
+  padding: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .app-content.ant-layout-content {
+    padding: 24px 20px 40px !important;
+  }
+}
+
+/* Tab skeletons */
+.skeleton-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.skeleton-map {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .skeleton-map {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

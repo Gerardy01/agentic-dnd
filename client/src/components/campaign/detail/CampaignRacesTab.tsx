@@ -40,7 +40,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
       <div style={styles.header}>
         <div style={styles.headerText}>
           <Title level={3} style={styles.title}>
-            <UserOutlined style={{ marginRight: 8, color: '#D95C14' }} />
+            <UserOutlined style={{ marginRight: 8, color: '#722B2B' }} />
             {t('campaignDetail.races.title')}
           </Title>
           <Paragraph style={styles.subtitle}>
@@ -49,7 +49,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
         </div>
 
         <Input
-          prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+          prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
           placeholder={t('campaignDetail.races.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -98,7 +98,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
                 {/* Languages preview */}
                 {race.languages && race.languages.length > 0 && (
                   <div style={styles.languagesPreview}>
-                    <GlobalOutlined style={{ color: '#8D98AA', marginRight: 6, fontSize: '12px' }} />
+                    <GlobalOutlined style={{ color: '#6B5A48', marginRight: 6, fontSize: '13px' }} />
                     <Space size={[4, 4]} wrap>
                       {race.languages.map((lang, idx) => (
                         <Tag key={idx} style={styles.langTag}>
@@ -146,7 +146,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
           styles={{
             mask: {
               backdropFilter: 'blur(8px)',
-              backgroundColor: 'rgba(7, 9, 13, 0.85)',
+              backgroundColor: 'rgba(43, 31, 23, 0.85)',
             },
             body: styles.modalBody,
           }}
@@ -155,7 +155,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
             {/* Modal Header */}
             <div style={styles.modalHeader}>
               <div style={styles.modalIconWrap}>
-                <UserOutlined style={{ fontSize: '26px', color: '#D95C14' }} />
+                <UserOutlined style={{ fontSize: '26px', color: '#722B2B' }} />
               </div>
               <div style={{ flex: 1 }}>
                 <div style={styles.modalBadgeRow}>
@@ -189,7 +189,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
             {selectedRace.languages && selectedRace.languages.length > 0 && (
               <div style={styles.modalSection}>
                 <Text style={styles.modalSectionTitle}>
-                  <GlobalOutlined style={{ marginRight: 6, color: '#C29B38' }} />
+                  <GlobalOutlined style={{ marginRight: 6, color: '#8B5E2B' }} />
                   {t('campaignDetail.races.modal.languagesTitle')}
                 </Text>
                 <div style={{ marginTop: 8 }}>
@@ -207,7 +207,7 @@ export default function CampaignRacesTab({ races }: CampaignRacesTabProps) {
             {/* Racial Traits */}
             <div style={styles.modalSection}>
               <Text style={styles.modalSectionTitle}>
-                <ThunderboltOutlined style={{ marginRight: 6, color: '#D95C14' }} />
+                <ThunderboltOutlined style={{ marginRight: 6, color: '#722B2B' }} />
                 {t('campaignDetail.races.modal.traitsTitle')}
               </Text>
 
@@ -261,28 +261,28 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '20px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '28px',
   },
   subtitle: {
     margin: '4px 0 0',
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     lineHeight: 1.5,
   },
   searchInput: {
     width: '300px',
     borderRadius: '8px',
-    background: '#0E1117',
-    borderColor: '#262D3D',
-    color: '#FFFFFF',
+    background: '#F3EAD2',
+    borderColor: '#DDD0AE',
+    color: '#2B1F17',
     height: '38px',
   },
   raceCard: {
-    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
-    border: '1px solid #232936',
+    background: 'linear-gradient(135deg, rgba(250, 243, 224, 0.95) 0%, rgba(250, 243, 224, 0.98) 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     padding: '4px',
     transition: 'all 0.25s ease',
@@ -290,7 +290,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   cardHeader: {
     display: 'flex',
@@ -302,8 +302,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '42px',
     height: '42px',
     borderRadius: '10px',
-    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.25) 0%, rgba(194, 155, 56, 0.1) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.6)',
+    background: 'linear-gradient(135deg, rgba(114, 43, 43, 0.25) 0%, rgba(139, 94, 43, 0.1) 100%)',
+    border: '1px solid rgba(114, 43, 43, 0.6)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -311,8 +311,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardIcon: {
     fontSize: '20px',
-    color: '#D95C14',
-    filter: 'drop-shadow(0 0 6px rgba(217, 92, 20, 0.6))',
+    color: '#722B2B',
+    filter: 'drop-shadow(0 0 6px rgba(114, 43, 43, 0.6))',
   },
   headerInfo: {
     flex: 1,
@@ -320,10 +320,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   raceName: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   badgeRow: {
     display: 'flex',
@@ -332,19 +332,19 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   speedTag: {
     borderRadius: '4px',
-    fontSize: '11px',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '12px',
+    fontFamily: 'var(--font-body)',
     fontWeight: 600,
     margin: 0,
   },
   traitsCountTag: {
     borderRadius: '4px',
-    fontSize: '11px',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '12px',
+    fontFamily: 'var(--font-body)',
     margin: 0,
   },
   description: {
-    color: '#9CA7BA',
+    color: '#5E4E3C',
     fontSize: '12.5px',
     lineHeight: 1.6,
     marginBottom: '12px',
@@ -356,9 +356,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '14px',
   },
   langTag: {
-    background: 'rgba(14, 17, 23, 0.7)',
-    border: '1px solid #2B3342',
-    color: '#C29B38',
+    background: 'rgba(250, 243, 224, 0.7)',
+    border: '1px solid #DDD0AE',
+    color: '#8B5E2B',
     borderRadius: '4px',
     fontSize: '10.5px',
     padding: '0 6px',
@@ -368,34 +368,35 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: '10px',
-    borderTop: '1px solid #1E2430',
+    borderTop: '1px solid #DDD0AE',
     marginTop: 'auto',
   },
   inspectText: {
-    fontSize: '12px',
-    color: '#D95C14',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    color: '#722B2B',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.3px',
     fontWeight: 600,
   },
   inspectArrow: {
-    fontSize: '11px',
-    color: '#D95C14',
+    fontSize: '12px',
+    color: '#722B2B',
   },
   emptyContainer: {
     padding: '60px 0',
     textAlign: 'center',
   },
   emptyTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
     display: 'block',
     marginBottom: '6px',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     maxWidth: '400px',
     margin: '0 auto',
   },
@@ -416,12 +417,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '56px',
     height: '56px',
     borderRadius: '14px',
-    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.3) 0%, rgba(194, 155, 56, 0.15) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.8)',
+    background: 'linear-gradient(135deg, rgba(114, 43, 43, 0.3) 0%, rgba(139, 94, 43, 0.15) 100%)',
+    border: '1px solid rgba(114, 43, 43, 0.8)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 0 20px rgba(217, 92, 20, 0.3)',
+    boxShadow: '0 0 20px rgba(114, 43, 43, 0.3)',
   },
   modalBadgeRow: {
     display: 'flex',
@@ -429,25 +430,25 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '4px',
   },
   modalBadgeTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     letterSpacing: '0.8px',
     textTransform: 'uppercase',
   },
   modalSpeedTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     fontWeight: 700,
   },
   modalTitle: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '22px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '31px',
   },
   modalDivider: {
-    borderColor: '#262D3D',
+    borderColor: '#DDD0AE',
     margin: '4px 0',
   },
   modalSection: {
@@ -456,21 +457,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
   },
   modalSectionTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    color: '#EDE6D6',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
+    color: '#2B1F17',
     letterSpacing: '0.5px',
     fontWeight: 700,
   },
   modalDescription: {
-    color: '#C7D0DE',
+    color: '#5E4E3C',
     fontSize: '13.5px',
     lineHeight: 1.7,
     margin: 0,
   },
   modalLangTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     padding: '2px 8px',
   },
   traitsList: {
@@ -480,11 +481,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginTop: '6px',
   },
   traitCard: {
-    background: 'rgba(14, 17, 23, 0.85)',
-    border: '1px solid #232936',
+    background: 'rgba(250, 243, 224, 0.85)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '12px 14px',
-    borderLeft: '3px solid #D95C14',
+    borderLeft: '3px solid #722B2B',
   },
   traitHeader: {
     display: 'flex',
@@ -493,27 +494,27 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '6px',
   },
   traitName: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
     fontWeight: 700,
     letterSpacing: '0.3px',
   },
   traitTypeTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '10px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '11px',
     padding: '0 6px',
     margin: 0,
   },
   traitDescription: {
-    color: '#9CA7BA',
+    color: '#5E4E3C',
     fontSize: '12.5px',
     lineHeight: 1.6,
     margin: 0,
   },
   noTraitsText: {
-    color: '#8D98AA',
-    fontSize: '12px',
+    color: '#6B5A48',
+    fontSize: '13px',
     fontStyle: 'italic',
   },
 };

@@ -193,6 +193,7 @@ export interface IWorldService {
   getMapByWorldId(worldId: number): Promise<MapDataReturn | null>;
   getAreasByMapId(mapId: number): Promise<AreaDataReturn[]>;
   getPOIsByAreaIds(areaIds: number[]): Promise<POIDataReturn[]>;
+  countAreasAndPOIsByCampaignId(campaignId: number): Promise<{ areas: number; pois: number }>;
 }
 
 // ==========================================
@@ -1172,6 +1173,20 @@ export class WorldService implements IWorldService {
       order: [['depth', 'ASC'], ['id', 'ASC']],
     });
     return areas.map((a) => this.areaToReturn(a));
+  }
+
+  async countAreasAndPOIsByCampaignId(campaignId: number): Promise<{ areas: number; pois: number }> {
+    const world = await World.findOne({ where: { campaign_id: campaignId }, attributes: ['id'] });
+    if (!world) return { areas: 0, pois: 0 };
+
+    const map = await Map.findOne({ where: { world_id: world.id }, attributes: ['id'] });
+    if (!map) return { areas: 0, pois: 0 };
+
+    const areas = await Area.findAll({ where: { map_id: map.id }, attributes: ['id'] });
+    if (areas.length === 0) return { areas: 0, pois: 0 };
+
+    const pois = await POI.count({ where: { area_id: { [Op.in]: areas.map((area) => area.id) } } });
+    return { areas: areas.length, pois };
   }
 
   async getPOIsByAreaIds(areaIds: number[]): Promise<POIDataReturn[]> {

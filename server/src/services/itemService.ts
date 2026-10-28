@@ -87,6 +87,7 @@ export interface IItemService {
   create(data: CreateItemDTO, campaignId: number, transaction?: Transaction): Promise<ItemDataReturn>;
   createBulk(data: CreateItemDTO[], campaignId: number, transaction?: Transaction): Promise<ItemDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<ItemDataReturn[]>;
+  countByCampaignId(campaignId: number): Promise<number>;
 }
 
 // ==========================================
@@ -292,6 +293,10 @@ export class ItemService implements IItemService {
     );
 
     return items.map((item) => this.toReturn(item));
+  }
+
+  async countByCampaignId(campaignId: number): Promise<number> {
+    return Item.count({ where: { campaign_id: campaignId } });
   }
 
   async getByCampaignId(campaignId: number): Promise<ItemDataReturn[]> {

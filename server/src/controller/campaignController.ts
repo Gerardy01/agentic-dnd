@@ -222,6 +222,48 @@ class CampaignController {
   }
 
   /**
+   * Retrieves the number of generated items for each module of a campaign.
+   */
+  static async getCampaignCounts(req: Request, res: Response) {
+    try {
+      const accountId = req.user?.accountId || '';
+      const campaignId = Number(req.params.id);
+
+      if (!campaignId || isNaN(campaignId)) {
+        return res.status(422).json({
+          status: 'failed',
+          message: 'Valid campaign ID is required',
+          userMessage: '',
+        });
+      }
+
+      const data = await campaignOrchestration.getCampaignCounts(campaignId, accountId);
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Campaign counts fetched successfully',
+        userMessage: '',
+        data,
+      });
+    } catch (e) {
+      if (e instanceof DataNotFound) {
+        return res.status(404).json({
+          status: 'failed',
+          message: e.message,
+          userMessage: e.message,
+        });
+      }
+
+      return res.status(500).json({
+        status: 'failed',
+        message: 'Internal server error',
+        userMessage: '500',
+        errors: e,
+      });
+    }
+  }
+
+  /**
    * Deletes a campaign by ID.
    */
   static async deleteCampaign(req: Request, res: Response) {

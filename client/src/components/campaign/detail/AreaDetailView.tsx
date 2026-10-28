@@ -38,7 +38,7 @@ export default function AreaDetailView({ area, onSelectPOI }: AreaDetailViewProp
         </Title>
         {area.descriptiveLocation && (
           <Text style={styles.locationSubtitle}>
-            <CompassOutlined style={{ marginRight: 6, color: '#C29B38' }} />
+            <CompassOutlined style={{ marginRight: 6, color: '#8B5E2B' }} />
             {area.descriptiveLocation}
           </Text>
         )}
@@ -115,7 +115,7 @@ export default function AreaDetailView({ area, onSelectPOI }: AreaDetailViewProp
                 >
                   <div style={styles.poiContent}>
                     <div style={styles.poiIconWrap}>
-                      <CompassOutlined style={{ color: '#D95C14', fontSize: '16px' }} />
+                      <CompassOutlined style={{ color: '#722B2B', fontSize: '16px' }} />
                     </div>
                     <div style={styles.poiMeta}>
                       <Text style={styles.poiName} ellipsis>
@@ -135,7 +135,7 @@ export default function AreaDetailView({ area, onSelectPOI }: AreaDetailViewProp
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={
-              <Text style={{ color: '#707C91', fontSize: '13px' }}>
+              <Text style={{ color: '#8A7A66', fontSize: '14px' }}>
                 {t('campaignDetail.map.noPOIs')}
               </Text>
             }
@@ -154,10 +154,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   header: {
     padding: '16px 20px',
-    background: 'linear-gradient(135deg, #171C26 0%, #12151D 100%)',
-    border: '1px solid #2B3342',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #FAF3E0 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   badgeRow: {
     display: 'flex',
@@ -166,34 +166,34 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '8px',
   },
   levelTag: {
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.5px',
     fontWeight: 600,
     borderRadius: '4px',
     padding: '2px 8px',
   },
   depthTag: {
-    fontSize: '11px',
+    fontSize: '12px',
     borderRadius: '4px',
-    color: '#8D98AA',
-    background: 'rgba(255, 255, 255, 0.04)',
-    borderColor: '#374151',
+    color: '#6B5A48',
+    background: 'rgba(70, 45, 20, 0.04)',
+    borderColor: '#CDBE96',
   },
   title: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '24px',
-    letterSpacing: '0.5px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '34px',
   },
   locationSubtitle: {
-    color: '#A0AEC0',
-    fontSize: '13px',
+    color: '#5E4E3C',
+    fontSize: '14px',
     fontStyle: 'italic',
   },
   sectionCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
   },
   sectionHeader: {
@@ -203,29 +203,29 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '12px',
   },
   sectionIcon: {
-    color: '#D95C14',
+    color: '#722B2B',
     fontSize: '15px',
   },
   sectionTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.5px',
-    fontSize: '13px',
+    fontSize: '14px',
     textTransform: 'uppercase',
     fontWeight: 600,
   },
   bodyText: {
-    color: '#B0BAC9',
+    color: '#5E4E3C',
     fontSize: '14px',
     lineHeight: 1.7,
     margin: 0,
   },
   loreCard: {
-    background: 'linear-gradient(135deg, #1C1914 0%, #14120F 100%)',
-    border: '1px solid #4A3E25',
-    borderLeft: '4px solid #C29B38',
+    background: 'linear-gradient(135deg, #F3EAD2 0%, #EDE3C6 100%)',
+    border: '1px solid #D9C79A',
+    borderLeft: '4px solid #8B5E2B',
     borderRadius: '12px',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.14)',
   },
   loreHeader: {
     display: 'flex',
@@ -234,7 +234,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '12px',
   },
   loreIcon: {
-    color: '#C29B38',
+    color: '#8B5E2B',
     fontSize: '22px',
     marginTop: '2px',
   },
@@ -242,35 +242,36 @@ const styles: { [key: string]: React.CSSProperties } = {
     flex: 1,
   },
   loreBadge: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '10px',
+    fontFamily: 'var(--font-heading)',
+    fontSize: '11px',
     letterSpacing: '0.5px',
     borderRadius: '4px',
     marginBottom: '4px',
   },
   loreTitle: {
     margin: 0,
-    color: '#F4E8C1',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '17px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '24px',
   },
   loreContent: {
-    color: '#D4C8A9',
-    fontSize: '13px',
+    color: '#4A3B2C',
+    fontSize: '14px',
     lineHeight: 1.8,
     margin: 0,
     fontStyle: 'italic',
   },
   factionTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     letterSpacing: '0.3px',
     borderRadius: '4px',
     padding: '3px 8px',
   },
   poiItem: {
-    background: 'rgba(10, 13, 18, 0.7)',
-    border: '1px solid #242B38',
+    background: 'rgba(250, 243, 224, 0.7)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '12px 14px',
     display: 'flex',
@@ -290,7 +291,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '32px',
     height: '32px',
     borderRadius: '6px',
-    background: 'rgba(217, 92, 20, 0.12)',
+    background: 'rgba(114, 43, 43, 0.12)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -303,18 +304,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     flex: 1,
   },
   poiName: {
-    color: '#EDE6D6',
+    color: '#2B1F17',
     fontWeight: 600,
-    fontSize: '13px',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '14px',
+    fontFamily: 'var(--font-body)',
   },
   poiDescription: {
-    color: '#8D98AA',
-    fontSize: '11px',
+    color: '#6B5A48',
+    fontSize: '12px',
   },
   poiArrow: {
-    color: '#707C91',
-    fontSize: '12px',
+    color: '#8A7A66',
+    fontSize: '13px',
     marginLeft: '8px',
   },
 };

@@ -1,23 +1,25 @@
-import { Button, Typography, Tabs, Tag } from 'antd';
+import { Button, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeftOutlined,
   CompassOutlined,
   ReadOutlined,
-  TeamOutlined,
-  FireOutlined,
-  BookOutlined,
+  SafetyOutlined,
+  ToolOutlined,
+  CrownOutlined,
   UserOutlined,
-  SmileOutlined,
   GiftOutlined,
   ThunderboltOutlined,
+  FireOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
 import useCampaignDetail from '@/hooks/campaign/useCampaignDetail';
 import useDeleteCampaign from '@/hooks/campaign/useDeleteCampaign';
 import PageLoading from '@/components/global/PageLoading';
 import CampaignStatusBanner from '@/components/campaign/detail/CampaignStatusBanner';
+import CampaignTabSkeleton from '@/components/campaign/detail/CampaignTabSkeleton';
+import CampaignStatsStrip from '@/components/campaign/detail/CampaignStatsStrip';
 import DeleteCampaignModal from '@/components/campaign/DeleteCampaignModal';
 import CampaignOverviewTab from '@/components/campaign/detail/CampaignOverviewTab';
 import CampaignMapTab from '@/components/campaign/detail/CampaignMapTab';
@@ -27,8 +29,8 @@ import CampaignRacesTab from '@/components/campaign/detail/CampaignRacesTab';
 import CampaignNpcsTab from '@/components/campaign/detail/CampaignNpcsTab';
 import CampaignItemsTab from '@/components/campaign/detail/CampaignItemsTab';
 import CampaignSpellsTab from '@/components/campaign/detail/CampaignSpellsTab';
-
-const { Title, Text } = Typography;
+import { CAMPAIGN_LANGUAGE_NAMES } from '@/constants/selections';
+import { palette } from '@/constants/theme';
 
 export default function CampaignDetail() {
   const navigate = useNavigate();
@@ -41,12 +43,14 @@ export default function CampaignDetail() {
     npcs,
     items,
     spells,
-    totalPOIs,
+    counts,
     areaTree,
     loading,
     activeTab,
     selectedNode,
     setActiveTab,
+    handleChangeTab,
+    isTabLoaded,
     handleSelectArea,
     handleSelectPOI,
     handleBackToCampaigns,
@@ -81,26 +85,49 @@ export default function CampaignDetail() {
     return <PageLoading />;
   }
 
+  const languageName = CAMPAIGN_LANGUAGE_NAMES[campaign.language] ?? campaign.language.toUpperCase();
+
+  const stats = [
+    { key: 'areas', label: t('campaignDetail.stats.areas'), value: counts.areas },
+    { key: 'pois', label: t('campaignDetail.stats.pois'), value: counts.pois },
+    { key: 'factions', label: t('campaignDetail.stats.factions'), value: counts.factions },
+    { key: 'classes', label: t('campaignDetail.stats.classes'), value: counts.classes },
+    { key: 'races', label: t('campaignDetail.stats.races'), value: counts.races },
+    { key: 'npcs', label: t('campaignDetail.stats.npcs'), value: counts.npcs },
+    { key: 'items', label: t('campaignDetail.stats.items'), value: counts.items },
+    { key: 'spells', label: t('campaignDetail.stats.spells'), value: counts.spells },
+  ];
+
+  const tabLabel = (icon: React.ReactNode, label: string, count?: number) => (
+    <span style={styles.tabLabel}>
+      <span className="tab-icon">{icon}</span>
+      {label}
+      {count !== undefined && <span className="tab-count">{count}</span>}
+    </span>
+  );
+
+  const withTabLoading = (
+    tabKey: string,
+    skeletonVariant: 'cards' | 'map',
+    content: React.ReactNode
+  ): React.ReactNode =>
+    isTabLoaded(tabKey) ? content : <CampaignTabSkeleton variant={skeletonVariant} />;
+
   const tabItems = [
     {
       key: 'overview',
-      label: (
-        <span style={styles.tabLabel}>
-          <ReadOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabOverview')}
-        </span>
-      ),
+      label: tabLabel(<ReadOutlined />, t('campaignDetail.tabOverview')),
       children: (
         <CampaignOverviewTab
           campaign={campaign}
-          areasCount={areas.length}
-          poisCount={totalPOIs}
-          factionsCount={factions.length}
-          classesCount={classes.length}
-          racesCount={races.length}
-          npcsCount={npcs.length}
-          itemsCount={items.length}
-          spellsCount={spells.length}
+          areasCount={counts.areas}
+          poisCount={counts.pois}
+          factionsCount={counts.factions}
+          classesCount={counts.classes}
+          racesCount={counts.races}
+          npcsCount={counts.npcs}
+          itemsCount={counts.items}
+          spellsCount={counts.spells}
           onNavigateToMap={() => setActiveTab('map')}
           onNavigateToFactions={() => setActiveTab('factions')}
           onNavigateToClasses={() => setActiveTab('classes')}
@@ -113,16 +140,8 @@ export default function CampaignDetail() {
     },
     {
       key: 'map',
-      label: (
-        <span style={styles.tabLabel}>
-          <CompassOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabMap')}
-          <Tag color="orange" style={styles.tabBadge}>
-            {areas.length}
-          </Tag>
-        </span>
-      ),
-      children: (
+      label: tabLabel(<CompassOutlined />, t('campaignDetail.tabMap'), counts.areas),
+      children: withTabLoading('map', 'map', (
         <CampaignMapTab
           areas={areas}
           areaTree={areaTree}
@@ -130,135 +149,84 @@ export default function CampaignDetail() {
           onSelectArea={handleSelectArea}
           onSelectPOI={handleSelectPOI}
         />
-      ),
+      )),
     },
     {
       key: 'factions',
-      label: (
-        <span style={styles.tabLabel}>
-          <TeamOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabFactions')}
-          <Tag color="purple" style={styles.tabBadge}>
-            {factions.length}
-          </Tag>
-        </span>
-      ),
-      children: <CampaignFactionsTab factions={factions} />,
+      label: tabLabel(<SafetyOutlined />, t('campaignDetail.tabFactions'), counts.factions),
+      children: withTabLoading('factions', 'cards', <CampaignFactionsTab factions={factions} />),
     },
     {
       key: 'classes',
-      label: (
-        <span style={styles.tabLabel}>
-          <BookOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabClasses')}
-          <Tag color="cyan" style={styles.tabBadge}>
-            {classes.length}
-          </Tag>
-        </span>
-      ),
-      children: <CampaignClassesTab classes={classes} />,
+      label: tabLabel(<ToolOutlined />, t('campaignDetail.tabClasses'), counts.classes),
+      children: withTabLoading('classes', 'cards', <CampaignClassesTab classes={classes} />),
     },
     {
       key: 'races',
-      label: (
-        <span style={styles.tabLabel}>
-          <UserOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabRaces')}
-          <Tag color="volcano" style={styles.tabBadge}>
-            {races.length}
-          </Tag>
-        </span>
-      ),
-      children: <CampaignRacesTab races={races} />,
+      label: tabLabel(<CrownOutlined />, t('campaignDetail.tabRaces'), counts.races),
+      children: withTabLoading('races', 'cards', <CampaignRacesTab races={races} />),
     },
     {
       key: 'npcs',
-      label: (
-        <span style={styles.tabLabel}>
-          <SmileOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabNpcs')}
-          <Tag color="blue" style={styles.tabBadge}>
-            {npcs.length}
-          </Tag>
-        </span>
-      ),
-      children: <CampaignNpcsTab npcs={npcs} />,
+      label: tabLabel(<UserOutlined />, t('campaignDetail.tabNpcs'), counts.npcs),
+      children: withTabLoading('npcs', 'cards', <CampaignNpcsTab npcs={npcs} />),
     },
     {
       key: 'items',
-      label: (
-        <span style={styles.tabLabel}>
-          <GiftOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabItems')}
-          <Tag color="magenta" style={styles.tabBadge}>
-            {items.length}
-          </Tag>
-        </span>
-      ),
-      children: <CampaignItemsTab items={items} />,
+      label: tabLabel(<GiftOutlined />, t('campaignDetail.tabItems'), counts.items),
+      children: withTabLoading('items', 'cards', <CampaignItemsTab items={items} />),
     },
     {
       key: 'spells',
-      label: (
-        <span style={styles.tabLabel}>
-          <ThunderboltOutlined style={styles.tabIcon} />
-          {t('campaignDetail.tabSpells')}
-          <Tag color="gold" style={styles.tabBadge}>
-            {spells.length}
-          </Tag>
-        </span>
-      ),
-      children: <CampaignSpellsTab spells={spells} />,
+      label: tabLabel(<ThunderboltOutlined />, t('campaignDetail.tabSpells'), counts.spells),
+      children: withTabLoading('spells', 'cards', <CampaignSpellsTab spells={spells} />),
     },
   ];
 
   return (
-    <div style={styles.container}>
-      {/* Top Breadcrumb / Back Bar */}
-      <div style={styles.topBar}>
-        <Button
-          type="text"
-          icon={<ArrowLeftOutlined />}
-          onClick={handleBackToCampaigns}
-          style={styles.backBtn}
-        >
-          {t('campaignDetail.backToCampaigns')}
-        </Button>
-      </div>
+    <div>
+      <Button
+        type="text"
+        icon={<ArrowLeftOutlined />}
+        onClick={handleBackToCampaigns}
+        style={styles.backBtn}
+      >
+        {t('campaignDetail.backToCampaigns')}
+      </Button>
 
-      {/* Main Campaign Header Banner */}
-      <div style={styles.headerBanner}>
+      <header style={styles.header}>
         <div style={styles.headerLeft}>
           <div style={styles.logoBadge}>
             <FireOutlined style={styles.logoIcon} />
           </div>
-          <div style={styles.headerTextGroup}>
-            <div style={styles.statusRow}>
-              <Tag color="orange" style={styles.statusTag}>
+          <div style={styles.headerText}>
+            <div style={styles.badgeRow}>
+              <span className="pill pill-success">
+                <span className="pill-dot" />
                 {t('campaigns.statusActive')}
-              </Tag>
-              <Text style={styles.langText}>
-                {campaign.language.toUpperCase()}
-              </Text>
+              </span>
+              <span className="pill">
+                {t('campaignDetail.narratedIn', { language: languageName })}
+              </span>
             </div>
-            <Title level={1} style={styles.campaignName}>
-              {campaign.name}
-            </Title>
+            <h1 style={styles.campaignName}>{campaign.name}</h1>
+            {campaign.worldDescription && (
+              <p style={styles.campaignBlurb}>{campaign.worldDescription}</p>
+            )}
           </div>
         </div>
-        <div style={styles.headerRight}>
-          <Button
-            danger
-            icon={<DeleteOutlined />}
-            onClick={openModal}
-            style={styles.deleteBtn}
-          >
-            {t('campaignDetail.delete.button')}
-          </Button>
-        </div>
-      </div>
 
-      {/* Delete Campaign Modal */}
+        <Button
+          danger
+          type="text"
+          icon={<DeleteOutlined />}
+          onClick={openModal}
+          style={styles.deleteBtn}
+        >
+          {t('campaignDetail.delete.button')}
+        </Button>
+      </header>
+
       <DeleteCampaignModal
         isOpen={isModalOpen}
         campaignName={campaign.name}
@@ -269,7 +237,7 @@ export default function CampaignDetail() {
         onCancel={closeModal}
       />
 
-      {/* Campaign Status Banner - shows if campaign generation is incomplete */}
+      {/* Shown if campaign generation is incomplete */}
       {campaign.successParameter && (
         <CampaignStatusBanner
           campaignId={campaign.id}
@@ -278,13 +246,14 @@ export default function CampaignDetail() {
         />
       )}
 
-      {/* Navigation Tabs */}
-      <div style={styles.tabsWrapper}>
+      <CampaignStatsStrip stats={stats} />
+
+      <div style={styles.tabsCard}>
         <Tabs
           activeKey={activeTab}
-          onChange={setActiveTab}
+          onChange={handleChangeTab}
           items={tabItems}
-          style={styles.tabs}
+          className="campaign-tabs"
         />
       </div>
     </div>
@@ -292,126 +261,85 @@ export default function CampaignDetail() {
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: '24px 32px',
-    maxWidth: '1440px',
-    margin: '0 auto',
-    width: '100%',
-  },
-  topBar: {
-    marginBottom: '16px',
-  },
   backBtn: {
-    color: '#8D98AA',
+    color: palette.inkMuted,
     padding: '0 8px',
-    height: '32px',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    transition: 'color 0.2s',
+    marginLeft: '-8px',
+    marginBottom: '20px',
   },
-  headerBanner: {
+  header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     flexWrap: 'wrap',
     gap: '20px',
-    padding: '24px',
-    borderRadius: '16px',
-    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
-    border: '1px solid #232936',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-    marginBottom: '24px',
+    marginBottom: '32px',
   },
   headerLeft: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-  },
-  headerRight: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-  },
-  deleteBtn: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    height: '36px',
-    borderRadius: '8px',
+    alignItems: 'flex-start',
+    gap: '20px',
+    flex: 1,
+    minWidth: '300px',
   },
   logoBadge: {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '56px',
-    height: '56px',
-    borderRadius: '14px',
-    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.25) 0%, rgba(194, 155, 56, 0.1) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.6)',
-    boxShadow: '0 0 20px rgba(217, 92, 20, 0.3)',
+    width: '80px',
+    height: '80px',
+    borderRadius: '22px',
+    background: palette.crimson,
+    boxShadow: '0 8px 20px rgba(114, 43, 43, 0.3)',
     flexShrink: 0,
   },
   logoIcon: {
-    fontSize: '28px',
-    color: '#D95C14',
-    filter: 'drop-shadow(0 0 6px rgba(217, 92, 20, 0.8))',
+    fontSize: '36px',
+    color: '#F4EBD3',
   },
-  headerTextGroup: {
+  headerText: {
     display: 'flex',
     flexDirection: 'column',
+    minWidth: 0,
+    maxWidth: '820px',
   },
-  statusRow: {
+  badgeRow: {
     display: 'flex',
-    alignItems: 'center',
+    flexWrap: 'wrap',
     gap: '8px',
-    marginBottom: '4px',
-  },
-  statusTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
-    letterSpacing: '0.8px',
-    borderRadius: '4px',
-    padding: '1px 8px',
-    textTransform: 'uppercase',
-  },
-  langText: {
-    color: '#707C91',
-    fontSize: '12px',
-    fontFamily: "'Cinzel', serif",
-    fontWeight: 600,
+    marginBottom: '8px',
   },
   campaignName: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '26px',
-    letterSpacing: '1px',
-    lineHeight: 1.2,
+    color: palette.ink,
+    fontFamily: 'var(--font-display)',
+    fontSize: 'clamp(36px, 5vw, 56px)',
+    fontWeight: 700,
+    lineHeight: 1.05,
   },
-  tabsWrapper: {
-    background: 'transparent',
+  campaignBlurb: {
+    marginTop: '12px',
+    color: palette.inkMuted,
+    fontSize: '17px',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
   },
-  tabs: {
-    color: '#8D98AA',
+  deleteBtn: {
+    fontWeight: 600,
+  },
+  tabsCard: {
+    background: palette.surface,
+    border: `1px solid ${palette.border}`,
+    borderRadius: '24px',
+    padding: '0 8px 8px',
+    overflow: 'hidden',
   },
   tabLabel: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '8px',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '14px',
-    letterSpacing: '0.5px',
-  },
-  tabIcon: {
-    fontSize: '15px',
-  },
-  tabBadge: {
-    borderRadius: '10px',
-    fontSize: '11px',
-    padding: '0 6px',
-    lineHeight: '16px',
-    fontWeight: 600,
+    fontSize: '16px',
   },
 };

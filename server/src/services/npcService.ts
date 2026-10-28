@@ -148,6 +148,7 @@ export interface INpcService {
     transaction?: Transaction
   ): Promise<NpcCombatProfileDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<NpcWithDetailsReturn[]>;
+  countByCampaignId(campaignId: number): Promise<number>;
 }
 
 // ==========================================
@@ -503,6 +504,10 @@ export class NpcService implements INpcService {
       crEquivalent: profile.cr_equivalent !== null ? Number(profile.cr_equivalent) : null,
       createdAt: profile.created_at,
     };
+  }
+
+  async countByCampaignId(campaignId: number): Promise<number> {
+    return NPC.count({ where: { campaign_id: campaignId } });
   }
 
   async getByCampaignId(campaignId: number): Promise<NpcWithDetailsReturn[]> {

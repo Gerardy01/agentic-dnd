@@ -7,6 +7,19 @@ export const SidebarMenuEnum = {
 
 export type SidebarMenuType = (typeof SidebarMenuEnum)[keyof typeof SidebarMenuEnum];
 
+export const CampaignTabEnum = {
+  OVERVIEW: 'overview',
+  MAP: 'map',
+  FACTIONS: 'factions',
+  CLASSES: 'classes',
+  RACES: 'races',
+  NPCS: 'npcs',
+  ITEMS: 'items',
+  SPELLS: 'spells',
+} as const;
+
+export type CampaignTabType = (typeof CampaignTabEnum)[keyof typeof CampaignTabEnum];
+
 export const CampaignLanguageEnum = {
   EN: 'en',
   ID: 'id',

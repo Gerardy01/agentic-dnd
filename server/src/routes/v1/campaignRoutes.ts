@@ -32,6 +32,12 @@ campaignRoutes.get(
 );
 
 campaignRoutes.get(
+  '/:id/counts',
+  authenticate,
+  CampaignController.getCampaignCounts,
+);
+
+campaignRoutes.get(
   '/:id',
   authenticate,
   CampaignController.getCampaignById,

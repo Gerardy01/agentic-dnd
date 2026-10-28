@@ -1,4 +1,4 @@
-import { Alert, Button, Tag, Typography, Progress } from 'antd';
+import { Alert, Button, Tag, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   GlobalOutlined,
@@ -13,15 +13,15 @@ import {
   CheckCircleFilled,
   CloseCircleFilled,
   ForwardOutlined,
-  LoadingOutlined,
 } from '@ant-design/icons';
 import useCampaignContinuation, { 
   CAMPAIGN_MODULE_KEYS, 
   type CampaignModuleKey 
 } from '@/hooks/campaign/useCampaignContinuation';
+import CampaignForgeProgressModal from '@/components/campaign/create/CampaignForgeProgressModal';
 import type { CampaignSuccessParameter } from '@/models/campaignInterfaces';
 
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 interface CampaignStatusBannerProps {
   campaignId: number;
@@ -30,15 +30,15 @@ interface CampaignStatusBannerProps {
 }
 
 const MODULE_ICON_MAP: Record<CampaignModuleKey, React.ReactNode> = {
-  world: <GlobalOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  factions: <TeamOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  areas: <EnvironmentOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  pois: <PushpinOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  classes: <BookOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  races: <UserOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  npcs: <SmileOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  items: <GiftOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
-  spells: <ThunderboltOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  world: <GlobalOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  factions: <TeamOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  areas: <EnvironmentOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  pois: <PushpinOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  classes: <BookOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  races: <UserOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  npcs: <SmileOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  items: <GiftOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
+  spells: <ThunderboltOutlined style={{ color: '#8B5E2B', fontSize: '15px' }} />,
 };
 
 export default function CampaignStatusBanner({
@@ -54,6 +54,9 @@ export default function CampaignStatusBanner({
     progressStep,
     progressSubStep,
     progressPercent,
+    progressSubPercent,
+    progressCurrent,
+    progressTotal,
     isAllSuccess,
     firstFailedModule,
     successParameter: currentSuccessParameter,
@@ -90,53 +93,15 @@ export default function CampaignStatusBanner({
         />
       )}
 
-      {/* Live Progress Card if actively generating */}
-      {loading && (
-        <div style={styles.progressCard}>
-          <div style={styles.progressHeader}>
-            <div style={styles.progressSpinnerWrapper}>
-              <LoadingOutlined style={styles.progressSpinner} spin />
-            </div>
-            <div style={{ flex: 1 }}>
-              <Text style={styles.progressTitle}>
-                {t('campaigns.progressTitle')}
-              </Text>
-              <Paragraph style={styles.progressSubtitle}>
-                {t('campaigns.progressSubtitle')}
-              </Paragraph>
-            </div>
-          </div>
-
-          <div style={styles.progressBarWrapper}>
-            <Progress
-              percent={progressPercent}
-              strokeColor={{
-                '0%': '#D95C14',
-                '70%': '#C29B38',
-                '100%': '#2ECC71',
-              }}
-              trailColor="#1A1F2B"
-              size={['100%', 8]}
-              status="active"
-              showInfo={false}
-            />
-          </div>
-
-          <div style={styles.stepBadge}>
-            <Text style={styles.stepText}>
-              {progressStep || t('campaigns.progressInitial')}
-            </Text>
-            <Text style={styles.stepPercentText}>
-              {progressPercent}%
-            </Text>
-          </div>
-          {progressSubStep && (
-            <div style={styles.subStepRow}>
-              <Text style={styles.subStepText}>{progressSubStep}</Text>
-            </div>
-          )}
-        </div>
-      )}
+      <CampaignForgeProgressModal
+        open={loading}
+        percent={progressPercent}
+        subPercent={progressSubPercent}
+        step={progressStep}
+        subStep={progressSubStep}
+        stepCurrent={progressCurrent}
+        stepTotal={progressTotal}
+      />
 
       {/* Module Checklist */}
       <div style={styles.moduleList}>
@@ -226,97 +191,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '24px',
     padding: '20px',
     borderRadius: '12px',
-    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.5)',
-    boxShadow: '0 4px 16px rgba(217, 92, 20, 0.15)',
+    background: 'linear-gradient(135deg, rgba(250, 243, 224, 0.95) 0%, rgba(250, 243, 224, 0.98) 100%)',
+    border: '1px solid rgba(114, 43, 43, 0.5)',
+    boxShadow: '0 4px 16px rgba(114, 43, 43, 0.15)',
   },
   warningAlert: {
     marginBottom: '16px',
     borderRadius: '8px',
-    background: 'rgba(217, 92, 20, 0.15)',
-    border: '1px solid rgba(217, 92, 20, 0.5)',
+    background: 'rgba(114, 43, 43, 0.15)',
+    border: '1px solid rgba(114, 43, 43, 0.5)',
   },
   errorAlert: {
     marginBottom: '16px',
     borderRadius: '8px',
-    background: 'rgba(192, 57, 43, 0.15)',
-    border: '1px solid #C0392B',
-  },
-  progressCard: {
-    background: 'linear-gradient(135deg, rgba(30, 22, 16, 0.85) 0%, rgba(15, 18, 24, 0.95) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.5)',
-    borderRadius: '12px',
-    padding: '16px',
-    marginBottom: '16px',
-    boxShadow: '0 0 20px rgba(217, 92, 20, 0.15)',
-  },
-  progressHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    marginBottom: '12px',
-  },
-  progressSpinnerWrapper: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
-    background: 'rgba(217, 92, 20, 0.2)',
-    border: '1px solid rgba(217, 92, 20, 0.6)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  progressSpinner: {
-    fontSize: '18px',
-    color: '#D95C14',
-  },
-  progressTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '14px',
-    fontWeight: 700,
-    color: '#EDE6D6',
-    letterSpacing: '0.5px',
-    display: 'block',
-  },
-  progressSubtitle: {
-    fontSize: '11px',
-    color: '#8D98AA',
-    margin: '2px 0 0',
-    lineHeight: 1.4,
-  },
-  progressBarWrapper: {
-    marginBottom: '10px',
-  },
-  stepBadge: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '8px 12px',
-    borderRadius: '8px',
-    background: 'rgba(14, 17, 23, 0.8)',
-    border: '1px solid #283040',
-  },
-  stepText: {
-    fontSize: '12px',
-    color: '#C29B38',
-    fontFamily: "'Cinzel', monospace, serif",
-    fontWeight: 600,
-    letterSpacing: '0.3px',
-  },
-  subStepRow: {
-    padding: '6px 12px 0',
-  },
-  subStepText: {
-    fontSize: '11.5px',
-    color: '#8D98AA',
-    fontFamily: "'Cinzel', monospace, serif",
-    letterSpacing: '0.3px',
-  },
-  stepPercentText: {
-    fontSize: '12px',
-    color: '#8D98AA',
-    fontWeight: 700,
+    background: 'rgba(163, 58, 46, 0.15)',
+    border: '1px solid #A33A2E',
   },
   moduleList: {
     display: 'flex',
@@ -329,15 +218,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '10px 14px',
-    background: 'rgba(18, 22, 31, 0.85)',
-    border: '1px solid #232936',
+    background: 'rgba(250, 243, 224, 0.85)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     transition: 'all 0.2s ease',
   },
   moduleItemHighlight: {
-    border: '1px solid rgba(217, 92, 20, 0.6)',
-    background: 'linear-gradient(90deg, rgba(217, 92, 20, 0.12) 0%, rgba(18, 22, 31, 0.95) 100%)',
-    boxShadow: '0 0 12px rgba(217, 92, 20, 0.2)',
+    border: '1px solid rgba(114, 43, 43, 0.6)',
+    background: 'linear-gradient(90deg, rgba(114, 43, 43, 0.12) 0%, rgba(250, 243, 224, 0.95) 100%)',
+    boxShadow: '0 0 12px rgba(114, 43, 43, 0.2)',
   },
   moduleLeft: {
     display: 'flex',
@@ -350,14 +239,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
   },
   checkIcon: {
-    color: '#2ECC71',
+    color: '#3F7D4A',
     fontSize: '16px',
-    filter: 'drop-shadow(0 0 4px rgba(46, 204, 113, 0.5))',
+    filter: 'drop-shadow(0 0 4px rgba(63, 125, 74, 0.5))',
   },
   crossIcon: {
-    color: '#E74C3C',
+    color: '#A33A2E',
     fontSize: '16px',
-    filter: 'drop-shadow(0 0 4px rgba(231, 76, 60, 0.5))',
+    filter: 'drop-shadow(0 0 4px rgba(163, 58, 46, 0.5))',
   },
   moduleMeta: {
     display: 'flex',
@@ -374,9 +263,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
   },
   moduleTitle: {
-    color: '#EDE6D6',
-    fontSize: '13px',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontSize: '14px',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.5px',
     fontWeight: 600,
   },
@@ -387,20 +276,20 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   manifestTag: {
     margin: 0,
-    fontFamily: "'Cinzel', serif",
-    fontSize: '10px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '11px',
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
   },
   inlineContinueBtn: {
-    background: 'linear-gradient(135deg, #D95C14 0%, #C29B38 100%)',
-    borderColor: '#D95C14',
+    background: 'linear-gradient(135deg, #722B2B 0%, #8B5E2B 100%)',
+    borderColor: '#722B2B',
     color: '#FFFFFF',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     fontWeight: 600,
-    fontSize: '11px',
+    fontSize: '12px',
     letterSpacing: '0.5px',
-    boxShadow: '0 2px 8px rgba(217, 92, 20, 0.4)',
+    boxShadow: '0 2px 8px rgba(114, 43, 43, 0.4)',
   },
   buttonGroup: {
     display: 'flex',
@@ -413,7 +302,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '14px',
     fontWeight: 600,
     letterSpacing: '0.5px',
-    fontFamily: "'Cinzel', serif",
-    boxShadow: '0 4px 16px rgba(217, 92, 20, 0.4)',
+    fontFamily: 'var(--font-body)',
+    boxShadow: '0 4px 16px rgba(114, 43, 43, 0.4)',
   },
 };

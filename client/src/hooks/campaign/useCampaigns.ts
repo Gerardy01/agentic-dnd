@@ -7,7 +7,6 @@ export default function useCampaigns() {
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState<CampaignListReturn[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isGenerateModalOpen, setIsGenerateModalOpen] = useState<boolean>(false);
 
   const fetchCampaigns = async () => {
     setLoading(true);
@@ -25,16 +24,8 @@ export default function useCampaigns() {
     fetchCampaigns();
   }, []);
 
-  const handleOpenGenerateModal = () => {
-    setIsGenerateModalOpen(true);
-  };
-
-  const handleCloseGenerateModal = () => {
-    setIsGenerateModalOpen(false);
-  };
-
-  const handleCampaignCreated = () => {
-    fetchCampaigns();
+  const handleCreateCampaign = () => {
+    navigate('/campaigns/new');
   };
 
   const handleSelectCampaign = (campaign: CampaignListReturn) => {
@@ -44,12 +35,8 @@ export default function useCampaigns() {
   return {
     campaigns,
     loading,
-    isGenerateModalOpen,
-    handleOpenGenerateModal,
-    handleCloseGenerateModal,
-    handleCampaignCreated,
+    handleCreateCampaign,
     handleSelectCampaign,
     fetchCampaigns,
   };
 }
-

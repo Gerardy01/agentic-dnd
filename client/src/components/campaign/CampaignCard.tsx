@@ -1,8 +1,7 @@
-import { Card, Typography, Tag, Button, Space } from 'antd';
+import { Card, Typography, Button, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   CompassOutlined,
-  FireOutlined,
   CalendarOutlined,
   ReadOutlined,
   GlobalOutlined,
@@ -30,6 +29,7 @@ export default function CampaignCard({ campaign, onSelect }: CampaignCardProps) 
   return (
     <Card
       style={styles.card}
+      className="campaign-card"
       hoverable
       onClick={() => onSelect(campaign)}
     >
@@ -39,18 +39,18 @@ export default function CampaignCard({ campaign, onSelect }: CampaignCardProps) 
         </div>
         <div style={styles.titleArea}>
           <div style={styles.badgeRow}>
-            <Tag color="orange" style={styles.statusTag}>
-              <FireOutlined style={{ marginRight: 4 }} />
+            <span className="pill pill-success">
+              <span className="pill-dot" />
               {t('campaigns.statusActive')}
-            </Tag>
+            </span>
             {campaign.language && (
-              <Tag color="gold" style={styles.statusTag}>
-                <GlobalOutlined style={{ marginRight: 4 }} />
+              <span className="pill">
+                <GlobalOutlined />
                 {campaign.language.toUpperCase()}
-              </Tag>
+              </span>
             )}
           </div>
-          <Title level={3} style={styles.campaignTitle} ellipsis={{ rows: 1 }}>
+          <Title level={3} style={styles.campaignTitle} ellipsis={{ rows: 2 }}>
             {campaign.name}
           </Title>
         </div>
@@ -96,16 +96,15 @@ export default function CampaignCard({ campaign, onSelect }: CampaignCardProps) 
 
 const styles: { [key: string]: React.CSSProperties } = {
   card: {
-    background: 'linear-gradient(135deg, #151922 0%, #12151C 100%)',
-    border: '1px solid #28303F',
-    borderRadius: '14px',
+    background: '#FAF3E0',
+    border: '1px solid #DDD0AE',
+    borderRadius: '20px',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: '8px',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-    transition: 'all 0.3s ease',
+    padding: '10px',
+    boxShadow: '0 2px 10px rgba(70, 45, 20, 0.06)',
   },
   cardHeader: {
     display: 'flex',
@@ -114,11 +113,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '14px',
   },
   iconWrapper: {
-    width: '46px',
-    height: '46px',
-    borderRadius: '12px',
-    background: 'rgba(217, 92, 20, 0.15)',
-    border: '1px solid rgba(217, 92, 20, 0.4)',
+    width: '48px',
+    height: '48px',
+    borderRadius: '14px',
+    background: '#722B2B',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -126,36 +124,39 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardIcon: {
     fontSize: '22px',
-    color: '#D95C14',
-    filter: 'drop-shadow(0 0 6px rgba(217, 92, 20, 0.6))',
+    color: '#F4EBD3',
   },
   titleArea: {
     flex: 1,
     minWidth: 0,
   },
   badgeRow: {
-    marginBottom: '4px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '6px',
+    marginBottom: '8px',
   },
   statusTag: {
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontSize: '10px',
-    borderRadius: '4px',
-    padding: '1px 8px',
+    fontFamily: 'var(--font-body)',
+    letterSpacing: '1px',
+    fontSize: '10.5px',
+    borderRadius: '999px',
+    padding: '1px 10px',
     textTransform: 'uppercase',
   },
   campaignTitle: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '18px',
-    letterSpacing: '0.5px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontSize: '26px',
+    fontWeight: 700,
+    lineHeight: 1.15,
   },
   promptSection: {
-    background: 'rgba(10, 13, 18, 0.7)',
-    border: '1px solid #222834',
-    borderRadius: '8px',
-    padding: '12px',
+    background: '#F3EAD2',
+    border: '1px solid #DDD0AE',
+    borderRadius: '12px',
+    padding: '14px',
     marginBottom: '16px',
     flex: 1,
   },
@@ -166,48 +167,51 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '6px',
   },
   promptIcon: {
-    color: '#C29B38',
+    color: '#8B5E2B',
     fontSize: '12px',
   },
   promptLabel: {
-    color: '#C29B38',
-    fontSize: '11px',
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
+    color: '#8B5E2B',
+    fontSize: '11.5px',
+    fontFamily: 'var(--font-body)',
+    letterSpacing: '1.5px',
     textTransform: 'uppercase',
     fontWeight: 600,
   },
   promptText: {
-    color: '#9CA7BA',
-    fontSize: '12px',
-    lineHeight: 1.6,
+    color: '#5E4E3C',
+    fontSize: '14px',
+    lineHeight: 1.65,
     margin: 0,
   },
   cardFooter: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: '10px',
     paddingTop: '10px',
-    borderTop: '1px solid #222834',
+    borderTop: '1px solid #DDD0AE',
   },
   dateWrapper: {
-    color: '#707C91',
+    color: '#8A7A66',
   },
   dateIcon: {
     fontSize: '12px',
-    color: '#707C91',
+    color: '#8A7A66',
   },
   dateText: {
-    fontSize: '11px',
-    color: '#707C91',
-    fontFamily: "'Cinzel', serif",
+    whiteSpace: 'nowrap',
+    fontSize: '12.5px',
+    color: '#8A7A66',
+    fontFamily: 'var(--font-body)',
   },
   actionBtn: {
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.5px',
-    fontSize: '12px',
+    fontSize: '14px',
     fontWeight: 600,
-    height: '34px',
-    padding: '0 14px',
+    height: '38px',
+    padding: '0 16px',
   },
 };

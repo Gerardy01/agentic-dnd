@@ -4,7 +4,7 @@ import { campaignApi } from '@/api';
 import useNotification from '@/hooks/global/useNotification';
 import useStaticModal from '@/hooks/global/useStaticModal';
 import useTokenStore from '@/stores/useTokenStore';
-import { calculateCampaignProgressPercent } from '@/utils/utility';
+import { calculateCampaignProgressPercent, calculateCampaignSubProgressPercent } from '@/utils/utility';
 import type { CampaignDataReturn, CampaignSSEEvent, CampaignSuccessParameter } from '@/models/campaignInterfaces';
 
 export const CAMPAIGN_MODULE_KEYS = [
@@ -34,6 +34,7 @@ export default function useCampaignContinuation(
   const [progressStep, setProgressStep] = useState<string>('');
   const [progressSubStep, setProgressSubStep] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [progressSubPercent, setProgressSubPercent] = useState<number>(0);
   const [progressCurrent, setProgressCurrent] = useState<number>(0);
   const [progressTotal, setProgressTotal] = useState<number>(12);
 
@@ -80,10 +81,12 @@ export default function useCampaignContinuation(
           setProgressCurrent(payload.current);
           setProgressTotal(payload.total);
           setProgressPercent(calculateCampaignProgressPercent(payload));
+          setProgressSubPercent(calculateCampaignSubProgressPercent(payload));
         } else if (payload.type === 'complete') {
           es.close();
           eventSourceRef.current = null;
           setProgressPercent(100);
+          setProgressSubPercent(100);
           setLoading(false);
 
           // Update success parameter
@@ -131,6 +134,7 @@ export default function useCampaignContinuation(
     setProgressStep(t('campaigns.progressInitial'));
     setProgressSubStep('');
     setProgressPercent(3);
+    setProgressSubPercent(0);
     setProgressCurrent(0);
 
     try {
@@ -179,6 +183,7 @@ export default function useCampaignContinuation(
     progressStep,
     progressSubStep,
     progressPercent,
+    progressSubPercent,
     progressCurrent,
     progressTotal,
     successParameter,

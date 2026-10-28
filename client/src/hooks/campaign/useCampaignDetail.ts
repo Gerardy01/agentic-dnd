@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { CampaignTabEnum, type CampaignTabType } from '@/utils/enums';
 import { campaignApi, worldApi, factionApi, classApi, raceApi, npcApi, itemApi, spellApi } from '@/api';
-import type { CampaignListReturn } from '@/models/campaignInterfaces';
+import type { CampaignListReturn, CampaignCountsReturn } from '@/models/campaignInterfaces';
 import type { AreaWithDetailsReturn, POIDataReturn } from '@/models/worldInterfaces';
 import type { FactionDataReturn } from '@/models/factionInterfaces';
 import type { ClassDataReturn } from '@/models/classInterfaces';
@@ -25,11 +26,25 @@ export interface AreaTreeNode {
   rawArea: AreaWithDetailsReturn;
 }
 
+const EMPTY_COUNTS: CampaignCountsReturn = {
+  areas: 0,
+  pois: 0,
+  factions: 0,
+  classes: 0,
+  races: 0,
+  npcs: 0,
+  items: 0,
+  spells: 0,
+};
+
+type LoadedTabs = Partial<Record<CampaignTabType, boolean>>;
+
 export default function useCampaignDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [campaign, setCampaign] = useState<CampaignListReturn | null>(null);
+  const [counts, setCounts] = useState<CampaignCountsReturn>(EMPTY_COUNTS);
   const [areas, setAreas] = useState<AreaWithDetailsReturn[]>([]);
   const [factions, setFactions] = useState<FactionDataReturn[]>([]);
   const [classes, setClasses] = useState<ClassDataReturn[]>([]);
@@ -37,39 +52,29 @@ export default function useCampaignDetail() {
   const [npcs, setNpcs] = useState<NpcWithDetailsReturn[]>([]);
   const [items, setItems] = useState<ItemDataReturn[]>([]);
   const [spells, setSpells] = useState<SpellDataReturn[]>([]);
+  const [loadedTabs, setLoadedTabs] = useState<LoadedTabs>({});
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [activeTab, setActiveTab] = useState<CampaignTabType>(CampaignTabEnum.OVERVIEW);
   const [selectedNode, setSelectedNode] = useState<SelectedMapNode | null>(null);
   const [treeSearchQuery, setTreeSearchQuery] = useState<string>('');
 
+  // Tabs whose request is in flight, so a tab is never fetched twice at once
+  const fetchingTabsRef = useRef<Set<CampaignTabType>>(new Set());
+
   const campaignId = Number(id);
 
-  const fetchCampaignData = useCallback(async () => {
+  // Overview data only: the campaign itself and the count of every module
+  const fetchCampaignOverview = useCallback(async (showPageLoading: boolean) => {
     if (!campaignId || isNaN(campaignId)) {
       navigate('/campaigns');
       return;
     }
 
-    setLoading(true);
+    if (showPageLoading) setLoading(true);
     try {
-      const [
-        [campaignErr, campaignData],
-        [areasErr, areasData],
-        [factionsErr, factionsData],
-        [classesErr, classesData],
-        [racesErr, racesData],
-        [npcsErr, npcsData],
-        [itemsErr, itemsData],
-        [spellsErr, spellsData],
-      ] = await Promise.all([
+      const [[campaignErr, campaignData], [countsErr, countsData]] = await Promise.all([
         campaignApi.getCampaignById(campaignId),
-        worldApi.getAreas(campaignId),
-        factionApi.getFactions(campaignId),
-        classApi.getClasses(campaignId),
-        raceApi.getRaces(campaignId),
-        npcApi.getNpcs(campaignId),
-        itemApi.getItems(campaignId),
-        spellApi.getSpells(campaignId),
+        campaignApi.getCampaignCounts(campaignId),
       ]);
 
       if (campaignErr || !campaignData) {
@@ -78,40 +83,76 @@ export default function useCampaignDetail() {
       }
 
       setCampaign(campaignData);
-
-      const loadedAreas = !areasErr && areasData ? areasData : [];
-      setAreas(loadedAreas);
-
-      const loadedFactions = !factionsErr && factionsData ? factionsData : [];
-      setFactions(loadedFactions);
-
-      const loadedClasses = !classesErr && classesData ? classesData : [];
-      setClasses(loadedClasses);
-
-      const loadedRaces = !racesErr && racesData ? racesData : [];
-      setRaces(loadedRaces);
-
-      const loadedNpcs = !npcsErr && npcsData ? npcsData : [];
-      setNpcs(loadedNpcs);
-
-      const loadedItems = !itemsErr && itemsData ? itemsData : [];
-      setItems(loadedItems);
-
-      const loadedSpells = !spellsErr && spellsData ? spellsData : [];
-      setSpells(loadedSpells);
-
-      // Auto-select first area if available
-      if (loadedAreas.length > 0) {
-        setSelectedNode({ type: 'area', data: loadedAreas[0] });
-      }
+      setCounts(!countsErr && countsData ? countsData : EMPTY_COUNTS);
     } finally {
       setLoading(false);
     }
   }, [campaignId, navigate]);
 
+  // Module data, fetched the first time its tab is opened
+  const fetchTabData = useCallback(async (targetTab: CampaignTabType) => {
+    if (fetchingTabsRef.current.has(targetTab)) return;
+    fetchingTabsRef.current.add(targetTab);
+
+    try {
+      switch (targetTab) {
+        case CampaignTabEnum.MAP: {
+          const [err, data] = await worldApi.getAreas(campaignId);
+          const loadedAreas = !err && data ? data : [];
+          setAreas(loadedAreas);
+          // Auto-select first area if available
+          setSelectedNode((current) => current ?? (loadedAreas.length > 0 ? { type: 'area', data: loadedAreas[0] } : null));
+          break;
+        }
+        case CampaignTabEnum.FACTIONS: {
+          const [err, data] = await factionApi.getFactions(campaignId);
+          setFactions(!err && data ? data : []);
+          break;
+        }
+        case CampaignTabEnum.CLASSES: {
+          const [err, data] = await classApi.getClasses(campaignId);
+          setClasses(!err && data ? data : []);
+          break;
+        }
+        case CampaignTabEnum.RACES: {
+          const [err, data] = await raceApi.getRaces(campaignId);
+          setRaces(!err && data ? data : []);
+          break;
+        }
+        case CampaignTabEnum.NPCS: {
+          const [err, data] = await npcApi.getNpcs(campaignId);
+          setNpcs(!err && data ? data : []);
+          break;
+        }
+        case CampaignTabEnum.ITEMS: {
+          const [err, data] = await itemApi.getItems(campaignId);
+          setItems(!err && data ? data : []);
+          break;
+        }
+        case CampaignTabEnum.SPELLS: {
+          const [err, data] = await spellApi.getSpells(campaignId);
+          setSpells(!err && data ? data : []);
+          break;
+        }
+        default:
+          return;
+      }
+
+      setLoadedTabs((current) => ({ ...current, [targetTab]: true }));
+    } finally {
+      fetchingTabsRef.current.delete(targetTab);
+    }
+  }, [campaignId]);
+
   useEffect(() => {
-    fetchCampaignData();
-  }, [fetchCampaignData]);
+    fetchCampaignOverview(true);
+  }, [fetchCampaignOverview]);
+
+  // Fetch the active tab's module once per campaign
+  useEffect(() => {
+    if (activeTab === CampaignTabEnum.OVERVIEW || loadedTabs[activeTab]) return;
+    fetchTabData(activeTab);
+  }, [activeTab, loadedTabs, fetchTabData]);
 
   // Build hierarchical area tree
   const areaTree = useMemo(() => {
@@ -147,11 +188,6 @@ export default function useCampaignDetail() {
     return rootNodes;
   }, [areas]);
 
-  // Total POIs count calculation
-  const totalPOIs = useMemo(() => {
-    return areas.reduce((acc, area) => acc + (area.pois ? area.pois.length : 0), 0);
-  }, [areas]);
-
   const handleSelectArea = (area: AreaWithDetailsReturn) => {
     setSelectedNode({ type: 'area', data: area });
   };
@@ -164,9 +200,20 @@ export default function useCampaignDetail() {
     navigate('/campaigns');
   };
 
+  const handleChangeTab = (targetTab: string) => {
+    setActiveTab(targetTab as CampaignTabType);
+  };
+
+  const isTabLoaded = (targetTab: string): boolean => {
+    return targetTab === CampaignTabEnum.OVERVIEW || !!loadedTabs[targetTab as CampaignTabType];
+  };
+
+  // Generation was continued: counts and every already-opened tab are stale
   const refreshCampaignData = useCallback(() => {
-    fetchCampaignData();
-  }, [fetchCampaignData]);
+    fetchCampaignOverview(false);
+    setSelectedNode(null);
+    setLoadedTabs({});
+  }, [fetchCampaignOverview]);
 
   return {
     campaign,
@@ -177,13 +224,15 @@ export default function useCampaignDetail() {
     npcs,
     items,
     spells,
-    totalPOIs,
+    counts,
     areaTree,
     loading,
     activeTab,
     selectedNode,
     treeSearchQuery,
     setActiveTab,
+    handleChangeTab,
+    isTabLoaded,
     setSelectedNode,
     setTreeSearchQuery,
     handleSelectArea,

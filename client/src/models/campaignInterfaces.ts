@@ -51,6 +51,17 @@ export type Campaign = {
   status?: string;
 };
 
+export type CampaignCountsReturn = {
+  areas: number;
+  pois: number;
+  factions: number;
+  classes: number;
+  races: number;
+  npcs: number;
+  items: number;
+  spells: number;
+};
+
 export type InitiateCampaignReturn = {
   processId: string;
 };

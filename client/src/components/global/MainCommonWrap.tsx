@@ -1,16 +1,17 @@
-import { Layout, Menu, Dropdown, Button, Typography, Space, Avatar } from 'antd';
+import { Layout, Menu, Dropdown, Button, Avatar } from 'antd';
 import { Outlet } from 'react-router-dom';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
   FireOutlined,
+  MoreOutlined,
 } from '@ant-design/icons';
 import useMainCommonWrap from '@/hooks/global/useMainCommonWrap';
 import InitModal from '@/components/global/InitModal';
+import { palette } from '@/constants/theme';
 
-const { Header, Sider, Content } = Layout;
-const { Text } = Typography;
+const { Sider, Content } = Layout;
 
 export default function MainCommonWrap() {
   const {
@@ -28,56 +29,56 @@ export default function MainCommonWrap() {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        breakpoint="lg"
+        onBreakpoint={setCollapsed}
         style={styles.sider}
-        width={240}
+        width={264}
+        collapsedWidth={84}
       >
-        <div style={styles.brand}>
-          <FireOutlined style={styles.brandIcon} />
-          {!collapsed && (
-            <div style={styles.brandText}>
-              <span style={styles.brandTitle}>AGENTIC D&amp;D</span>
-              <span style={styles.brandSubtitle}>AI DUNGEON MASTER</span>
+        <div style={styles.siderInner}>
+          <div style={{ ...styles.brand, ...(collapsed ? styles.brandCollapsed : {}) }}>
+            <div style={styles.brandMark}>
+              <FireOutlined style={styles.brandIcon} />
             </div>
-          )}
+            {!collapsed && (
+              <div style={styles.brandText}>
+                <span style={styles.brandTitle}>Agentic D&amp;D</span>
+                <span style={styles.brandSubtitle}>AI Dungeon Master</span>
+              </div>
+            )}
+          </div>
+
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            items={menuItems}
+            style={{ ...styles.menu, ...(collapsed ? styles.menuCollapsed : {}) }}
+          />
+
+          <div style={styles.siderFooter}>
+            <Dropdown menu={{ items: userMenuItems }} placement="topLeft" trigger={['click']}>
+              <Button type="text" style={{ ...styles.userProfileBtn, ...(collapsed ? styles.userProfileBtnCollapsed : {}) }} aria-label={username}>
+                <span style={styles.userInfo}>
+                  <Avatar size={32} icon={<UserOutlined />} style={styles.userAvatar} />
+                  {!collapsed && <span style={styles.userName}>{username}</span>}
+                </span>
+                {!collapsed && <MoreOutlined style={styles.userMore} />}
+              </Button>
+            </Dropdown>
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              style={styles.collapseBtn}
+              aria-label="Toggle sidebar"
+            />
+          </div>
         </div>
-
-        <div style={styles.divider} />
-
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          items={menuItems}
-          style={styles.menu}
-        />
       </Sider>
 
       <Layout style={styles.innerLayout}>
-        <Header style={styles.header}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={styles.collapseBtn}
-          />
-
-          <div style={styles.headerRight}>
-            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow>
-              <Button type="text" style={styles.userProfileBtn}>
-                <Space>
-                  <Avatar
-                    size="small"
-                    icon={<UserOutlined />}
-                    style={styles.userAvatar}
-                  />
-                  <Text style={styles.userName}>{username}</Text>
-                </Space>
-              </Button>
-            </Dropdown>
-          </div>
-        </Header>
-
-        <Content style={styles.content}>
+        <Content style={styles.content} className="app-content">
           <div style={styles.contentInner}>
             <Outlet />
           </div>
@@ -91,104 +92,143 @@ export default function MainCommonWrap() {
 const styles: { [key: string]: React.CSSProperties } = {
   layout: {
     minHeight: '100vh',
-    background: '#0F1217',
+    background: palette.pageBg,
   },
   sider: {
-    background: '#141820',
-    borderRight: '1px solid #29303D',
-    boxShadow: '4px 0 16px rgba(0, 0, 0, 0.4)',
+    background: palette.sidebar,
+    position: 'sticky',
+    top: 0,
+    height: '100vh',
+    overflow: 'hidden',
+  },
+  siderInner: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '28px 0 16px 0',
   },
   brand: {
-    height: '64px',
     display: 'flex',
     alignItems: 'center',
+    gap: '14px',
     padding: '0 20px',
-    gap: '12px',
+    marginBottom: '36px',
+    minHeight: '52px',
+  },
+  brandMark: {
+    width: '44px',
+    height: '44px',
+    flexShrink: 0,
+    borderRadius: '12px',
+    background: palette.crimson,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
   },
   brandIcon: {
-    fontSize: '24px',
-    color: '#D95C14',
-    filter: 'drop-shadow(0 0 8px rgba(217, 92, 20, 0.6))',
+    fontSize: '20px',
+    color: '#F4EBD3',
   },
   brandText: {
     display: 'flex',
     flexDirection: 'column',
+    lineHeight: 1.2,
+    minWidth: 0,
   },
   brandTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '15px',
+    fontFamily: 'var(--font-display)',
+    fontSize: '22px',
     fontWeight: 700,
-    color: '#EDE6D6',
-    letterSpacing: '1.5px',
+    color: '#F4EBD3',
+    whiteSpace: 'nowrap',
   },
   brandSubtitle: {
-    fontSize: '9px',
-    color: '#C29B38',
+    fontFamily: 'var(--font-body)',
+    fontSize: '10px',
+    color: '#B89968',
     letterSpacing: '2px',
-    fontFamily: "'Cinzel', serif",
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
   },
-  divider: {
-    height: '1px',
-    background: 'linear-gradient(90deg, transparent, #353D4D, transparent)',
-    margin: '0 16px 12px',
+  brandCollapsed: {
+    justifyContent: 'center',
+    padding: 0,
+  },
+  menuCollapsed: {
+    paddingRight: 0,
+  },
+  userProfileBtnCollapsed: {
+    justifyContent: 'center',
+    padding: 0,
   },
   menu: {
+    flex: 1,
     background: 'transparent',
-    borderRight: 'none',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '14px',
-  },
-  innerLayout: {
-    background: '#0D0F14',
-  },
-  header: {
-    padding: '0 24px',
-    background: '#141820',
-    borderBottom: '1px solid #29303D',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: '64px',
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
-  },
-  collapseBtn: {
-    color: '#C29B38',
+    borderInlineEnd: 'none',
+    fontFamily: 'var(--font-body)',
     fontSize: '16px',
-    width: '40px',
-    height: '40px',
+    fontWeight: 500,
+    paddingRight: '20px',
   },
-  headerRight: {
+  siderFooter: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
+    flexDirection: 'column',
+    gap: '8px',
+    padding: '12px 14px 0',
+    borderTop: '1px solid rgba(238, 229, 204, 0.12)',
+    margin: '0 6px',
   },
   userProfileBtn: {
     display: 'flex',
     alignItems: 'center',
-    height: '42px',
-    padding: '0 12px',
-    borderRadius: '8px',
-    background: '#1A1F2A',
-    border: '1px solid #353D4D',
+    gap: '10px',
+    height: '48px',
+    padding: '0 8px',
+    borderRadius: '12px',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  userInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    minWidth: 0,
   },
   userAvatar: {
-    backgroundColor: '#D95C14',
-    color: '#FFFFFF',
+    backgroundColor: palette.crimson,
+    color: '#F4EBD3',
+    flexShrink: 0,
   },
   userName: {
-    color: '#EDE6D6',
+    color: '#F4EBD3',
     fontWeight: 600,
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
+    minWidth: 0,
+    maxWidth: '150px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    textAlign: 'left',
+  },
+  userMore: {
+    color: palette.sidebarText,
+  },
+  collapseBtn: {
+    color: palette.sidebarText,
+    height: '36px',
+    width: '100%',
+    justifyContent: 'center',
+  },
+  innerLayout: {
+    background: palette.pageBg,
+    minWidth: 0,
   },
   content: {
-    margin: '24px',
-    minHeight: 'calc(100vh - 112px)',
+    padding: '40px 48px 56px',
+    minHeight: '100vh',
   },
   contentInner: {
-    maxWidth: '1200px',
+    maxWidth: '1240px',
     margin: '0 auto',
     width: '100%',
   },

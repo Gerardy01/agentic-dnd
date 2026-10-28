@@ -7,3 +7,11 @@ export const CAMPAIGN_LANGUAGE_OPTIONS = [
   { value: CampaignLanguageEnum.KOR, label: '한국어 (KOR)' },
   { value: CampaignLanguageEnum.CHN, label: '中文 (CHN)' },
 ];
+
+export const CAMPAIGN_LANGUAGE_NAMES: Record<string, string> = {
+  [CampaignLanguageEnum.EN]: 'English',
+  [CampaignLanguageEnum.ID]: 'Indonesian',
+  [CampaignLanguageEnum.JP]: 'Japanese',
+  [CampaignLanguageEnum.KOR]: 'Korean',
+  [CampaignLanguageEnum.CHN]: 'Chinese',
+};

@@ -44,7 +44,7 @@ export default function CampaignFactionsTab({ factions }: CampaignFactionsTabPro
       <div style={styles.header}>
         <div style={styles.headerText}>
           <Title level={3} style={styles.title}>
-            <TeamOutlined style={{ marginRight: 8, color: '#D95C14' }} />
+            <TeamOutlined style={{ marginRight: 8, color: '#722B2B' }} />
             {t('campaignDetail.factions.title')}
           </Title>
           <Paragraph style={styles.subtitle}>
@@ -53,7 +53,7 @@ export default function CampaignFactionsTab({ factions }: CampaignFactionsTabPro
         </div>
 
         <Input
-          prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+          prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
           placeholder={t('campaignDetail.factions.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -90,7 +90,7 @@ export default function CampaignFactionsTab({ factions }: CampaignFactionsTabPro
                 <div style={styles.influenceSection}>
                   <div style={styles.influenceLabelRow}>
                     <Text style={styles.influenceLabel}>
-                      <ThunderboltOutlined style={{ marginRight: 4, color: '#C29B38' }} />
+                      <ThunderboltOutlined style={{ marginRight: 4, color: '#8B5E2B' }} />
                       {t('campaignDetail.factions.influenceLabel')}
                     </Text>
                     <Text style={styles.influenceValue}>{faction.influence}%</Text>
@@ -99,10 +99,10 @@ export default function CampaignFactionsTab({ factions }: CampaignFactionsTabPro
                     percent={faction.influence}
                     showInfo={false}
                     strokeColor={{
-                      '0%': '#C29B38',
-                      '100%': '#D95C14',
+                      '0%': '#8B5E2B',
+                      '100%': '#722B2B',
                     }}
-                    trailColor="#222834"
+                    trailColor="#DDD0AE"
                     size="small"
                   />
                 </div>
@@ -159,28 +159,28 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: '0 0 4px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '20px',
-    letterSpacing: '0.5px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '28px',
   },
   subtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     margin: 0,
   },
   searchInput: {
     width: '260px',
-    background: 'rgba(10, 13, 18, 0.8)',
-    borderColor: '#2D3748',
+    background: 'rgba(250, 243, 224, 0.8)',
+    borderColor: '#CDBE96',
     borderRadius: '6px',
-    color: '#EDE6D6',
+    color: '#2B1F17',
   },
   factionCard: {
-    background: 'linear-gradient(135deg, #161A23 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
@@ -195,8 +195,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '40px',
     height: '40px',
     borderRadius: '10px',
-    background: 'rgba(217, 92, 20, 0.12)',
-    border: '1px solid rgba(217, 92, 20, 0.3)',
+    background: 'rgba(114, 43, 43, 0.12)',
+    border: '1px solid rgba(114, 43, 43, 0.3)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -204,7 +204,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardIcon: {
     fontSize: '20px',
-    color: '#D95C14',
+    color: '#722B2B',
   },
   headerInfo: {
     flex: 1,
@@ -212,20 +212,21 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   factionName: {
     margin: '0 0 4px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   reputationTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '10px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '11px',
     letterSpacing: '0.5px',
     borderRadius: '4px',
     padding: '1px 6px',
   },
   influenceSection: {
-    background: 'rgba(10, 13, 18, 0.6)',
-    border: '1px solid #222834',
+    background: 'rgba(250, 243, 224, 0.6)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '10px 12px',
     marginBottom: '14px',
@@ -237,28 +238,28 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '6px',
   },
   influenceLabel: {
-    color: '#8D98AA',
-    fontSize: '11px',
-    fontFamily: "'Cinzel', serif",
+    color: '#6B5A48',
+    fontSize: '12px',
+    fontFamily: 'var(--font-body)',
     textTransform: 'uppercase',
   },
   influenceValue: {
-    color: '#EDE6D6',
+    color: '#2B1F17',
     fontWeight: 700,
-    fontSize: '12px',
+    fontSize: '13px',
   },
   descSection: {
     flex: 1,
   },
   descText: {
-    color: '#B0BAC9',
-    fontSize: '13px',
+    color: '#5E4E3C',
+    fontSize: '14px',
     lineHeight: 1.6,
     margin: 0,
   },
   emptyCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     padding: '40px 20px',
     textAlign: 'center',
@@ -268,11 +269,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   emptyTitle: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
   },
 };

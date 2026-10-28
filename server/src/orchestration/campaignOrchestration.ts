@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import sequelize from '@/config/database';
-import { CampaignDataReturn, CampaignListReturn, CampaignSuccessParameter } from '@/interfaces/ICampaign';
+import { CampaignCountsReturn, CampaignDataReturn, CampaignListReturn, CampaignSuccessParameter } from '@/interfaces/ICampaign';
 import { ICampaignService } from '@/services/campaignService';
 import { IFactionService } from '@/services/factionService';
 import { IWorldService } from '@/services/worldService';
@@ -62,6 +62,7 @@ export interface ICampaignOrchestration {
 
   getCampaigns(accountId: string): Promise<CampaignListReturn[]>;
   getCampaignById(campaignId: number, accountId: string): Promise<CampaignListReturn>;
+  getCampaignCounts(campaignId: number, accountId: string): Promise<CampaignCountsReturn>;
   deleteCampaign(campaignId: number, accountId: string): Promise<void>;
 }
 
@@ -1018,6 +1019,35 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       worldDescription: worldMap.get(campaign.id) ?? null,
       createdAt: campaign.createdAt,
     }));
+  }
+
+  /**
+   * Counts of every generated module of a campaign, without loading the modules themselves.
+   */
+  async getCampaignCounts(campaignId: number, accountId: string): Promise<CampaignCountsReturn> {
+    // Validate campaign exists and belongs to the authenticated user
+    await this.campaignService.getById(campaignId, accountId);
+
+    const [worldCounts, factions, classes, races, npcs, items, spells] = await Promise.all([
+      this.worldService.countAreasAndPOIsByCampaignId(campaignId),
+      this.factionService.countByCampaignId(campaignId),
+      this.classService.countByCampaignId(campaignId),
+      this.raceService.countByCampaignId(campaignId),
+      this.npcService.countByCampaignId(campaignId),
+      this.itemService.countByCampaignId(campaignId),
+      this.spellService.countByCampaignId(campaignId),
+    ]);
+
+    return {
+      areas: worldCounts.areas,
+      pois: worldCounts.pois,
+      factions,
+      classes,
+      races,
+      npcs,
+      items,
+      spells,
+    };
   }
 
   async getCampaignById(campaignId: number, accountId: string): Promise<CampaignListReturn> {

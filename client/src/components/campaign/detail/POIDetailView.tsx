@@ -135,7 +135,7 @@ export default function POIDetailView({
 
         {poi.descriptiveLocation && (
           <Text style={styles.locationSubtitle}>
-            <EnvironmentOutlined style={{ marginRight: 6, color: '#C29B38' }} />
+            <EnvironmentOutlined style={{ marginRight: 6, color: '#8B5E2B' }} />
             {poi.descriptiveLocation}
           </Text>
         )}
@@ -159,7 +159,7 @@ export default function POIDetailView({
         <Card style={styles.mapCard}>
           <div style={styles.mapHeader}>
             <div style={styles.mapTitleBlock}>
-              <CompassOutlined style={{ color: '#D95C14', fontSize: '16px' }} />
+              <CompassOutlined style={{ color: '#722B2B', fontSize: '16px' }} />
               <Text style={styles.mapTitle}>{t('campaignDetail.map.asciiTitle')}</Text>
 
               {parsedMapData && (
@@ -177,7 +177,7 @@ export default function POIDetailView({
             <div style={styles.actionButtons}>
               <Button
                 size="small"
-                icon={copiedAscii ? <CheckOutlined style={{ color: '#4CAF50' }} /> : <CopyOutlined />}
+                icon={copiedAscii ? <CheckOutlined style={{ color: '#3F7D4A' }} /> : <CopyOutlined />}
                 onClick={handleCopyAscii}
                 style={styles.actionBtn}
               >
@@ -187,7 +187,7 @@ export default function POIDetailView({
               {parsedMapData && (
                 <Button
                   size="small"
-                  icon={copiedJson ? <CheckOutlined style={{ color: '#4CAF50' }} /> : <CodeOutlined />}
+                  icon={copiedJson ? <CheckOutlined style={{ color: '#3F7D4A' }} /> : <CodeOutlined />}
                   onClick={handleCopyJson}
                   style={styles.actionBtn}
                 >
@@ -242,7 +242,7 @@ export default function POIDetailView({
             <div style={styles.legendContainer}>
               <div style={styles.legendHeader}>
                 <div style={styles.legendTitleRow}>
-                  <AppstoreOutlined style={{ color: '#D95C14', fontSize: '14px' }} />
+                  <AppstoreOutlined style={{ color: '#722B2B', fontSize: '14px' }} />
                   <Text style={styles.legendTitle}>{t('campaignDetail.map.legendTitle')}</Text>
                 </div>
                 <Text style={styles.legendHint}>{t('campaignDetail.map.hoverHint')}</Text>
@@ -295,10 +295,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   header: {
     padding: '16px 20px',
-    background: 'linear-gradient(135deg, #171C26 0%, #12151D 100%)',
-    border: '1px solid #2B3342',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #FAF3E0 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   topNavRow: {
     display: 'flex',
@@ -308,13 +308,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   backBtn: {
     padding: 0,
-    color: '#8D98AA',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '12px',
+    color: '#6B5A48',
+    fontFamily: 'var(--font-body)',
+    fontSize: '13px',
     letterSpacing: '0.3px',
   },
   poiTag: {
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.5px',
     fontWeight: 600,
     borderRadius: '4px',
@@ -322,19 +322,19 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '24px',
-    letterSpacing: '0.5px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '34px',
   },
   locationSubtitle: {
-    color: '#A0AEC0',
-    fontSize: '13px',
+    color: '#5E4E3C',
+    fontSize: '14px',
     fontStyle: 'italic',
   },
   sectionCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
   },
   sectionHeader: {
@@ -344,28 +344,28 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '10px',
   },
   sectionIcon: {
-    color: '#D95C14',
+    color: '#722B2B',
     fontSize: '15px',
   },
   sectionTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.5px',
-    fontSize: '13px',
+    fontSize: '14px',
     textTransform: 'uppercase',
     fontWeight: 600,
   },
   bodyText: {
-    color: '#B0BAC9',
+    color: '#5E4E3C',
     fontSize: '14px',
     lineHeight: 1.7,
     margin: 0,
   },
   mapCard: {
-    background: 'linear-gradient(135deg, #10141C 0%, #0A0D12 100%)',
-    border: '1px solid #283244',
+    background: 'linear-gradient(135deg, #F3EAD2 0%, #EDE3C6 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
-    boxShadow: '0 6px 24px rgba(0, 0, 0, 0.4)',
+    boxShadow: '0 6px 24px rgba(70, 45, 20, 0.18)',
     overflow: 'hidden',
   },
   mapHeader: {
@@ -383,9 +383,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   mapTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
     fontWeight: 600,
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
@@ -396,20 +396,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
   },
   dimensionTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     fontWeight: 600,
     borderRadius: '4px',
     padding: '0 6px',
     letterSpacing: '0.5px',
   },
   metaBadge: {
-    fontSize: '11px',
+    fontSize: '12px',
     borderRadius: '4px',
     padding: '0 6px',
-    color: '#8D98AA',
-    background: 'rgba(255, 255, 255, 0.04)',
-    borderColor: '#374151',
+    color: '#6B5A48',
+    background: 'rgba(70, 45, 20, 0.04)',
+    borderColor: '#CDBE96',
   },
   actionButtons: {
     display: 'flex',
@@ -417,20 +417,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '8px',
   },
   actionBtn: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     borderRadius: '4px',
-    background: 'rgba(255, 255, 255, 0.05)',
-    borderColor: '#374151',
-    color: '#EDE6D6',
+    background: 'rgba(70, 45, 20, 0.05)',
+    borderColor: '#CDBE96',
+    color: '#2B1F17',
   },
   asciiContainer: {
-    background: '#070A0E',
-    border: '1px solid #1C2330',
+    background: '#F3EAD2',
+    border: '1px solid #EFE6CC',
     borderRadius: '8px',
     padding: '16px',
     overflowX: 'auto',
-    boxShadow: 'inset 0 3px 12px rgba(0, 0, 0, 0.7)',
+    boxShadow: 'inset 0 3px 12px rgba(70, 45, 20, 0.32)',
   },
   gridWrapper: {
     display: 'inline-block',
@@ -447,17 +447,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '14px',
     height: '16px',
     fontFamily: "'Courier New', Courier, Consolas, monospace",
-    fontSize: '13px',
+    fontSize: '14px',
     fontWeight: 500,
-    color: '#E8A854',
+    color: '#9A6A2E',
     textShadow: '0 0 3px rgba(232, 168, 84, 0.25)',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
   },
   gridCellHovered: {
     color: '#FFFFFF',
-    backgroundColor: 'rgba(217, 92, 20, 0.45)',
-    boxShadow: '0 0 8px rgba(217, 92, 20, 0.6)',
+    backgroundColor: '#722B2B',
+    boxShadow: '0 0 8px rgba(114, 43, 43, 0.6)',
     borderRadius: '2px',
     fontWeight: 700,
     transform: 'scale(1.15)',
@@ -469,16 +469,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   asciiContent: {
     margin: 0,
     fontFamily: "'Courier New', Courier, Consolas, monospace",
-    fontSize: '13px',
+    fontSize: '14px',
     lineHeight: 1.25,
-    color: '#E8A854',
+    color: '#9A6A2E',
     textShadow: '0 0 4px rgba(232, 168, 84, 0.3)',
     whiteSpace: 'pre',
   },
   legendContainer: {
     marginTop: '16px',
     paddingTop: '16px',
-    borderTop: '1px solid #1D2433',
+    borderTop: '1px solid #EFE6CC',
   },
   legendHeader: {
     display: 'flex',
@@ -494,21 +494,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
   },
   legendTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '12px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
+    fontSize: '13px',
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
     fontWeight: 600,
   },
   legendHint: {
-    color: '#707C91',
-    fontSize: '11px',
+    color: '#8A7A66',
+    fontSize: '12px',
     fontStyle: 'italic',
   },
   legendItem: {
-    background: 'rgba(12, 16, 23, 0.7)',
-    border: '1px solid #222B3A',
+    background: '#F3EAD2',
+    border: '1px solid #DDD0AE',
     borderRadius: '6px',
     padding: '8px 10px',
     display: 'flex',
@@ -518,26 +518,26 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: 'all 0.2s ease',
   },
   legendItemHovered: {
-    background: 'rgba(217, 92, 20, 0.15)',
-    borderColor: '#D95C14',
-    boxShadow: '0 2px 10px rgba(217, 92, 20, 0.25)',
+    background: 'rgba(114, 43, 43, 0.15)',
+    borderColor: '#722B2B',
+    boxShadow: '0 2px 10px rgba(114, 43, 43, 0.25)',
     transform: 'translateY(-1px)',
   },
   symbolBadge: {
     width: '28px',
     height: '28px',
     borderRadius: '4px',
-    background: '#151A24',
-    border: '1px solid #374151',
+    background: '#F3EAD2',
+    border: '1px solid #CDBE96',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: "'Courier New', Courier, monospace",
     fontSize: '14px',
     fontWeight: 700,
-    color: '#E8A854',
+    color: '#9A6A2E',
     flexShrink: 0,
-    boxShadow: 'inset 0 1px 4px rgba(0, 0, 0, 0.4)',
+    boxShadow: 'inset 0 1px 4px rgba(70, 45, 20, 0.18)',
   },
   legendMeta: {
     display: 'flex',
@@ -546,15 +546,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     flex: 1,
   },
   legendName: {
-    color: '#EDE6D6',
-    fontSize: '12px',
+    color: '#2B1F17',
+    fontSize: '13px',
     fontWeight: 500,
     lineHeight: 1.3,
   },
   legendCount: {
-    color: '#8D98AA',
-    fontSize: '10px',
-    fontFamily: "'Cinzel', serif",
+    color: '#6B5A48',
+    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
   },
 };
 

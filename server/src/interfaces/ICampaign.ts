@@ -79,6 +79,17 @@ export type CampaignGameStateDataReturn = {
   updatedAt: Date;
 };
 
+export type CampaignCountsReturn = {
+  areas: number;
+  pois: number;
+  factions: number;
+  classes: number;
+  races: number;
+  npcs: number;
+  items: number;
+  spells: number;
+};
+
 export type CampaignListReturn = {
   id: number;
   accountId: string;

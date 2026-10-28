@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, type FormProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { campaignApi } from '@/api';
 import useNotification from '@/hooks/global/useNotification';
 import useStaticModal from '@/hooks/global/useStaticModal';
 import useTokenStore from '@/stores/useTokenStore';
-import { calculateCampaignProgressPercent } from '@/utils/utility';
+import { calculateCampaignProgressPercent, calculateCampaignSubProgressPercent } from '@/utils/utility';
 import { CampaignLanguageEnum } from '@/utils/enums';
 import type { CampaignDataReturn, CampaignSSEEvent } from '@/models/campaignInterfaces';
 import { CAMPAIGN_MODULE_KEYS, type CampaignModuleKey } from './useCampaignContinuation';
@@ -18,11 +19,23 @@ export interface CreateCampaignFormValues {
   language: string;
 }
 
-export default function useGenerateCampaignModal(
-  onClose: () => void,
-  onSuccess: (campaign: CampaignDataReturn) => void
-) {
+export const CAMPAIGN_PROMPT_MAX_LENGTH = 2000;
+
+export const CAMPAIGN_SEED_KEYS = [
+  'grimdark',
+  'highFantasy',
+  'gothicHorror',
+  'cosmicMystery',
+  'postApocalyptic',
+  'mythicBronzeAge',
+] as const;
+
+export type CampaignSeedKey = (typeof CAMPAIGN_SEED_KEYS)[number];
+
+export default function useCreateCampaign() {
+  const navigate = useNavigate();
   const [form] = Form.useForm<CreateCampaignFormValues>();
+  const promptValue = Form.useWatch('prompt', form) ?? '';
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -33,6 +46,7 @@ export default function useGenerateCampaignModal(
   const [progressStep, setProgressStep] = useState<string>('');
   const [progressSubStep, setProgressSubStep] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [progressSubPercent, setProgressSubPercent] = useState<number>(0);
   const [progressCurrent, setProgressCurrent] = useState<number>(0);
   const [progressTotal, setProgressTotal] = useState<number>(12);
 
@@ -52,27 +66,32 @@ export default function useGenerateCampaignModal(
     };
   }, []);
 
-  const handleCloseModal = useCallback(() => {
+  const closeEventSource = useCallback(() => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
       eventSourceRef.current = null;
     }
-    form.resetFields();
-    setCreationResult(null);
-    setErrorMsg('');
-    setProgressStep('');
-    setProgressSubStep('');
-    setProgressPercent(0);
-    setProgressCurrent(0);
-    onClose();
-  }, [form, onClose]);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    closeEventSource();
+    navigate('/campaigns');
+  }, [closeEventSource, navigate]);
 
   const handleFinishAndProceed = useCallback(() => {
+    closeEventSource();
     if (creationResult) {
-      onSuccess(creationResult);
+      navigate(`/campaigns/${creationResult.id}`);
+      return;
     }
-    handleCloseModal();
-  }, [creationResult, onSuccess, handleCloseModal]);
+    navigate('/campaigns');
+  }, [closeEventSource, creationResult, navigate]);
+
+  const handleAddSeed = useCallback((seedLabel: string) => {
+    const current: string = form.getFieldValue('prompt') ?? '';
+    const next = current.trim() ? `${current.trim()} ${seedLabel}.` : `${seedLabel}.`;
+    form.setFieldValue('prompt', next.slice(0, CAMPAIGN_PROMPT_MAX_LENGTH));
+  }, [form]);
 
   const subscribeToSSE = useCallback((processId: string) => {
     const accessToken = useTokenStore.getState().accessToken;
@@ -96,10 +115,12 @@ export default function useGenerateCampaignModal(
           setProgressCurrent(payload.current);
           setProgressTotal(payload.total);
           setProgressPercent(calculateCampaignProgressPercent(payload));
+          setProgressSubPercent(calculateCampaignSubProgressPercent(payload));
         } else if (payload.type === 'complete') {
           es.close();
           eventSourceRef.current = null;
           setProgressPercent(100);
+          setProgressSubPercent(100);
           setLoading(false);
           setCreationResult(payload.data);
 
@@ -141,6 +162,7 @@ export default function useGenerateCampaignModal(
     setProgressStep(t('campaigns.progressInitial'));
     setProgressSubStep('');
     setProgressPercent(3);
+    setProgressSubPercent(0);
     setProgressCurrent(0);
 
     try {
@@ -200,6 +222,7 @@ export default function useGenerateCampaignModal(
     setProgressStep(t('campaigns.progressInitial'));
     setProgressSubStep('');
     setProgressPercent(3);
+    setProgressSubPercent(0);
     setProgressCurrent(0);
 
     try {
@@ -254,14 +277,17 @@ export default function useGenerateCampaignModal(
     progressStep,
     progressSubStep,
     progressPercent,
+    progressSubPercent,
     progressCurrent,
     progressTotal,
     creationResult,
     isAllSuccess,
     firstFailedModule,
+    promptValue,
     submitGenerateCampaign,
     handleContinueCampaign,
     handleFinishAndProceed,
-    handleCloseModal,
+    handleAddSeed,
+    handleCancel,
   };
 }

@@ -62,7 +62,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
       <div style={styles.header}>
         <div style={styles.headerText}>
           <Title level={3} style={styles.title}>
-            <SmileOutlined style={{ marginRight: 8, color: '#D95C14' }} />
+            <SmileOutlined style={{ marginRight: 8, color: '#722B2B' }} />
             {t('campaignDetail.npcs.title')}
           </Title>
           <Paragraph style={styles.subtitle}>
@@ -83,7 +83,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
             ]}
           />
           <Input
-            prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+            prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
             placeholder={t('campaignDetail.npcs.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -137,7 +137,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
                 {/* Location */}
                 {npc.location && (
                   <div style={styles.locationRow}>
-                    <EnvironmentOutlined style={{ color: '#C29B38', marginRight: 6 }} />
+                    <EnvironmentOutlined style={{ color: '#8B5E2B', marginRight: 6 }} />
                     <Text style={styles.locationText} ellipsis>
                       {npc.location.poiName}
                     </Text>
@@ -153,7 +153,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
                 {npc.mannerism && (
                   <div style={styles.mannerismBox}>
                     <div style={styles.mannerismHeader}>
-                      <CommentOutlined style={{ color: '#C29B38', marginRight: 4, fontSize: '11px' }} />
+                      <CommentOutlined style={{ color: '#8B5E2B', marginRight: 4, fontSize: '12px' }} />
                       <Text style={styles.mannerismTitle}>Roleplay Mannerism</Text>
                     </div>
                     <Paragraph style={styles.mannerismText} ellipsis={{ rows: 2 }}>
@@ -199,7 +199,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
           styles={{
             mask: {
               backdropFilter: 'blur(8px)',
-              backgroundColor: 'rgba(7, 9, 13, 0.85)',
+              backgroundColor: 'rgba(43, 31, 23, 0.85)',
             },
             body: styles.modalBody,
           }}
@@ -208,7 +208,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
             {/* Modal Header */}
             <div style={styles.modalHeader}>
               <div style={styles.modalIconWrap}>
-                <SmileOutlined style={{ fontSize: '28px', color: '#D95C14' }} />
+                <SmileOutlined style={{ fontSize: '28px', color: '#722B2B' }} />
               </div>
               <div style={{ flex: 1 }}>
                 <div style={styles.modalBadgeRow}>
@@ -242,7 +242,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
             {selectedNpc.mannerism && (
               <div style={styles.modalMannerismCard}>
                 <div style={styles.modalMannerismHeader}>
-                  <CommentOutlined style={{ color: '#D95C14', fontSize: '14px' }} />
+                  <CommentOutlined style={{ color: '#722B2B', fontSize: '14px' }} />
                   <Text style={styles.modalMannerismTitle}>
                     {t('campaignDetail.npcs.modal.mannerismTitle')}
                   </Text>
@@ -359,7 +359,7 @@ export default function CampaignNpcsTab({ npcs }: CampaignNpcsTabProps) {
                             {selectedNpc.combatProfile.actions && selectedNpc.combatProfile.actions.length > 0 && (
                               <div style={styles.modalSection}>
                                 <Text style={styles.modalSectionTitle}>
-                                  <ThunderboltOutlined style={{ marginRight: 6, color: '#D95C14' }} />
+                                  <ThunderboltOutlined style={{ marginRight: 6, color: '#722B2B' }} />
                                   {t('campaignDetail.npcs.modal.actionsTitle')}
                                 </Text>
                                 <div style={styles.actionsList}>
@@ -404,15 +404,15 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '20px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '28px',
   },
   subtitle: {
     margin: '4px 0 0',
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     lineHeight: 1.5,
   },
   filterGroup: {
@@ -426,14 +426,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   searchInput: {
     width: '260px',
     borderRadius: '8px',
-    background: '#0E1117',
-    borderColor: '#262D3D',
-    color: '#FFFFFF',
+    background: '#F3EAD2',
+    borderColor: '#DDD0AE',
+    color: '#2B1F17',
     height: '38px',
   },
   npcCard: {
-    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
-    border: '1px solid #232936',
+    background: 'linear-gradient(135deg, rgba(250, 243, 224, 0.95) 0%, rgba(250, 243, 224, 0.98) 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     padding: '4px',
     transition: 'all 0.25s ease',
@@ -441,7 +441,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   cardHeader: {
     display: 'flex',
@@ -453,8 +453,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '42px',
     height: '42px',
     borderRadius: '10px',
-    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.25) 0%, rgba(194, 155, 56, 0.1) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.6)',
+    background: 'linear-gradient(135deg, rgba(114, 43, 43, 0.25) 0%, rgba(139, 94, 43, 0.1) 100%)',
+    border: '1px solid rgba(114, 43, 43, 0.6)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -462,8 +462,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardIcon: {
     fontSize: '20px',
-    color: '#D95C14',
-    filter: 'drop-shadow(0 0 6px rgba(217, 92, 20, 0.6))',
+    color: '#722B2B',
+    filter: 'drop-shadow(0 0 6px rgba(114, 43, 43, 0.6))',
   },
   headerInfo: {
     flex: 1,
@@ -471,10 +471,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   npcName: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   badgeRow: {
     display: 'flex',
@@ -484,19 +484,19 @@ const styles: { [key: string]: React.CSSProperties } = {
   raceTag: {
     borderRadius: '4px',
     fontSize: '10.5px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     margin: 0,
   },
   alignmentTag: {
     borderRadius: '4px',
     fontSize: '10.5px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     margin: 0,
   },
   combatTag: {
     borderRadius: '4px',
     fontSize: '10.5px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     fontWeight: 600,
     margin: 0,
   },
@@ -506,20 +506,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '8px',
   },
   locationText: {
-    fontSize: '12px',
-    color: '#C29B38',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    color: '#8B5E2B',
+    fontFamily: 'var(--font-body)',
     fontWeight: 600,
   },
   personalitySnippet: {
-    color: '#9CA7BA',
+    color: '#5E4E3C',
     fontSize: '12.5px',
     lineHeight: 1.5,
     marginBottom: '10px',
   },
   mannerismBox: {
-    background: 'rgba(217, 92, 20, 0.08)',
-    borderLeft: '3px solid #D95C14',
+    background: 'rgba(114, 43, 43, 0.08)',
+    borderLeft: '3px solid #722B2B',
     borderRadius: '4px',
     padding: '8px 10px',
     marginBottom: '12px',
@@ -531,15 +531,15 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   mannerismTitle: {
     fontSize: '10.5px',
-    color: '#D95C14',
-    fontFamily: "'Cinzel', serif",
+    color: '#722B2B',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
   },
   mannerismText: {
-    color: '#EDE6D6',
-    fontSize: '12px',
+    color: '#2B1F17',
+    fontSize: '13px',
     lineHeight: 1.5,
     margin: 0,
     fontStyle: 'italic',
@@ -549,34 +549,35 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: '10px',
-    borderTop: '1px solid #1E2430',
+    borderTop: '1px solid #DDD0AE',
     marginTop: 'auto',
   },
   inspectText: {
-    fontSize: '12px',
-    color: '#D95C14',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    color: '#722B2B',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.3px',
     fontWeight: 600,
   },
   inspectArrow: {
-    fontSize: '11px',
-    color: '#D95C14',
+    fontSize: '12px',
+    color: '#722B2B',
   },
   emptyContainer: {
     padding: '60px 0',
     textAlign: 'center',
   },
   emptyTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
     display: 'block',
     marginBottom: '6px',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     maxWidth: '400px',
     margin: '0 auto',
   },
@@ -597,12 +598,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '56px',
     height: '56px',
     borderRadius: '14px',
-    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.3) 0%, rgba(194, 155, 56, 0.15) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.8)',
+    background: 'linear-gradient(135deg, rgba(114, 43, 43, 0.3) 0%, rgba(139, 94, 43, 0.15) 100%)',
+    border: '1px solid rgba(114, 43, 43, 0.8)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 0 20px rgba(217, 92, 20, 0.3)',
+    boxShadow: '0 0 20px rgba(114, 43, 43, 0.3)',
   },
   modalBadgeRow: {
     display: 'flex',
@@ -611,26 +612,26 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   modalTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
   },
   modalTitle: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '22px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '31px',
   },
   modalDivider: {
-    borderColor: '#262D3D',
+    borderColor: '#DDD0AE',
     margin: '4px 0',
   },
   modalMannerismCard: {
-    background: 'linear-gradient(135deg, rgba(217, 92, 20, 0.15) 0%, rgba(194, 155, 56, 0.08) 100%)',
-    border: '1px solid rgba(217, 92, 20, 0.5)',
+    background: 'linear-gradient(135deg, rgba(114, 43, 43, 0.15) 0%, rgba(139, 94, 43, 0.08) 100%)',
+    border: '1px solid rgba(114, 43, 43, 0.5)',
     borderRadius: '10px',
     padding: '12px 16px',
-    boxShadow: '0 0 16px rgba(217, 92, 20, 0.15)',
+    boxShadow: '0 0 16px rgba(114, 43, 43, 0.15)',
   },
   modalMannerismHeader: {
     display: 'flex',
@@ -639,23 +640,23 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '6px',
   },
   modalMannerismTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '12px',
-    color: '#D95C14',
+    fontFamily: 'var(--font-body)',
+    fontSize: '13px',
+    color: '#722B2B',
     fontWeight: 700,
     letterSpacing: '0.5px',
     textTransform: 'uppercase',
   },
   modalMannerismText: {
-    color: '#EDE6D6',
-    fontSize: '13px',
+    color: '#2B1F17',
+    fontSize: '14px',
     lineHeight: 1.6,
     margin: 0,
     fontStyle: 'italic',
   },
   dossierTabLabel: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
   },
   dossierTabContent: {
     display: 'flex',
@@ -669,15 +670,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
   },
   modalSectionTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    color: '#EDE6D6',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
+    color: '#2B1F17',
     letterSpacing: '0.5px',
     fontWeight: 700,
   },
   modalSectionText: {
-    color: '#C7D0DE',
-    fontSize: '13px',
+    color: '#5E4E3C',
+    fontSize: '14px',
     lineHeight: 1.6,
     margin: 0,
   },
@@ -690,8 +691,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   combatStatBar: {
     display: 'flex',
     justifyContent: 'space-around',
-    background: 'rgba(14, 17, 23, 0.85)',
-    border: '1px solid #232936',
+    background: 'rgba(250, 243, 224, 0.85)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '12px',
   },
@@ -701,15 +702,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
   },
   combatStatLabel: {
-    fontSize: '11px',
-    color: '#8D98AA',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '12px',
+    color: '#6B5A48',
+    fontFamily: 'var(--font-body)',
     textTransform: 'uppercase',
   },
   combatStatValue: {
     fontSize: '18px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
   },
   abilityGrid: {
@@ -722,20 +723,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    background: 'rgba(14, 17, 23, 0.7)',
-    border: '1px solid #262D3D',
+    background: 'rgba(250, 243, 224, 0.7)',
+    border: '1px solid #DDD0AE',
     borderRadius: '6px',
     padding: '6px',
   },
   abilityKey: {
-    fontSize: '10px',
-    color: '#8D98AA',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '11px',
+    color: '#6B5A48',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
   },
   abilityVal: {
     fontSize: '14px',
-    color: '#C29B38',
+    color: '#8B5E2B',
     fontWeight: 700,
   },
   actionsList: {
@@ -745,22 +746,22 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginTop: '6px',
   },
   actionCard: {
-    background: 'rgba(14, 17, 23, 0.75)',
-    border: '1px solid #232936',
+    background: 'rgba(250, 243, 224, 0.75)',
+    border: '1px solid #DDD0AE',
     borderRadius: '6px',
     padding: '8px 12px',
   },
   actionName: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
     fontWeight: 700,
     display: 'block',
     marginBottom: '2px',
   },
   actionDesc: {
-    color: '#9CA7BA',
-    fontSize: '12px',
+    color: '#5E4E3C',
+    fontSize: '13px',
     lineHeight: 1.5,
     margin: 0,
   },

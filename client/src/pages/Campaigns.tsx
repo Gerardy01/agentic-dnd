@@ -1,4 +1,4 @@
-import { Typography, Button, Tag, Row, Col, Card, Spin } from 'antd';
+import { Typography, Button, Row, Col, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   FireOutlined,
@@ -7,58 +7,44 @@ import {
 } from '@ant-design/icons';
 import useCampaigns from '@/hooks/campaign/useCampaigns';
 import CampaignCard from '@/components/campaign/CampaignCard';
-import GenerateCampaignModal from '@/components/campaign/GenerateCampaignModal';
+import { palette } from '@/constants/theme';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 export default function Campaigns() {
   const {
     campaigns,
     loading,
-    isGenerateModalOpen,
-    handleOpenGenerateModal,
-    handleCloseGenerateModal,
-    handleCampaignCreated,
+    handleCreateCampaign,
     handleSelectCampaign,
   } = useCampaigns();
 
   const { t } = useTranslation();
 
   return (
-    <div style={styles.container}>
-      {/* Top Header Banner */}
-      <div style={styles.banner}>
-        <div style={styles.bannerContent}>
-          <div style={styles.bannerLeft}>
-            <div style={styles.tagWrapper}>
-              <Tag color="orange" style={styles.tag}>
-                <FireOutlined style={{ marginRight: 4 }} />
-                {t('campaigns.badge')}
-              </Tag>
-            </div>
-            <Title level={1} style={styles.bannerTitle}>
-              {t('campaigns.pageTitle')}
-            </Title>
-            <Paragraph style={styles.bannerSubtitle}>
-              {t('campaigns.pageSubtitle')}
-            </Paragraph>
+    <div>
+      <header style={styles.header}>
+        <div style={styles.headerText}>
+          <div style={styles.eyebrow}>
+            <FireOutlined />
+            <span>{t('campaigns.badge')}</span>
           </div>
-
-          <div style={styles.bannerActions}>
-            <Button
-              type="primary"
-              size="large"
-              icon={<PlusOutlined />}
-              onClick={handleOpenGenerateModal}
-              style={styles.generateBtn}
-            >
-              {t('campaigns.generateBtn')}
-            </Button>
-          </div>
+          <h1 style={styles.title}>{t('campaigns.pageTitle')}</h1>
+          <p style={styles.subtitle}>{t('campaigns.pageSubtitle')}</p>
         </div>
-      </div>
 
-      {/* Campaigns Listing, Loading, or Empty State */}
+        {campaigns.length > 0 && (
+          <Button
+            type="primary"
+            size="large"
+            icon={<PlusOutlined />}
+            onClick={handleCreateCampaign}
+          >
+            {t('campaigns.generateBtn')}
+          </Button>
+        )}
+      </header>
+
       {loading ? (
         <div style={styles.loadingContainer}>
           <Spin size="large" />
@@ -67,9 +53,9 @@ export default function Campaigns() {
           </Paragraph>
         </div>
       ) : campaigns.length > 0 ? (
-        <Row gutter={[20, 20]} style={styles.grid}>
+        <Row gutter={[24, 24]}>
           {campaigns.map((campaign) => (
-            <Col xs={24} sm={12} lg={8} key={campaign.id}>
+            <Col xs={24} md={12} xl={8} key={campaign.id}>
               <CampaignCard
                 campaign={campaign}
                 onSelect={handleSelectCampaign}
@@ -78,115 +64,73 @@ export default function Campaigns() {
           ))}
         </Row>
       ) : (
-        <Card style={styles.emptyCard}>
-          <div style={styles.emptyContainer}>
-            <div style={styles.emptyIconWrapper}>
-              <BookOutlined style={styles.emptyIcon} />
-            </div>
-            <Title level={3} style={styles.emptyTitle}>
-              {t('campaigns.emptyTitle')}
-            </Title>
-            <Paragraph style={styles.emptySubtitle}>
-              {t('campaigns.emptySubtitle')}
-            </Paragraph>
-            <Button
-              type="primary"
-              size="large"
-              icon={<FireOutlined />}
-              onClick={handleOpenGenerateModal}
-              style={styles.emptyActionBtn}
-            >
-              {t('campaigns.emptyAction')}
-            </Button>
+        <div style={styles.emptyCard}>
+          <div style={styles.emptyIconWrapper}>
+            <BookOutlined style={styles.emptyIcon} />
           </div>
-        </Card>
+          <h2 style={styles.emptyTitle}>{t('campaigns.emptyTitle')}</h2>
+          <Paragraph style={styles.emptySubtitle}>
+            {t('campaigns.emptySubtitle')}
+          </Paragraph>
+          <Button
+            type="primary"
+            size="large"
+            icon={<FireOutlined />}
+            onClick={handleCreateCampaign}
+          >
+            {t('campaigns.emptyAction')}
+          </Button>
+        </div>
       )}
-
-      {/* Generate Campaign Modal */}
-      <GenerateCampaignModal
-        isOpen={isGenerateModalOpen}
-        onClose={handleCloseGenerateModal}
-        onSuccess={handleCampaignCreated}
-      />
     </div>
   );
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: '8px 0',
-  },
-  banner: {
-    padding: '28px 32px',
-    borderRadius: '16px',
-    background: 'linear-gradient(135deg, #181D26 0%, #101319 100%)',
-    border: '1px solid #2B3342',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
-    marginBottom: '28px',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  bannerContent: {
+  header: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: '20px',
-    position: 'relative',
-    zIndex: 1,
+    marginBottom: '36px',
   },
-  bannerLeft: {
+  headerText: {
     flex: 1,
     minWidth: '280px',
   },
-  bannerActions: {
+  eyebrow: {
     display: 'flex',
     alignItems: 'center',
-  },
-  tagWrapper: {
+    gap: '8px',
+    color: palette.bronze,
+    fontSize: '13px',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
     marginBottom: '6px',
   },
-  tag: {
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    borderRadius: '4px',
-    padding: '2px 8px',
+  title: {
+    fontFamily: 'var(--font-display)',
+    fontSize: 'clamp(36px, 5vw, 52px)',
+    fontWeight: 700,
+    lineHeight: 1.1,
+    color: palette.ink,
+    margin: '0 0 12px',
   },
-  bannerTitle: {
-    margin: '4px 0 8px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '1px',
-    fontSize: '26px',
-  },
-  bannerSubtitle: {
-    color: '#8D98AA',
-    fontSize: '14px',
-    maxWidth: '620px',
+  subtitle: {
+    color: palette.inkMuted,
+    fontSize: '17px',
+    maxWidth: '680px',
     margin: 0,
   },
-  generateBtn: {
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontWeight: 600,
-    height: '46px',
-    padding: '0 24px',
-    boxShadow: '0 4px 16px rgba(217, 92, 20, 0.4)',
-  },
-  grid: {
-    marginTop: '4px',
-  },
   emptyCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #101319 100%)',
-    border: '1px solid #28303F',
-    borderRadius: '16px',
-    padding: '48px 24px',
-    textAlign: 'center',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-  },
-  emptyContainer: {
-    maxWidth: '520px',
+    background: palette.surface,
+    border: `1px solid ${palette.border}`,
+    borderRadius: '24px',
+    padding: '64px 24px',
+    maxWidth: '640px',
     margin: '0 auto',
+    textAlign: 'center',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -195,38 +139,26 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '72px',
     height: '72px',
     borderRadius: '20px',
-    background: 'rgba(217, 92, 20, 0.12)',
-    border: '1px solid rgba(217, 92, 20, 0.3)',
+    background: palette.crimson,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '20px',
-    boxShadow: '0 0 24px rgba(217, 92, 20, 0.2)',
+    marginBottom: '24px',
   },
   emptyIcon: {
     fontSize: '32px',
-    color: '#D95C14',
+    color: '#F4EBD3',
   },
   emptyTitle: {
-    margin: '0 0 10px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.5px',
-    fontSize: '20px',
+    fontFamily: 'var(--font-display)',
+    fontSize: '32px',
+    color: palette.ink,
+    margin: '0 0 12px',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
-    lineHeight: 1.6,
-    marginBottom: '24px',
-  },
-  emptyActionBtn: {
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontWeight: 600,
-    height: '44px',
-    padding: '0 24px',
-    boxShadow: '0 4px 16px rgba(217, 92, 20, 0.4)',
+    color: palette.inkMuted,
+    fontSize: '16px',
+    marginBottom: '28px',
   },
   loadingContainer: {
     padding: '80px 0',
@@ -237,10 +169,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '16px',
   },
   loadingText: {
-    color: '#8D98AA',
-    fontSize: '14px',
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
+    color: palette.inkMuted,
     margin: 0,
   },
 };

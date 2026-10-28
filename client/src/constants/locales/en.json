@@ -141,7 +141,58 @@
     "continueSuccessTitle": "Campaign Generation Resumed!",
     "continueSuccessMessage": "Campaign modules are now being generated. Please wait.",
     "generationIncompleteAlertDetail": "This campaign has incomplete modules",
-    "generationIncompleteDescDetail": "Some modules failed to generate during initial creation. You can resume generation from where it left off."
+    "generationIncompleteDescDetail": "Some modules failed to generate during initial creation. You can resume generation from where it left off.",
+    "createBackLink": "Back to Chronicles",
+    "createSubtitle": "Name your realm and describe the world you envision. The AI Dungeon Master will dynamically construct its geography, factions, classes, races, and lore around your vision.",
+    "scribeNoteTitle": "A scribe's note on guiding your world's creation",
+    "scribeNoteDesc": "Describe the mood (grimdark, high fantasy, gothic horror, cosmic mystery), magic density, dominant factions, geography, conflicts, or mythological roots. The more specific your vision, the more faithfully the AI Dungeon Master will weave it into your map, factions, classes, races, and lore.",
+    "seedsTitle": "Need inspiration? Add a seed to your vision",
+    "seeds": {
+      "grimdark": "Grimdark",
+      "highFantasy": "High Fantasy",
+      "gothicHorror": "Gothic Horror",
+      "cosmicMystery": "Cosmic Mystery",
+      "postApocalyptic": "Post-Apocalyptic",
+      "mythicBronzeAge": "Mythic Bronze Age"
+    },
+    "forgeTitle": "What the AI Will Forge",
+    "forgeSubtitle": "Generated automatically from your vision. Each piece can be reviewed and expanded once your realm awakens.",
+    "forgeItems": {
+      "world": {
+        "title": "World Map & Geography",
+        "desc": "Continents, kingdoms, and points of interest"
+      },
+      "factions": {
+        "title": "Starting Factions",
+        "desc": "Reputation and influence toward the party"
+      },
+      "classes": {
+        "title": "Classes & Archetypes",
+        "desc": "Features, resources, and spellcasting"
+      },
+      "races": {
+        "title": "Races & Lineages",
+        "desc": "Traits, speed, and languages"
+      },
+      "npcs": {
+        "title": "Key NPCs",
+        "desc": "Personalities, backstories, and mannerisms"
+      },
+      "items": {
+        "title": "Starting Relics & Items",
+        "desc": "Weapons, armor, and curiosities"
+      },
+      "spells": {
+        "title": "Spells & Incantations",
+        "desc": "Schools, ranges, and saving throws"
+      }
+    },
+    "forgeResumeNote": "If any piece fails to generate, you can safely resume from where it left off — nothing already forged is lost.",
+    "promptCounter": "{{count}} / {{max}}",
+    "progressOverall": "Overall progress",
+    "progressCurrentTask": "Current task",
+    "progressStepOf": "Step {{current}} of {{total}}",
+    "submitHint": "Ready to begin? Forging takes a few minutes — keep this page open while the AI Dungeon Master weaves your realm."
   },
   "campaignDetail": {
     "backToCampaigns": "Back to Chronicles",
@@ -366,7 +417,15 @@
       "nameDoesNotMatch": "Campaign name does not match",
       "success": "Campaign deleted successfully",
       "failed": "Failed to delete campaign"
-    }
+    },
+    "narratedIn": "Narrated in {{language}}",
+    "exportCodex": "Export Codex",
+    "enterAdventureDesc": "The AI Dungeon Master has woven this world's foundation. Explore what's been forged so far.",
+    "exploreMapBtn": "Explore the World Map",
+    "viewWorldMap": "View World Map",
+    "inscribed": "Inscribed {{date}}",
+    "startingRegion": "Starting region: {{region}}",
+    "areasCount": "{{count}} Areas",
+    "themeVisionNote": "Your original vision"
   }
 }
-

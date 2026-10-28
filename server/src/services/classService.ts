@@ -129,6 +129,7 @@ export interface IClassService {
   linkSpellsToClasses(links: ClassSpellLinkDTO[], transaction?: Transaction): Promise<void>;
   getSpellLinksByClassIds(classIds: number[]): Promise<ClassSpellLinkDTO[]>;
   getByCampaignId(campaignId: number): Promise<ClassDataReturn[]>;
+  countByCampaignId(campaignId: number): Promise<number>;
   getSpellcasterClasses(classes: ClassDataReturn[]): SpellcasterClassContext[];
 }
 
@@ -493,6 +494,10 @@ export class ClassService implements IClassService {
       classId: classSpell.class_id,
       spellId: classSpell.spell_id,
     }));
+  }
+
+  async countByCampaignId(campaignId: number): Promise<number> {
+    return Class.count({ where: { campaign_id: campaignId } });
   }
 
   async getByCampaignId(campaignId: number): Promise<ClassDataReturn[]> {

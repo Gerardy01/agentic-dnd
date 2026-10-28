@@ -29,6 +29,12 @@ const MIN_PROGRESS_PERCENT = 3;
  * Overall campaign generation progress: main steps finished before the current one,
  * plus the share of the current step that its sub-progress reports as done.
  */
+export const calculateCampaignSubProgressPercent = (event: CampaignSSEStepEvent): number => {
+  if (!event.sub || event.sub.total <= 0) return 0;
+
+  return Math.min(100, Math.max(0, Math.round((event.sub.current / event.sub.total) * 100)));
+};
+
 export const calculateCampaignProgressPercent = (event: CampaignSSEStepEvent): number => {
   const finishedSteps = Math.max(0, event.current - 1);
   const currentStepShare = event.sub && event.sub.total > 0 ? Math.min(1, event.sub.current / event.sub.total) : 0;

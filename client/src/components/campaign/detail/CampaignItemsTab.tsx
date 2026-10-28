@@ -19,12 +19,12 @@ interface CampaignItemsTabProps {
 }
 
 export const RARITY_COLOR_MAP: Record<string, string> = {
-  common: '#8D98AA',
-  uncommon: '#2ECC71',
-  rare: '#3498DB',
-  very_rare: '#9B59B6',
-  legendary: '#F39C12',
-  artifact: '#E74C3C',
+  common: '#6B5A48',
+  uncommon: '#3F7D4A',
+  rare: '#3E6A8A',
+  very_rare: '#7A4B8F',
+  legendary: '#B7791F',
+  artifact: '#A33A2E',
 };
 
 export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
@@ -54,8 +54,8 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
   }, [items, searchQuery, typeFilter, rarityFilter]);
 
   const getRarityColor = (rarity: string | null) => {
-    if (!rarity) return '#8D98AA';
-    return RARITY_COLOR_MAP[rarity.toLowerCase()] || '#8D98AA';
+    if (!rarity) return '#6B5A48';
+    return RARITY_COLOR_MAP[rarity.toLowerCase()] || '#6B5A48';
   };
 
   return (
@@ -64,7 +64,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
       <div style={styles.header}>
         <div style={styles.headerText}>
           <Title level={3} style={styles.title}>
-            <GiftOutlined style={{ marginRight: 8, color: '#D95C14' }} />
+            <GiftOutlined style={{ marginRight: 8, color: '#722B2B' }} />
             {t('campaignDetail.items.title')}
           </Title>
           <Paragraph style={styles.subtitle}>
@@ -99,7 +99,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
             ]}
           />
           <Input
-            prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+            prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
             placeholder={t('campaignDetail.items.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -164,7 +164,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
                   {/* Weapon Mechanics */}
                   {item.weaponProperties && (
                     <div style={styles.propsRow}>
-                      <FireOutlined style={{ color: '#D95C14', marginRight: 4 }} />
+                      <FireOutlined style={{ color: '#722B2B', marginRight: 4 }} />
                       <Text style={styles.propValue}>{item.weaponProperties.damage}</Text>
                       {item.weaponProperties.properties?.map((p, idx) => (
                         <Tag key={idx} style={styles.microTag}>
@@ -177,7 +177,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
                   {/* Armor Mechanics */}
                   {item.armorProperties && (
                     <div style={styles.propsRow}>
-                      <SafetyOutlined style={{ color: '#3498DB', marginRight: 4 }} />
+                      <SafetyOutlined style={{ color: '#3E6A8A', marginRight: 4 }} />
                       <Text style={styles.propValue}>{item.armorProperties.ac} AC</Text>
                       {item.armorProperties.strRequirements > 0 && (
                         <Tag style={styles.microTag}>
@@ -200,7 +200,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
                   {/* Cost & Weight */}
                   <div style={styles.costWeightRow}>
                     <Text style={styles.costText}>
-                      <DollarOutlined style={{ marginRight: 3, color: '#C29B38' }} />
+                      <DollarOutlined style={{ marginRight: 3, color: '#8B5E2B' }} />
                       {item.cost} gp
                     </Text>
                     <Text style={styles.weightText}>
@@ -246,7 +246,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
           styles={{
             mask: {
               backdropFilter: 'blur(8px)',
-              backgroundColor: 'rgba(7, 9, 13, 0.85)',
+              backgroundColor: 'rgba(43, 31, 23, 0.85)',
             },
             body: styles.modalBody,
           }}
@@ -303,7 +303,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
               {selectedItem.weaponProperties && (
                 <div style={styles.mechItem}>
                   <Text style={styles.mechLabel}>{t('campaignDetail.items.modal.damage')}</Text>
-                  <Text style={{ ...styles.mechVal, color: '#D95C14' }}>
+                  <Text style={{ ...styles.mechVal, color: '#722B2B' }}>
                     {selectedItem.weaponProperties.damage}
                   </Text>
                 </div>
@@ -311,7 +311,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
               {selectedItem.armorProperties && (
                 <div style={styles.mechItem}>
                   <Text style={styles.mechLabel}>{t('campaignDetail.items.modal.ac')}</Text>
-                  <Text style={{ ...styles.mechVal, color: '#3498DB' }}>
+                  <Text style={{ ...styles.mechVal, color: '#3E6A8A' }}>
                     +{selectedItem.armorProperties.ac}
                   </Text>
                 </div>
@@ -364,7 +364,7 @@ export default function CampaignItemsTab({ items }: CampaignItemsTabProps) {
             {selectedItem.flatBonus && selectedItem.flatBonus.length > 0 && (
               <div style={styles.modalSection}>
                 <Text style={styles.modalSectionTitle}>
-                  <ThunderboltOutlined style={{ marginRight: 6, color: '#C29B38' }} />
+                  <ThunderboltOutlined style={{ marginRight: 6, color: '#8B5E2B' }} />
                   {t('campaignDetail.items.modal.statBonusesTitle')}
                 </Text>
                 <div style={{ marginTop: 6 }}>
@@ -403,15 +403,15 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '20px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '28px',
   },
   subtitle: {
     margin: '4px 0 0',
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     lineHeight: 1.5,
   },
   filterGroup: {
@@ -425,14 +425,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   searchInput: {
     width: '240px',
     borderRadius: '8px',
-    background: '#0E1117',
-    borderColor: '#262D3D',
-    color: '#FFFFFF',
+    background: '#F3EAD2',
+    borderColor: '#DDD0AE',
+    color: '#2B1F17',
     height: '38px',
   },
   itemCard: {
-    background: 'linear-gradient(135deg, rgba(20, 24, 32, 0.95) 0%, rgba(14, 17, 23, 0.98) 100%)',
-    border: '1px solid #232936',
+    background: 'linear-gradient(135deg, rgba(250, 243, 224, 0.95) 0%, rgba(250, 243, 224, 0.98) 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     padding: '4px',
     transition: 'all 0.25s ease',
@@ -440,7 +440,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   cardHeader: {
     display: 'flex',
@@ -452,8 +452,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '42px',
     height: '42px',
     borderRadius: '10px',
-    background: 'rgba(14, 17, 23, 0.9)',
-    border: '1px solid #303747',
+    background: 'rgba(250, 243, 224, 0.9)',
+    border: '1px solid #CDBE96',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -465,10 +465,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   itemName: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    letterSpacing: '0.5px',
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   badgeRow: {
     display: 'flex',
@@ -477,22 +477,22 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   rarityTag: {
     borderRadius: '4px',
-    fontSize: '10px',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
-    background: 'rgba(14, 17, 23, 0.8)',
+    background: 'rgba(250, 243, 224, 0.8)',
     margin: 0,
   },
   typeTag: {
     borderRadius: '4px',
     fontSize: '10.5px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     margin: 0,
   },
   categoryTag: {
-    background: 'rgba(14, 17, 23, 0.6)',
-    border: '1px solid #283040',
-    color: '#8D98AA',
+    background: 'rgba(250, 243, 224, 0.6)',
+    border: '1px solid #DDD0AE',
+    color: '#6B5A48',
     borderRadius: '4px',
     fontSize: '10.5px',
     margin: 0,
@@ -505,21 +505,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   propValue: {
-    fontSize: '13px',
-    color: '#EDE6D6',
+    fontSize: '14px',
+    color: '#2B1F17',
     fontWeight: 700,
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
   },
   microTag: {
-    fontSize: '10px',
+    fontSize: '11px',
     padding: '0 4px',
     margin: 0,
-    background: '#151922',
-    border: '1px solid #2B3342',
-    color: '#C29B38',
+    background: '#FAF3E0',
+    border: '1px solid #DDD0AE',
+    color: '#8B5E2B',
   },
   description: {
-    color: '#9CA7BA',
+    color: '#5E4E3C',
     fontSize: '12.5px',
     lineHeight: 1.5,
     marginBottom: '10px',
@@ -530,52 +530,53 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     padding: '6px 8px',
     borderRadius: '6px',
-    background: 'rgba(14, 17, 23, 0.6)',
+    background: 'rgba(250, 243, 224, 0.6)',
     marginBottom: '10px',
   },
   costText: {
-    fontSize: '12px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
     fontWeight: 600,
   },
   weightText: {
-    fontSize: '11px',
-    color: '#8D98AA',
+    fontSize: '12px',
+    color: '#6B5A48',
   },
   cardFooter: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: '10px',
-    borderTop: '1px solid #1E2430',
+    borderTop: '1px solid #DDD0AE',
     marginTop: 'auto',
   },
   inspectText: {
-    fontSize: '12px',
-    color: '#D95C14',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '13px',
+    color: '#722B2B',
+    fontFamily: 'var(--font-body)',
     letterSpacing: '0.3px',
     fontWeight: 600,
   },
   inspectArrow: {
-    fontSize: '11px',
-    color: '#D95C14',
+    fontSize: '12px',
+    color: '#722B2B',
   },
   emptyContainer: {
     padding: '60px 0',
     textAlign: 'center',
   },
   emptyTitle: {
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
     display: 'block',
     marginBottom: '6px',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     maxWidth: '400px',
     margin: '0 auto',
   },
@@ -596,8 +597,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '56px',
     height: '56px',
     borderRadius: '14px',
-    background: 'rgba(14, 17, 23, 0.9)',
-    border: '1px solid #303747',
+    background: 'rgba(250, 243, 224, 0.9)',
+    border: '1px solid #CDBE96',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -609,31 +610,31 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   modalRarityTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     fontWeight: 700,
-    background: 'rgba(14, 17, 23, 0.8)',
+    background: 'rgba(250, 243, 224, 0.8)',
   },
   modalTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
   },
   modalTitle: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    letterSpacing: '0.8px',
-    fontSize: '22px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '31px',
   },
   modalDivider: {
-    borderColor: '#262D3D',
+    borderColor: '#DDD0AE',
     margin: '4px 0',
   },
   mechanicsBar: {
     display: 'flex',
     justifyContent: 'space-around',
-    background: 'rgba(14, 17, 23, 0.85)',
-    border: '1px solid #232936',
+    background: 'rgba(250, 243, 224, 0.85)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '12px',
   },
@@ -643,15 +644,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
   },
   mechLabel: {
-    fontSize: '11px',
-    color: '#8D98AA',
-    fontFamily: "'Cinzel', serif",
+    fontSize: '12px',
+    color: '#6B5A48',
+    fontFamily: 'var(--font-body)',
     textTransform: 'uppercase',
   },
   mechVal: {
     fontSize: '16px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
     fontWeight: 700,
   },
   modalSection: {
@@ -660,21 +661,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: '6px',
   },
   modalSectionTitle: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '13px',
-    color: '#EDE6D6',
+    fontFamily: 'var(--font-body)',
+    fontSize: '14px',
+    color: '#2B1F17',
     letterSpacing: '0.5px',
     fontWeight: 700,
   },
   modalText: {
-    color: '#C7D0DE',
-    fontSize: '13px',
+    color: '#5E4E3C',
+    fontSize: '14px',
     lineHeight: 1.6,
     margin: 0,
   },
   modalPropTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     padding: '2px 8px',
   },
 };

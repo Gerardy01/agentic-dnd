@@ -140,7 +140,7 @@ export default function CampaignMapTab({
           <Card style={styles.explorerCard}>
             <div style={styles.explorerHeader}>
               <div style={styles.explorerTitleBlock}>
-                <FolderOpenOutlined style={{ color: '#D95C14', fontSize: '16px' }} />
+                <FolderOpenOutlined style={{ color: '#722B2B', fontSize: '16px' }} />
                 <Title level={4} style={styles.explorerTitle}>
                   {t('campaignDetail.map.explorerTitle')}
                 </Title>
@@ -152,7 +152,7 @@ export default function CampaignMapTab({
 
             {/* Search Input */}
             <Input
-              prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+              prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
               placeholder={t('campaignDetail.map.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -174,7 +174,7 @@ export default function CampaignMapTab({
                 <Empty
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   description={
-                    <Text style={{ color: '#707C91', fontSize: '13px' }}>
+                    <Text style={{ color: '#8A7A66', fontSize: '14px' }}>
                       No matching locations
                     </Text>
                   }
@@ -206,7 +206,7 @@ export default function CampaignMapTab({
             <Card style={styles.emptyCard}>
               <div style={styles.emptyContent}>
                 <div style={styles.emptyIconWrap}>
-                  <AimOutlined style={{ color: '#D95C14', fontSize: '32px' }} />
+                  <AimOutlined style={{ color: '#722B2B', fontSize: '32px' }} />
                 </div>
                 <Title level={3} style={styles.emptyTitle}>
                   {t('campaignDetail.map.emptySelectTitle')}
@@ -228,13 +228,13 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '4px 0',
   },
   explorerCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
   },
   explorerHeader: {
     marginBottom: '12px',
@@ -247,27 +247,27 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   explorerTitle: {
     margin: 0,
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '16px',
-    letterSpacing: '0.5px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   explorerSubtitle: {
-    color: '#8D98AA',
-    fontSize: '12px',
+    color: '#6B5A48',
+    fontSize: '13px',
     margin: 0,
     lineHeight: 1.5,
   },
   searchInput: {
     marginBottom: '14px',
-    background: 'rgba(10, 13, 18, 0.8)',
-    borderColor: '#2D3748',
+    background: 'rgba(250, 243, 224, 0.8)',
+    borderColor: '#CDBE96',
     borderRadius: '6px',
-    color: '#EDE6D6',
+    color: '#2B1F17',
   },
   treeWrapper: {
-    background: 'rgba(10, 13, 18, 0.6)',
-    border: '1px solid #222834',
+    background: 'rgba(250, 243, 224, 0.6)',
+    border: '1px solid #DDD0AE',
     borderRadius: '8px',
     padding: '12px 8px',
     maxHeight: '520px',
@@ -275,7 +275,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   tree: {
     background: 'transparent',
-    color: '#EDE6D6',
+    color: '#2B1F17',
   },
   treeNodeRow: {
     display: 'inline-flex',
@@ -284,48 +284,48 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: '2px 0',
   },
   areaIcon: {
-    color: '#D95C14',
+    color: '#722B2B',
     fontSize: '14px',
   },
   areaTitle: {
-    color: '#EDE6D6',
-    fontSize: '13px',
+    color: '#2B1F17',
+    fontSize: '14px',
     fontWeight: 500,
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
     maxWidth: '120px',
   },
   levelTag: {
-    fontSize: '10px',
+    fontSize: '11px',
     borderRadius: '3px',
     padding: '0 5px',
-    color: '#8D98AA',
-    background: 'rgba(255, 255, 255, 0.04)',
-    borderColor: '#374151',
+    color: '#6B5A48',
+    background: 'rgba(70, 45, 20, 0.04)',
+    borderColor: '#CDBE96',
   },
   countTag: {
-    fontSize: '10px',
+    fontSize: '11px',
     borderRadius: '3px',
     padding: '0 5px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
   },
   poiIcon: {
-    color: '#C29B38',
-    fontSize: '13px',
+    color: '#8B5E2B',
+    fontSize: '14px',
   },
   poiTitle: {
-    color: '#D4C8A9',
-    fontSize: '12px',
+    color: '#4A3B2C',
+    fontSize: '13px',
     maxWidth: '130px',
   },
   poiTag: {
     fontSize: '9px',
     borderRadius: '3px',
     padding: '0 4px',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: 'var(--font-body)',
   },
   emptyCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     height: '100%',
     display: 'flex',
@@ -345,8 +345,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '64px',
     height: '64px',
     borderRadius: '16px',
-    background: 'rgba(217, 92, 20, 0.12)',
-    border: '1px solid rgba(217, 92, 20, 0.3)',
+    background: 'rgba(114, 43, 43, 0.12)',
+    border: '1px solid rgba(114, 43, 43, 0.3)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -354,13 +354,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   emptyTitle: {
     margin: '0 0 8px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '18px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '25px',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     lineHeight: 1.6,
     margin: 0,
   },

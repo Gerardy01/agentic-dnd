@@ -53,7 +53,7 @@ export default function CampaignClassesTab({ classes }: CampaignClassesTabProps)
       <div style={styles.header}>
         <div style={styles.headerText}>
           <Title level={3} style={styles.title}>
-            <BookOutlined style={{ marginRight: 8, color: '#D95C14' }} />
+            <BookOutlined style={{ marginRight: 8, color: '#722B2B' }} />
             {t('campaignDetail.classes.title')}
           </Title>
           <Paragraph style={styles.subtitle}>
@@ -62,7 +62,7 @@ export default function CampaignClassesTab({ classes }: CampaignClassesTabProps)
         </div>
 
         <Input
-          prefix={<SearchOutlined style={{ color: '#707C91' }} />}
+          prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
           placeholder={t('campaignDetail.classes.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -119,12 +119,12 @@ export default function CampaignClassesTab({ classes }: CampaignClassesTabProps)
                 <div style={styles.cardFooter}>
                   <div style={styles.summaryTags}>
                     <Tag color="default" style={styles.summaryTag}>
-                      <ThunderboltOutlined style={{ marginRight: 4, color: '#D95C14' }} />
+                      <ThunderboltOutlined style={{ marginRight: 4, color: '#722B2B' }} />
                       {cls.features?.length || 0} {t('campaignDetail.classes.featuresCount')}
                     </Tag>
                     {cls.resources && cls.resources.length > 0 && (
                       <Tag color="default" style={styles.summaryTag}>
-                        <SafetyOutlined style={{ marginRight: 4, color: '#C29B38' }} />
+                        <SafetyOutlined style={{ marginRight: 4, color: '#8B5E2B' }} />
                         {cls.resources.length} {t('campaignDetail.classes.resourcesCount')}
                       </Tag>
                     )}
@@ -139,7 +139,7 @@ export default function CampaignClassesTab({ classes }: CampaignClassesTabProps)
                     }}
                   >
                     {t('campaignDetail.classes.inspectCodex')}
-                    <RightOutlined style={{ fontSize: '10px', marginLeft: 4 }} />
+                    <RightOutlined style={{ fontSize: '11px', marginLeft: 4 }} />
                   </Button>
                 </div>
               </Card>
@@ -192,28 +192,28 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   title: {
     margin: '0 0 4px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '20px',
-    letterSpacing: '0.5px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '28px',
   },
   subtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
     margin: 0,
   },
   searchInput: {
     width: '280px',
-    background: 'rgba(10, 13, 18, 0.8)',
-    borderColor: '#2D3748',
+    background: 'rgba(250, 243, 224, 0.8)',
+    borderColor: '#CDBE96',
     borderRadius: '6px',
-    color: '#EDE6D6',
+    color: '#2B1F17',
   },
   classCard: {
-    background: 'linear-gradient(135deg, #161A23 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
-    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: '0 4px 16px rgba(70, 45, 20, 0.11)',
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
@@ -230,8 +230,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '42px',
     height: '42px',
     borderRadius: '10px',
-    background: 'rgba(217, 92, 20, 0.12)',
-    border: '1px solid rgba(217, 92, 20, 0.3)',
+    background: 'rgba(114, 43, 43, 0.12)',
+    border: '1px solid rgba(114, 43, 43, 0.3)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -239,7 +239,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardIcon: {
     fontSize: '20px',
-    color: '#D95C14',
+    color: '#722B2B',
   },
   headerInfo: {
     flex: 1,
@@ -247,9 +247,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   className: {
     margin: '0 0 4px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', 'Palatino Linotype', serif",
-    fontSize: '16px',
+    color: '#2B1F17',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '22px',
   },
   badgeRow: {
     display: 'flex',
@@ -258,15 +259,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   hitDieTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '10px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '11px',
     letterSpacing: '0.5px',
     borderRadius: '4px',
     padding: '0 6px',
   },
   spellcasterTag: {
-    fontFamily: "'Cinzel', serif",
-    fontSize: '10px',
+    fontFamily: 'var(--font-body)',
+    fontSize: '11px',
     letterSpacing: '0.5px',
     borderRadius: '4px',
     padding: '0 6px',
@@ -276,8 +277,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '14px',
   },
   descText: {
-    color: '#A0AEC0',
-    fontSize: '12px',
+    color: '#5E4E3C',
+    fontSize: '13px',
     lineHeight: 1.6,
     margin: 0,
   },
@@ -286,7 +287,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: '10px',
-    borderTop: '1px solid #222834',
+    borderTop: '1px solid #DDD0AE',
     marginTop: 'auto',
   },
   summaryTags: {
@@ -295,25 +296,25 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexWrap: 'wrap',
   },
   summaryTag: {
-    background: 'rgba(255, 255, 255, 0.03)',
-    borderColor: '#2D3748',
-    color: '#8D98AA',
-    fontSize: '11px',
-    fontFamily: "'Cinzel', serif",
+    background: 'rgba(70, 45, 20, 0.03)',
+    borderColor: '#CDBE96',
+    color: '#6B5A48',
+    fontSize: '12px',
+    fontFamily: 'var(--font-body)',
     borderRadius: '4px',
     margin: 0,
   },
   inspectBtn: {
-    color: '#D95C14',
-    fontFamily: "'Cinzel', serif",
-    fontSize: '11px',
+    color: '#722B2B',
+    fontFamily: 'var(--font-body)',
+    fontSize: '12px',
     padding: 0,
     display: 'inline-flex',
     alignItems: 'center',
   },
   emptyCard: {
-    background: 'linear-gradient(135deg, #151922 0%, #11141B 100%)',
-    border: '1px solid #28303F',
+    background: 'linear-gradient(135deg, #FAF3E0 0%, #F3EAD2 100%)',
+    border: '1px solid #DDD0AE',
     borderRadius: '12px',
     padding: '40px 20px',
     textAlign: 'center',
@@ -323,11 +324,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   emptyTitle: {
     margin: '0 0 6px',
-    color: '#EDE6D6',
-    fontFamily: "'Cinzel', serif",
+    color: '#2B1F17',
+    fontFamily: 'var(--font-body)',
   },
   emptySubtitle: {
-    color: '#8D98AA',
-    fontSize: '13px',
+    color: '#6B5A48',
+    fontSize: '14px',
   },
 };
