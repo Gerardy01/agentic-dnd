@@ -9,6 +9,7 @@ import {
   UserOutlined,
   SmileOutlined,
   GiftOutlined,
+  ThunderboltOutlined,
   CheckCircleFilled,
   CloseCircleFilled,
   ForwardOutlined,
@@ -37,6 +38,7 @@ const MODULE_ICON_MAP: Record<CampaignModuleKey, React.ReactNode> = {
   races: <UserOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
   npcs: <SmileOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
   items: <GiftOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  spells: <ThunderboltOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
 };
 
 export default function CampaignStatusBanner({

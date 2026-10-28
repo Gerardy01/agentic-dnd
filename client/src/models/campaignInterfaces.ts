@@ -17,6 +17,7 @@ export type CampaignSuccessParameter = {
   races: boolean;
   npcs: boolean;
   items: boolean;
+  spells: boolean;
 };
 
 export type CampaignDataReturn = {

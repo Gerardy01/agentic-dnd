@@ -4,6 +4,7 @@ import { Class, ClassResource, ClassSpell } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { SpellcasterClassContext } from '@/interfaces/ISpell';
 import {
   CreateClassDTO,
   GenerateClassesDTO,
@@ -16,6 +17,8 @@ import {
   ResourceMaxPerLevel,
   ResourceRecovery,
   CreateClassResourceRecord,
+  ClassSpellLinkDTO,
+  CreateClassSpellRecord,
 } from '@/interfaces/IClass';
 
 // ==========================================
@@ -119,7 +122,10 @@ export interface IClassService {
   createBulk(data: CreateClassDTO[], campaignId: number, transaction?: Transaction): Promise<ClassDataReturn[]>;
   createResourcesBulk(data: CreateClassDTO[], createdClasses: ClassDataReturn[], transaction?: Transaction): Promise<void>;
   linkSpellToClass(classId: number, spellId: number, transaction?: Transaction): Promise<void>;
+  linkSpellsToClasses(links: ClassSpellLinkDTO[], transaction?: Transaction): Promise<void>;
+  getSpellLinksByClassIds(classIds: number[]): Promise<ClassSpellLinkDTO[]>;
   getByCampaignId(campaignId: number): Promise<ClassDataReturn[]>;
+  getSpellcasterClasses(classes: ClassDataReturn[]): SpellcasterClassContext[];
 }
 
 // ==========================================
@@ -444,6 +450,28 @@ export class ClassService implements IClassService {
     );
   }
 
+  async linkSpellsToClasses(links: ClassSpellLinkDTO[], transaction?: Transaction): Promise<void> {
+    if (links.length === 0) return;
+
+    const records: CreateClassSpellRecord[] = links.map((link) => ({
+      class_id: link.classId,
+      spell_id: link.spellId,
+    }));
+
+    await ClassSpell.bulkCreate(records, { transaction: transaction ?? undefined, ignoreDuplicates: true });
+  }
+
+  async getSpellLinksByClassIds(classIds: number[]): Promise<ClassSpellLinkDTO[]> {
+    if (classIds.length === 0) return [];
+
+    const classSpells = await ClassSpell.findAll({ where: { class_id: classIds } });
+
+    return classSpells.map((classSpell) => ({
+      classId: classSpell.class_id,
+      spellId: classSpell.spell_id,
+    }));
+  }
+
   async getByCampaignId(campaignId: number): Promise<ClassDataReturn[]> {
     const classes = await Class.findAll({
       where: { campaign_id: campaignId },
@@ -457,6 +485,24 @@ export class ClassService implements IClassService {
     });
 
     return classes.map((cls) => this.toReturn(cls));
+  }
+
+  /**
+   * Only classes with spellcasting properties can learn spells.
+   */
+  getSpellcasterClasses(classes: ClassDataReturn[]): SpellcasterClassContext[] {
+    return classes.flatMap((cls) =>
+      cls.spellcastingProperties
+        ? [
+            {
+              id: cls.id,
+              name: cls.name,
+              description: cls.description,
+              spellcastingProperties: cls.spellcastingProperties,
+            },
+          ]
+        : []
+    );
   }
 
   private toReturn(cls: Class): ClassDataReturn {

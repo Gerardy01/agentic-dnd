@@ -82,6 +82,15 @@ export type CreateClassResourceRecord = {
   resource_recovery: ResourceRecovery | null;
 };
 
+export interface ClassSpellLinkDTO {
+  classId: number;
+  spellId: number;
+}
+
+export type CreateClassSpellRecord = {
+  class_id: number;
+  spell_id: number;
+};
 
 // ==========================================
 // DTOs

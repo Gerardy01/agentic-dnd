@@ -13,6 +13,7 @@ import {
   UserOutlined,
   SmileOutlined,
   GiftOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import type { CampaignListReturn } from '@/models/campaignInterfaces';
 
@@ -27,12 +28,14 @@ interface CampaignOverviewTabProps {
   racesCount?: number;
   npcsCount?: number;
   itemsCount?: number;
+  spellsCount?: number;
   onNavigateToMap: () => void;
   onNavigateToFactions: () => void;
   onNavigateToClasses?: () => void;
   onNavigateToRaces?: () => void;
   onNavigateToNpcs?: () => void;
   onNavigateToItems?: () => void;
+  onNavigateToSpells?: () => void;
 }
 
 export default function CampaignOverviewTab({
@@ -44,12 +47,14 @@ export default function CampaignOverviewTab({
   racesCount = 0,
   npcsCount = 0,
   itemsCount = 0,
+  spellsCount = 0,
   onNavigateToMap,
   onNavigateToFactions,
   onNavigateToClasses,
   onNavigateToRaces,
   onNavigateToNpcs,
   onNavigateToItems,
+  onNavigateToSpells,
 }: CampaignOverviewTabProps) {
   const { t } = useTranslation();
 
@@ -159,6 +164,20 @@ export default function CampaignOverviewTab({
             </div>
             <Title level={2} style={styles.statValue}>
               {itemsCount}
+            </Title>
+          </Card>
+        </Col>
+
+        <Col xs={12} sm={6} md={3}>
+          <Card style={styles.statCard}>
+            <div style={styles.statHeader}>
+              <div style={{ ...styles.statIconWrapper, background: 'rgba(194, 155, 56, 0.15)' }}>
+                <ThunderboltOutlined style={{ color: '#C29B38' }} />
+              </div>
+              <Text style={styles.statLabel}>{t('campaignDetail.stats.spells')}</Text>
+            </div>
+            <Title level={2} style={styles.statValue}>
+              {spellsCount}
             </Title>
           </Card>
         </Col>
@@ -306,6 +325,18 @@ export default function CampaignOverviewTab({
                   block
                 >
                   {t('campaignDetail.tabItems')} ({itemsCount} Relics)
+                </Button>
+              )}
+
+              {onNavigateToSpells && (
+                <Button
+                  size="large"
+                  icon={<ThunderboltOutlined />}
+                  style={styles.navBtn}
+                  onClick={onNavigateToSpells}
+                  block
+                >
+                  {t('campaignDetail.tabSpells')} ({spellsCount} Incantations)
                 </Button>
               )}
             </Space>

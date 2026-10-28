@@ -8,6 +8,7 @@ import classRoutes from '@/routes/v1/classRoutes';
 import raceRoutes from '@/routes/v1/raceRoutes';
 import npcRoutes from '@/routes/v1/npcRoutes';
 import itemRoutes from '@/routes/v1/itemRoutes';
+import spellRoutes from '@/routes/v1/spellRoutes';
 
 const v1Api = Router();
 
@@ -20,5 +21,6 @@ v1Api.use('/class', classRoutes);
 v1Api.use('/race', raceRoutes);
 v1Api.use('/npc', npcRoutes);
 v1Api.use('/item', itemRoutes);
+v1Api.use('/spell', spellRoutes);
 
 export default v1Api;

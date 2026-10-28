@@ -15,6 +15,7 @@ export const CAMPAIGN_MODULE_KEYS = [
   'races',
   'npcs',
   'items',
+  'spells',
 ] as const;
 
 export type CampaignModuleKey = (typeof CAMPAIGN_MODULE_KEYS)[number];

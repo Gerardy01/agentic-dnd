@@ -7,6 +7,7 @@ import { ClassOrchestration } from '@/orchestration/classOrchestration';
 import { RaceOrchestration } from '@/orchestration/raceOrchestration';
 import { NpcOrchestration } from '@/orchestration/npcOrchestration';
 import { ItemOrchestration } from '@/orchestration/itemOrchestration';
+import { SpellOrchestration } from '@/orchestration/spellOrchestration';
 import { accountService, authService } from '@/services';
 import {
   campaignService,
@@ -74,4 +75,8 @@ export const itemOrchestration = new ItemOrchestration(
   campaignService
 );
 
-
+export const spellOrchestration = new SpellOrchestration(
+  spellService,
+  classService,
+  campaignService
+);

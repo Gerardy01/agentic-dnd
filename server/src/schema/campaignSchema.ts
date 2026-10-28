@@ -16,6 +16,7 @@ export const ContinueCampaignSchema = z.object({
     races: z.boolean(),
     npcs: z.boolean(),
     items: z.boolean(),
+    spells: z.boolean(),
   }),
 });
 

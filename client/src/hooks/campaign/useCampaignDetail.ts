@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { campaignApi, worldApi, factionApi, classApi, raceApi, npcApi, itemApi } from '@/api';
+import { campaignApi, worldApi, factionApi, classApi, raceApi, npcApi, itemApi, spellApi } from '@/api';
 import type { CampaignListReturn } from '@/models/campaignInterfaces';
 import type { AreaWithDetailsReturn, POIDataReturn } from '@/models/worldInterfaces';
 import type { FactionDataReturn } from '@/models/factionInterfaces';
@@ -8,6 +8,7 @@ import type { ClassDataReturn } from '@/models/classInterfaces';
 import type { RaceDataReturn } from '@/models/raceInterfaces';
 import type { NpcWithDetailsReturn } from '@/models/npcInterfaces';
 import type { ItemDataReturn } from '@/models/itemInterfaces';
+import type { SpellDataReturn } from '@/models/spellInterfaces';
 
 export type SelectedMapNode =
   | { type: 'area'; data: AreaWithDetailsReturn }
@@ -35,6 +36,7 @@ export default function useCampaignDetail() {
   const [races, setRaces] = useState<RaceDataReturn[]>([]);
   const [npcs, setNpcs] = useState<NpcWithDetailsReturn[]>([]);
   const [items, setItems] = useState<ItemDataReturn[]>([]);
+  const [spells, setSpells] = useState<SpellDataReturn[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [selectedNode, setSelectedNode] = useState<SelectedMapNode | null>(null);
@@ -58,6 +60,7 @@ export default function useCampaignDetail() {
         [racesErr, racesData],
         [npcsErr, npcsData],
         [itemsErr, itemsData],
+        [spellsErr, spellsData],
       ] = await Promise.all([
         campaignApi.getCampaignById(campaignId),
         worldApi.getAreas(campaignId),
@@ -66,6 +69,7 @@ export default function useCampaignDetail() {
         raceApi.getRaces(campaignId),
         npcApi.getNpcs(campaignId),
         itemApi.getItems(campaignId),
+        spellApi.getSpells(campaignId),
       ]);
 
       if (campaignErr || !campaignData) {
@@ -92,6 +96,9 @@ export default function useCampaignDetail() {
 
       const loadedItems = !itemsErr && itemsData ? itemsData : [];
       setItems(loadedItems);
+
+      const loadedSpells = !spellsErr && spellsData ? spellsData : [];
+      setSpells(loadedSpells);
 
       // Auto-select first area if available
       if (loadedAreas.length > 0) {
@@ -169,6 +176,7 @@ export default function useCampaignDetail() {
     races,
     npcs,
     items,
+    spells,
     totalPOIs,
     areaTree,
     loading,

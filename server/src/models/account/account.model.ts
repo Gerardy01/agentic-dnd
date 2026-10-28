@@ -8,6 +8,7 @@ class Account extends Model {
   declare public password: string;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
+  declare public readonly deleted_at: Date | null;
 }
 
 Account.init(
@@ -38,6 +39,7 @@ Account.init(
     modelName: 'Account',
     tableName: 'accounts',
     timestamps: true,
+    paranoid: true,
     underscored: true,
   }
 );

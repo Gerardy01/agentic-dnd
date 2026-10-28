@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
 import Campaign from '@/models/campaign/campaign.model';
+import { SpellAttackProperties, SpellSaveProperties, SpellSchool } from '@/interfaces/ISpell';
 
 class Spell extends Model {
   declare public id: number;
@@ -9,9 +10,9 @@ class Spell extends Model {
   declare public description: string | null;
   declare public level: number;
   declare public range: string | null;
-  declare public school: string | null;
-  declare public attack_properties: any;
-  declare public spell_save_properties: any;
+  declare public school: SpellSchool | null;
+  declare public attack_properties: SpellAttackProperties | null;
+  declare public spell_save_properties: SpellSaveProperties | null;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

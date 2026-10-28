@@ -32,7 +32,7 @@ export const classService = new ClassService(aiProvider);
 export const raceService = new RaceService(aiProvider);
 export const npcService = new NpcService(aiProvider);
 export const itemService = new ItemService(aiProvider);
-export const spellService = new SpellService();
+export const spellService = new SpellService(aiProvider);
 export const questService = new QuestService();
 
 export { LoggerService, ILoggerService } from '@/services/loggerService';

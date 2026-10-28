@@ -125,7 +125,8 @@
       "classes": "Classes & Archetypes",
       "races": "Races & Lineages",
       "npcs": "Key NPCs & Figures",
-      "items": "Starting Relics & Items"
+      "items": "Starting Relics & Items",
+      "spells": "Spells & Incantations"
     },
     "moduleStatusTitle": "Campaign Genesis Manifest",
     "moduleStatusSubtitle": "Overview of world modules generated for this realm.",
@@ -151,6 +152,7 @@
     "tabRaces": "Races",
     "tabNpcs": "NPCs",
     "tabItems": "Items",
+    "tabSpells": "Spells",
     "themePromptTitle": "Campaign Theme & Vision",
     "worldDescriptionTitle": "World Geography & Lore Codex",
     "stats": {
@@ -161,6 +163,7 @@
       "races": "Living Races",
       "npcs": "Notable NPCs",
       "items": "Starting Relics",
+      "spells": "Known Spells",
       "language": "Narrative Language",
       "created": "Inscribed Date"
     },
@@ -313,6 +316,40 @@
         "statBonusesTitle": "Attribute Modifiers",
         "statOverridesTitle": "Stat Overrides",
         "weightCost": "Dimensions & Value"
+      }
+    },
+    "spells": {
+      "title": "Grimoire & Incantations",
+      "subtitle": "Spells and cantrips, and the classes that can learn them",
+      "searchPlaceholder": "Filter spells by name, school, class, or description...",
+      "emptyTitle": "No Spells Inscribed",
+      "emptySubtitle": "This campaign does not currently feature any recorded spells.",
+      "cantrip": "Cantrip",
+      "level": "Level {{level}}",
+      "allLevels": "All Levels",
+      "allSchools": "All Schools",
+      "allClasses": "All Classes",
+      "rangedAttack": "Ranged Attack",
+      "meleeAttack": "Melee Attack",
+      "noDamage": "No damage",
+      "saveShort": "{{stat}} Save",
+      "noDescription": "No incantation recorded.",
+      "noClasses": "Not assigned to any class",
+      "inspectCodex": "Inspect Spell Details",
+      "modal": {
+        "level": "Spell Level",
+        "range": "Range",
+        "damage": "Damage Output",
+        "savingThrow": "Saving Throw",
+        "descriptionTitle": "Spell Description",
+        "attackTitle": "Spell Attack",
+        "rangedAttackDesc": "The caster makes a ranged spell attack roll against the target.",
+        "meleeAttackDesc": "The caster makes a melee spell attack roll against the target.",
+        "saveTitle": "Saving Throw",
+        "saveStat": "{{stat}} saving throw",
+        "onSuccess": "On success: {{percentage}}% damage",
+        "onFail": "On failure: {{percentage}}% damage",
+        "classesTitle": "Learned By"
       }
     },
     "delete": {

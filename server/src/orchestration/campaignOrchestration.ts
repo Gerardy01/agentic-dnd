@@ -18,6 +18,7 @@ import { DataNotFound } from '@/utils/exceptions';
 import { WorldDataReturn, MapDataReturn, AreaDataReturn, POIDataReturn } from '@/interfaces/IWorld';
 import { FactionDataReturn } from '@/interfaces/IFaction';
 import { RaceDataReturn } from '@/interfaces/IRace';
+import { ClassDataReturn } from '@/interfaces/IClass';
 
 export type CampaignProgressCallback = (step: string, message: string, current: number, total: number) => void;
 
@@ -159,6 +160,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
    *     9. Create Races
    *     10. Create NPCs
    *     11. Create Items
+   *     12. Create Spells (brief → detail per spell, then assigned to the classes that can learn them)
    */
   async createCampaign(
     name: string,
@@ -180,6 +182,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       races: false,
       npcs: false,
       items: false,
+      spells: false,
     };
 
     // --- Core Transaction (Campaign, GameState, World & Map) ---
@@ -380,9 +383,10 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     }
 
     // --- Step 8: Generate Classes via AI (Brief list + Detail loop) ---
+    let classes: ClassDataReturn[] = [];
     try {
       this.emitStep('8/13', 'Generating Classes via AI (Brief list + Detail loop)...', onProgress);
-      const classes = await this.classService.generateClasses(
+      classes = await this.classService.generateClasses(
         {
           themePrompt,
           language,
@@ -494,6 +498,51 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       this.logger.success(`Successfully generated and saved ${items.length} items`);
     } catch (error) {
       this.logger.error('Failed to generate items:', error);
+      return this.buildCampaignResponse(campaign, successParameter);
+    }
+
+    // --- Step 12: Generate Spells via AI (Brief list + Detail loop, then assign to classes) ---
+    try {
+      this.emitStep('12/13', 'Generating Spells via AI (Brief list + Detail loop)...', onProgress);
+      const spellcasterClasses = this.classService.getSpellcasterClasses(classes);
+      if (spellcasterClasses.length === 0) {
+        this.logger.info('No spellcasting classes found, skipping spell generation');
+      } else {
+        // Spells and their class_spells links are saved together so a failed link never leaves orphan spells
+        const spellTransaction = await sequelize.transaction();
+        try {
+          const generatedSpells = await this.spellService.generateSpells(
+            {
+              themePrompt,
+              language,
+              world: {
+                name: world.name,
+                description: world.description,
+                currencyName: world.currencyName,
+              },
+              classes: spellcasterClasses,
+            },
+            campaign.id,
+            spellTransaction
+          );
+
+          const classSpellLinks = generatedSpells.flatMap(({ spell, classIds }) =>
+            classIds.map((classId) => ({ classId, spellId: spell.id }))
+          );
+          await this.classService.linkSpellsToClasses(classSpellLinks, spellTransaction);
+
+          await spellTransaction.commit();
+          this.logger.success(
+            `Successfully generated ${generatedSpells.length} spells and linked them to classes (${classSpellLinks.length} class_spells records)`
+          );
+        } catch (spellError) {
+          await spellTransaction.rollback();
+          throw spellError;
+        }
+      }
+      successParameter.spells = true;
+    } catch (error) {
+      this.logger.error('Failed to generate spells:', error);
       return this.buildCampaignResponse(campaign, successParameter);
     }
 
@@ -727,10 +776,11 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     }
 
     // --- Step 8: Classes ---
+    let classes: ClassDataReturn[] = [];
     if (!currentSuccessParameter.classes) {
       try {
         this.emitStep('8/13', 'Generating Classes via AI (Brief list + Detail loop)...', onProgress);
-        const classes = await this.classService.generateClasses(
+        classes = await this.classService.generateClasses(
           {
             themePrompt,
             language,
@@ -749,7 +799,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
         return this.buildCampaignResponse(campaign, currentSuccessParameter);
       }
     } else {
-      this.logger.info('Classes already generated, skipping');
+      classes = await this.classService.getByCampaignId(campaign.id);
+      this.logger.info(`Loaded ${classes.length} existing classes from service`);
     }
 
     // --- Step 9: Races ---
@@ -861,6 +912,55 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       this.logger.info('Items already generated, skipping');
     }
 
+    // --- Step 12: Spells ---
+    if (!currentSuccessParameter.spells) {
+      try {
+        this.emitStep('12/13', 'Generating Spells via AI (Brief list + Detail loop)...', onProgress);
+        const spellcasterClasses = this.classService.getSpellcasterClasses(classes);
+        if (spellcasterClasses.length === 0) {
+          this.logger.info('No spellcasting classes found, skipping spell generation');
+        } else {
+          // Spells and their class_spells links are saved together so a failed link never leaves orphan spells
+          const spellTransaction = await sequelize.transaction();
+          try {
+            const generatedSpells = await this.spellService.generateSpells(
+              {
+                themePrompt,
+                language,
+                world: {
+                  name: world.name,
+                  description: world.description,
+                  currencyName: world.currencyName,
+                },
+                classes: spellcasterClasses,
+              },
+              campaign.id,
+              spellTransaction
+            );
+
+            const classSpellLinks = generatedSpells.flatMap(({ spell, classIds }) =>
+              classIds.map((classId) => ({ classId, spellId: spell.id }))
+            );
+            await this.classService.linkSpellsToClasses(classSpellLinks, spellTransaction);
+
+            await spellTransaction.commit();
+            this.logger.success(
+              `Successfully generated ${generatedSpells.length} spells and linked them to classes (${classSpellLinks.length} class_spells records)`
+            );
+          } catch (spellError) {
+            await spellTransaction.rollback();
+            throw spellError;
+          }
+        }
+        currentSuccessParameter.spells = true;
+      } catch (error) {
+        this.logger.error('Failed to generate spells:', error);
+        return this.buildCampaignResponse(campaign, currentSuccessParameter);
+      }
+    } else {
+      this.logger.info('Spells already generated, skipping');
+    }
+
     return this.buildCampaignResponse(campaign, currentSuccessParameter);
   }
 
@@ -924,6 +1024,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       races: false,
       npcs: false,
       items: false,
+      spells: false,
     };
 
     // Check world & map
@@ -966,8 +1067,9 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     }
 
     // Check classes
+    let classes: ClassDataReturn[] = [];
     try {
-      const classes = await this.classService.getByCampaignId(campaignId);
+      classes = await this.classService.getByCampaignId(campaignId);
       successParameter.classes = classes.length > 0;
     } catch {
       successParameter.classes = false;
@@ -995,6 +1097,16 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       successParameter.items = items.length > 0;
     } catch {
       successParameter.items = false;
+    }
+
+    // Check spells (nothing to generate when no class can cast spells)
+    if (successParameter.classes) {
+      try {
+        const spells = await this.spellService.getByCampaignId(campaignId);
+        successParameter.spells = spells.length > 0 || this.classService.getSpellcasterClasses(classes).length === 0;
+      } catch {
+        successParameter.spells = false;
+      }
     }
 
     return successParameter;

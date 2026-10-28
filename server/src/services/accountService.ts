@@ -29,6 +29,7 @@ export class AccountService implements IAccountService {
 
     const existingEmail = await Account.findOne({
       where: { email: data.email.toLowerCase().trim() },
+      paranoid: false,
     });
 
     if (existingEmail) {
@@ -62,6 +63,7 @@ export class AccountService implements IAccountService {
         username: { [Op.iLike]: trimmed },
         id: { [Op.ne]: accountId },
       },
+      paranoid: false,
     });
 
     if (existingUsername) {

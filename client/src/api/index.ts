@@ -7,6 +7,7 @@ import { ClassApi } from './classApi';
 import { RaceApi } from './raceApi';
 import { NpcApi } from './npcApi';
 import { ItemApi } from './itemApi';
+import { SpellApi } from './spellApi';
 
 export const authApi = new AuthApi();
 export const accountApi = new AccountApi();
@@ -17,5 +18,4 @@ export const classApi = new ClassApi();
 export const raceApi = new RaceApi();
 export const npcApi = new NpcApi();
 export const itemApi = new ItemApi();
-
-
+export const spellApi = new SpellApi();

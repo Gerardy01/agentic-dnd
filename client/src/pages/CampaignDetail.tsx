@@ -11,6 +11,7 @@ import {
   UserOutlined,
   SmileOutlined,
   GiftOutlined,
+  ThunderboltOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
 import useCampaignDetail from '@/hooks/campaign/useCampaignDetail';
@@ -25,6 +26,7 @@ import CampaignClassesTab from '@/components/campaign/detail/CampaignClassesTab'
 import CampaignRacesTab from '@/components/campaign/detail/CampaignRacesTab';
 import CampaignNpcsTab from '@/components/campaign/detail/CampaignNpcsTab';
 import CampaignItemsTab from '@/components/campaign/detail/CampaignItemsTab';
+import CampaignSpellsTab from '@/components/campaign/detail/CampaignSpellsTab';
 
 const { Title, Text } = Typography;
 
@@ -38,6 +40,7 @@ export default function CampaignDetail() {
     races,
     npcs,
     items,
+    spells,
     totalPOIs,
     areaTree,
     loading,
@@ -97,12 +100,14 @@ export default function CampaignDetail() {
           racesCount={races.length}
           npcsCount={npcs.length}
           itemsCount={items.length}
+          spellsCount={spells.length}
           onNavigateToMap={() => setActiveTab('map')}
           onNavigateToFactions={() => setActiveTab('factions')}
           onNavigateToClasses={() => setActiveTab('classes')}
           onNavigateToRaces={() => setActiveTab('races')}
           onNavigateToNpcs={() => setActiveTab('npcs')}
           onNavigateToItems={() => setActiveTab('items')}
+          onNavigateToSpells={() => setActiveTab('spells')}
         />
       ),
     },
@@ -191,6 +196,19 @@ export default function CampaignDetail() {
         </span>
       ),
       children: <CampaignItemsTab items={items} />,
+    },
+    {
+      key: 'spells',
+      label: (
+        <span style={styles.tabLabel}>
+          <ThunderboltOutlined style={styles.tabIcon} />
+          {t('campaignDetail.tabSpells')}
+          <Tag color="gold" style={styles.tabBadge}>
+            {spells.length}
+          </Tag>
+        </span>
+      ),
+      children: <CampaignSpellsTab spells={spells} />,
     },
   ];
 

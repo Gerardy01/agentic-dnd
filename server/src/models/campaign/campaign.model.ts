@@ -10,6 +10,7 @@ class Campaign extends Model {
   declare public language: string;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
+  declare public readonly deleted_at: Date | null;
 }
 
 Campaign.init(
@@ -48,6 +49,7 @@ Campaign.init(
     modelName: 'Campaign',
     tableName: 'campaigns',
     timestamps: true,
+    paranoid: true,
     underscored: true,
   }
 );

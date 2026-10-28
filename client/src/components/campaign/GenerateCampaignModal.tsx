@@ -18,6 +18,7 @@ import {
   UserOutlined,
   SmileOutlined,
   GiftOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import useGenerateCampaignModal, {
   CAMPAIGN_MODULE_KEYS,
@@ -45,6 +46,7 @@ const MODULE_ICON_MAP: Record<CampaignModuleKey, React.ReactNode> = {
   races: <UserOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
   npcs: <SmileOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
   items: <GiftOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
+  spells: <ThunderboltOutlined style={{ color: '#C29B38', fontSize: '15px' }} />,
 };
 
 export default function GenerateCampaignModal({
