@@ -55,12 +55,20 @@ export type InitiateCampaignReturn = {
   processId: string;
 };
 
+export interface CampaignSSESubProgress {
+  message: string;
+  current: number;
+  total: number;
+}
+
 export interface CampaignSSEStepEvent {
   type: 'step';
   step: string;
   message: string;
   current: number;
   total: number;
+  /** What the running step is doing right now (e.g. which class of the roster is being generated) */
+  sub?: CampaignSSESubProgress;
 }
 
 export interface CampaignSSECompleteEvent {

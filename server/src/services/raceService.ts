@@ -4,6 +4,7 @@ import { Race } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import {
   CreateRaceDTO,
   GenerateRacesDTO,
@@ -47,7 +48,7 @@ export interface IRaceService {
   getLanguageInstruction(): string;
   getRaceBriefPrompt(): string;
   getRaceDetailPrompt(): string;
-  generateRaces(data: GenerateRacesDTO, campaignId: number, transaction?: Transaction): Promise<RaceDataReturn[]>;
+  generateRaces(data: GenerateRacesDTO, campaignId: number, onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<RaceDataReturn[]>;
   create(data: CreateRaceDTO, campaignId: number, transaction?: Transaction): Promise<RaceDataReturn>;
   createBulk(data: CreateRaceDTO[], campaignId: number, transaction?: Transaction): Promise<RaceDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<RaceDataReturn[]>;
@@ -85,6 +86,7 @@ export class RaceService implements IRaceService {
   async generateRaces(
     data: GenerateRacesDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<RaceDataReturn[]> {
     const briefSystemPrompt = this.getRaceBriefPrompt();
@@ -109,6 +111,7 @@ export class RaceService implements IRaceService {
       worldContext,
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the race roster...', current: 0, total: 1 });
     this.logger.info('Requesting brief race list from AI...');
     const briefRaw = await this.aiProvider.chatJSON<RaceBriefListAIResponse>([
       { role: 'system', content: briefSystemPrompt },
@@ -124,6 +127,11 @@ export class RaceService implements IRaceService {
 
     for (let i = 0; i < briefParsed.races.length; i++) {
       const stub = briefParsed.races[i];
+      onProgress?.({
+        message: `Detailing race ${i + 1}/${briefParsed.races.length}: "${stub.name}"`,
+        current: i,
+        total: briefParsed.races.length,
+      });
       this.logger.info(`[${i + 1}/${briefParsed.races.length}] Generating race "${stub.name}"...`);
 
       // Race Detail Prompt (name, description, speed, languages, traits)

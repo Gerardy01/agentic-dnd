@@ -19,8 +19,15 @@ import { WorldDataReturn, MapDataReturn, AreaDataReturn, POIDataReturn } from '@
 import { FactionDataReturn } from '@/interfaces/IFaction';
 import { RaceDataReturn } from '@/interfaces/IRace';
 import { ClassDataReturn } from '@/interfaces/IClass';
+import { GenerationProgress, GenerationProgressCallback } from '@/interfaces/IProgress';
 
-export type CampaignProgressCallback = (step: string, message: string, current: number, total: number) => void;
+export type CampaignProgressCallback = (
+  step: string,
+  message: string,
+  current: number,
+  total: number,
+  sub?: GenerationProgress
+) => void;
 
 export interface ICampaignOrchestration {
   initiateCampaignCreation(
@@ -92,8 +99,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       themePrompt,
       language,
       accountId,
-      (step, message, current, total) => {
-        sseManager.emitStep(processId, { step, message, current, total });
+      (step, message, current, total, sub) => {
+        sseManager.emitStep(processId, { step, message, current, total, sub });
       }
     )
       .then((campaign) => {
@@ -122,8 +129,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       campaignId,
       accountId,
       successParameter,
-      (step, message, current, total) => {
-        sseManager.emitStep(processId, { step, message, current, total });
+      (step, message, current, total, sub) => {
+        sseManager.emitStep(processId, { step, message, current, total, sub });
       }
     )
       .then((campaign) => {
@@ -193,12 +200,12 @@ export class CampaignOrchestration implements ICampaignOrchestration {
 
     try {
       // --- Step 1: Create Campaign ---
-      this.emitStep('1/13', 'Creating campaign DB record...', onProgress);
+      this.emitStep('1/12', 'Creating campaign DB record...', onProgress);
       campaign = await this.campaignService.create({ name, themePrompt, language }, accountId, transaction);
       this.logger.success(`Campaign record created with ID: ${campaign.id}`);
 
       // --- Step 2: Initialize CampaignGameState ---
-      this.emitStep('2/13', 'Initializing Campaign Game State...', onProgress);
+      this.emitStep('2/12', 'Initializing Campaign Game State...', onProgress);
       await this.campaignService.createGameState(
         {
           campaignId: campaign.id,
@@ -216,7 +223,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
       this.logger.success('Campaign Game State initialized');
 
       // --- Step 3: Create World → Map (AI-generated) ---
-      this.emitStep('3/13', 'Generating World & Map via AI...', onProgress);
+      this.emitStep('3/12', 'Generating World & Map via AI...', onProgress);
       world = await this.worldService.generateWorld(
         { campaignName: name, themePrompt, language },
         campaign.id,
@@ -246,7 +253,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 4: Create Factions (AI-generated) ---
     let factions: FactionDataReturn[] = [];
     try {
-      this.emitStep('4/13', 'Generating Factions via AI (Brief list + Detail loop)...', onProgress);
+      const factionProgress = this.emitStep('4/12', 'Generating Factions via AI (Brief list + Detail loop)...', onProgress);
       factions = await this.factionService.generateFactions(
         {
           themePrompt,
@@ -260,7 +267,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             descriptiveOverview: map.descriptiveOverview,
           },
         },
-        campaign.id
+        campaign.id,
+        factionProgress
       );
       successParameter.factions = true;
       this.logger.success(`Successfully generated and saved ${factions.length} factions`);
@@ -272,7 +280,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 5 & 6: Generate Areas & Sub-Areas (AI-generated) ---
     let finalLeafAreas: AreaDataReturn[] = [];
     try {
-      this.emitStep('5/13', 'Generating Areas via AI (Brief tree + Detail loop)...', onProgress);
+      const areaProgress = this.emitStep('5/12', 'Generating Areas via AI (Brief tree + Detail loop)...', onProgress);
       const areas = await this.worldService.generateAreas(
         {
           themePrompt,
@@ -294,7 +302,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
           })),
         },
         campaign.id,
-        map.id
+        map.id,
+        areaProgress
       );
       this.logger.success(`Successfully generated and saved ${areas.length} areas`);
 
@@ -315,7 +324,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
 
       // --- Step 6: Generate Sub-Areas for the 1 starting leaf only ---
       // We only subdivide the single starting area — the AI DM generates more during gameplay.
-      this.emitStep('6/13', 'Generating Sub-Areas via AI (starting area only)...', onProgress);
+      const subAreaProgress = this.emitStep('6/12', 'Generating Sub-Areas via AI (starting area only)...', onProgress);
       const startingLeaf = leafAreas.slice(0, 1);
       try {
         finalLeafAreas = await this.worldService.generateSubAreas(
@@ -334,7 +343,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
           },
           campaign.id,
           map.id,
-          startingLeaf
+          startingLeaf,
+          subAreaProgress
         );
         this.logger.success(`Sub-area pass complete — ${finalLeafAreas.length} starting leaf area(s)`);
       } catch (subAreaErr) {
@@ -352,7 +362,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // Cap to 2 areas. More POIs/areas will be generated by the AI DM during gameplay.
     let pois: POIDataReturn[] = [];
     try {
-      this.emitStep('7/13', 'Generating POIs via AI (starting areas only)...', onProgress);
+      const poiProgress = this.emitStep('7/12', 'Generating POIs via AI (starting areas only)...', onProgress);
       if (finalLeafAreas.length > 0) {
         const areasForPOIs = finalLeafAreas.slice(0, 2);
         pois = await this.worldService.generatePOIs(
@@ -369,7 +379,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             },
           },
           campaign.id,
-          areasForPOIs
+          areasForPOIs,
+          poiProgress
         );
         successParameter.pois = true;
         this.logger.success(`Successfully generated and saved ${pois.length} starting POIs`);
@@ -385,7 +396,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 8: Generate Classes via AI (Brief list + Detail loop) ---
     let classes: ClassDataReturn[] = [];
     try {
-      this.emitStep('8/13', 'Generating Classes via AI (Brief list + Detail loop)...', onProgress);
+      const classProgress = this.emitStep('8/12', 'Generating Classes via AI (Brief list + Detail loop)...', onProgress);
       classes = await this.classService.generateClasses(
         {
           themePrompt,
@@ -396,7 +407,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             currencyName: world.currencyName,
           },
         },
-        campaign.id
+        campaign.id,
+        classProgress
       );
       successParameter.classes = true;
       this.logger.success(`Successfully generated and saved ${classes.length} classes`);
@@ -408,7 +420,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 9: Create Races via AI (Brief list + Detail loop) ---
     let races: RaceDataReturn[] = [];
     try {
-      this.emitStep('9/13', 'Generating Races via AI (Brief list + Detail loop)...', onProgress);
+      const raceProgress = this.emitStep('9/12', 'Generating Races via AI (Brief list + Detail loop)...', onProgress);
       races = await this.raceService.generateRaces(
         {
           themePrompt,
@@ -419,7 +431,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             currencyName: world.currencyName,
           },
         },
-        campaign.id
+        campaign.id,
+        raceProgress
       );
       successParameter.races = true;
       this.logger.success(`Successfully generated and saved ${races.length} races`);
@@ -430,7 +443,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
 
     // --- Step 10: Generate NPCs via AI (Brief list + Detail loop) ---
     try {
-      this.emitStep('10/13', 'Generating NPCs via AI (Brief list + Detail loop)...', onProgress);
+      const npcProgress = this.emitStep('10/12', 'Generating NPCs via AI (Brief list + Detail loop)...', onProgress);
       const generatedNpcs = await this.npcService.generateNpcs(
         {
           themePrompt,
@@ -452,12 +465,13 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             map: p.map,
           })),
         },
-        campaign.id
+        campaign.id,
+        npcProgress
       );
       this.logger.success(`Successfully generated and saved ${generatedNpcs.length} NPCs`);
 
       if (pois.length > 0 && generatedNpcs.length > 0) {
-        this.emitStep('10/13', 'Assigning NPCs to Points of Interest...', onProgress);
+        this.emitStep('10/12', 'Assigning NPCs to Points of Interest...', onProgress);
         const validPoiIds = new Set(pois.map((p) => p.id));
         const validLinks = generatedNpcs
           .filter((item) => validPoiIds.has(item.poiId))
@@ -481,7 +495,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
 
     // --- Step 11: Generate Items via AI (Brief list + Detail loop) ---
     try {
-      this.emitStep('11/13', 'Generating Items via AI (Brief list + Detail loop)...', onProgress);
+      const itemProgress = this.emitStep('11/12', 'Generating Items via AI (Brief list + Detail loop)...', onProgress);
       const items = await this.itemService.generateItems(
         {
           themePrompt,
@@ -492,7 +506,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             currencyName: world.currencyName,
           },
         },
-        campaign.id
+        campaign.id,
+        itemProgress
       );
       successParameter.items = true;
       this.logger.success(`Successfully generated and saved ${items.length} items`);
@@ -503,7 +518,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
 
     // --- Step 12: Generate Spells via AI (Brief list + Detail loop, then assign to classes) ---
     try {
-      this.emitStep('12/13', 'Generating Spells via AI (Brief list + Detail loop)...', onProgress);
+      const spellProgress = this.emitStep('12/12', 'Generating Spells via AI (Brief list + Detail loop)...', onProgress);
       const spellcasterClasses = this.classService.getSpellcasterClasses(classes);
       if (spellcasterClasses.length === 0) {
         this.logger.info('No spellcasting classes found, skipping spell generation');
@@ -523,6 +538,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               classes: spellcasterClasses,
             },
             campaign.id,
+            spellProgress,
             spellTransaction
           );
 
@@ -549,14 +565,21 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     return this.buildCampaignResponse(campaign, successParameter);
   }
 
+  /**
+   * Announces the start of a main step and returns a callback the step's generator can use to report
+   * what it is doing right now (e.g. "class 3/10"). Sub-progress events repeat the main step message.
+   */
   private emitStep(
     stepStr: string,
     message: string,
     onProgress?: CampaignProgressCallback
-  ): void {
+  ): GenerationProgressCallback {
     this.logger.step(stepStr, message);
     const [curr, tot] = stepStr.split('/').map(Number);
-    onProgress?.(stepStr, `[${stepStr}] ${message}`, curr || 0, tot || 13);
+    const stepMessage = `[${stepStr}] ${message}`;
+    onProgress?.(stepStr, stepMessage, curr || 0, tot || 12);
+
+    return (progress) => onProgress?.(stepStr, stepMessage, curr || 0, tot || 12, progress);
   }
 
   private buildCampaignResponse(
@@ -600,7 +623,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     let world = await this.worldService.getWorldByCampaignId(campaignId);
     if (!world) {
       this.logger.info('World not found in DB, generating World via AI...');
-      this.emitStep('3/13', 'Generating World & Map via AI...', onProgress);
+      this.emitStep('3/12', 'Generating World & Map via AI...', onProgress);
       world = await this.worldService.generateWorld(
         { campaignName: name, themePrompt, language },
         campaign.id
@@ -625,7 +648,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     let factions: FactionDataReturn[] = [];
     if (!currentSuccessParameter.factions) {
       try {
-        this.emitStep('4/13', 'Generating Factions via AI (Brief list + Detail loop)...', onProgress);
+        const factionProgress = this.emitStep('4/12', 'Generating Factions via AI (Brief list + Detail loop)...', onProgress);
         factions = await this.factionService.generateFactions(
           {
             themePrompt,
@@ -639,7 +662,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               descriptiveOverview: map.descriptiveOverview,
             },
           },
-          campaign.id
+          campaign.id,
+          factionProgress
         );
         currentSuccessParameter.factions = true;
         this.logger.success(`Successfully generated and saved ${factions.length} factions`);
@@ -656,7 +680,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     let finalLeafAreas: AreaDataReturn[] = [];
     if (!currentSuccessParameter.areas) {
       try {
-        this.emitStep('5/13', 'Generating Areas via AI (Brief tree + Detail loop)...', onProgress);
+        const areaProgress = this.emitStep('5/12', 'Generating Areas via AI (Brief tree + Detail loop)...', onProgress);
         const areas = await this.worldService.generateAreas(
           {
             themePrompt,
@@ -678,7 +702,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             })),
           },
           campaign.id,
-          map.id
+          map.id,
+          areaProgress
         );
         this.logger.success(`Successfully generated and saved ${areas.length} areas`);
 
@@ -694,7 +719,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
           2
         );
 
-        this.emitStep('6/13', 'Generating Sub-Areas via AI (starting area only)...', onProgress);
+        const subAreaProgress = this.emitStep('6/12', 'Generating Sub-Areas via AI (starting area only)...', onProgress);
         const startingLeaf = leafAreas.slice(0, 1);
         try {
           finalLeafAreas = await this.worldService.generateSubAreas(
@@ -713,7 +738,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
             },
             campaign.id,
             map.id,
-            startingLeaf
+            startingLeaf,
+            subAreaProgress
           );
           this.logger.success(`Sub-area pass complete — ${finalLeafAreas.length} starting leaf area(s)`);
         } catch (subAreaErr) {
@@ -740,7 +766,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     let pois: POIDataReturn[] = [];
     if (!currentSuccessParameter.pois) {
       try {
-        this.emitStep('7/13', 'Generating POIs via AI (starting areas only)...', onProgress);
+        const poiProgress = this.emitStep('7/12', 'Generating POIs via AI (starting areas only)...', onProgress);
         if (finalLeafAreas.length > 0) {
           const areasForPOIs = finalLeafAreas.slice(0, 2);
           pois = await this.worldService.generatePOIs(
@@ -757,7 +783,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               },
             },
             campaign.id,
-            areasForPOIs
+            areasForPOIs,
+            poiProgress
           );
           currentSuccessParameter.pois = true;
           this.logger.success(`Successfully generated and saved ${pois.length} starting POIs`);
@@ -779,7 +806,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     let classes: ClassDataReturn[] = [];
     if (!currentSuccessParameter.classes) {
       try {
-        this.emitStep('8/13', 'Generating Classes via AI (Brief list + Detail loop)...', onProgress);
+        const classProgress = this.emitStep('8/12', 'Generating Classes via AI (Brief list + Detail loop)...', onProgress);
         classes = await this.classService.generateClasses(
           {
             themePrompt,
@@ -790,7 +817,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               currencyName: world.currencyName,
             },
           },
-          campaign.id
+          campaign.id,
+          classProgress
         );
         currentSuccessParameter.classes = true;
         this.logger.success(`Successfully generated and saved ${classes.length} classes`);
@@ -807,7 +835,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     let races: RaceDataReturn[] = [];
     if (!currentSuccessParameter.races) {
       try {
-        this.emitStep('9/13', 'Generating Races via AI (Brief list + Detail loop)...', onProgress);
+        const raceProgress = this.emitStep('9/12', 'Generating Races via AI (Brief list + Detail loop)...', onProgress);
         races = await this.raceService.generateRaces(
           {
             themePrompt,
@@ -818,7 +846,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               currencyName: world.currencyName,
             },
           },
-          campaign.id
+          campaign.id,
+          raceProgress
         );
         currentSuccessParameter.races = true;
         this.logger.success(`Successfully generated and saved ${races.length} races`);
@@ -834,7 +863,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 10: NPCs ---
     if (!currentSuccessParameter.npcs) {
       try {
-        this.emitStep('10/13', 'Generating NPCs via AI (Brief list + Detail loop)...', onProgress);
+        const npcProgress = this.emitStep('10/12', 'Generating NPCs via AI (Brief list + Detail loop)...', onProgress);
         const generatedNpcs = await this.npcService.generateNpcs(
           {
             themePrompt,
@@ -856,12 +885,13 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               map: p.map,
             })),
           },
-          campaign.id
+          campaign.id,
+          npcProgress
         );
         this.logger.success(`Successfully generated and saved ${generatedNpcs.length} NPCs`);
 
         if (pois.length > 0 && generatedNpcs.length > 0) {
-          this.emitStep('10/13', 'Assigning NPCs to Points of Interest...', onProgress);
+          this.emitStep('10/12', 'Assigning NPCs to Points of Interest...', onProgress);
           const validPoiIds = new Set(pois.map((p) => p.id));
           const validLinks = generatedNpcs
             .filter((item) => validPoiIds.has(item.poiId))
@@ -889,7 +919,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 11: Items ---
     if (!currentSuccessParameter.items) {
       try {
-        this.emitStep('11/13', 'Generating Items via AI (Brief list + Detail loop)...', onProgress);
+        const itemProgress = this.emitStep('11/12', 'Generating Items via AI (Brief list + Detail loop)...', onProgress);
         const items = await this.itemService.generateItems(
           {
             themePrompt,
@@ -900,7 +930,8 @@ export class CampaignOrchestration implements ICampaignOrchestration {
               currencyName: world.currencyName,
             },
           },
-          campaign.id
+          campaign.id,
+          itemProgress
         );
         currentSuccessParameter.items = true;
         this.logger.success(`Successfully generated and saved ${items.length} items`);
@@ -915,7 +946,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
     // --- Step 12: Spells ---
     if (!currentSuccessParameter.spells) {
       try {
-        this.emitStep('12/13', 'Generating Spells via AI (Brief list + Detail loop)...', onProgress);
+        const spellProgress = this.emitStep('12/12', 'Generating Spells via AI (Brief list + Detail loop)...', onProgress);
         const spellcasterClasses = this.classService.getSpellcasterClasses(classes);
         if (spellcasterClasses.length === 0) {
           this.logger.info('No spellcasting classes found, skipping spell generation');
@@ -935,6 +966,7 @@ export class CampaignOrchestration implements ICampaignOrchestration {
                 classes: spellcasterClasses,
               },
               campaign.id,
+              spellProgress,
               spellTransaction
             );
 

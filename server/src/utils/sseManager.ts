@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { GenerationProgress } from '@/interfaces/IProgress';
 
 export interface SSEProgressEvent {
   type: 'step';
@@ -6,6 +7,7 @@ export interface SSEProgressEvent {
   message: string;
   current: number;
   total: number;
+  sub?: GenerationProgress;
 }
 
 export interface SSECompleteEvent {

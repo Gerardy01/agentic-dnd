@@ -52,6 +52,7 @@ export default function CampaignStatusBanner({
     loading,
     errorMsg,
     progressStep,
+    progressSubStep,
     progressPercent,
     isAllSuccess,
     firstFailedModule,
@@ -129,6 +130,11 @@ export default function CampaignStatusBanner({
               {progressPercent}%
             </Text>
           </div>
+          {progressSubStep && (
+            <div style={styles.subStepRow}>
+              <Text style={styles.subStepText}>{progressSubStep}</Text>
+            </div>
+          )}
         </div>
       )}
 
@@ -296,6 +302,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#C29B38',
     fontFamily: "'Cinzel', monospace, serif",
     fontWeight: 600,
+    letterSpacing: '0.3px',
+  },
+  subStepRow: {
+    padding: '6px 12px 0',
+  },
+  subStepText: {
+    fontSize: '11.5px',
+    color: '#8D98AA',
+    fontFamily: "'Cinzel', monospace, serif",
     letterSpacing: '0.3px',
   },
   stepPercentText: {

@@ -4,6 +4,7 @@ import { Class, ClassResource, ClassSpell } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import { SpellcasterClassContext } from '@/interfaces/ISpell';
 import {
   CreateClassDTO,
@@ -107,6 +108,9 @@ const ClassResourcesAISchema = z.object({
   resources: z.array(ClassResourceItemAISchema).default([]),
 });
 
+// Each class needs 3 sequential prompts: core detail, features, resources
+const CLASS_PROMPTS_PER_CLASS = 3;
+
 // ==========================================
 // Interface
 // ==========================================
@@ -117,7 +121,7 @@ export interface IClassService {
   getClassDetailPrompt(): string;
   getClassFeaturesPrompt(): string;
   getClassResourcesPrompt(): string;
-  generateClasses(data: GenerateClassesDTO, campaignId: number, transaction?: Transaction): Promise<ClassDataReturn[]>;
+  generateClasses(data: GenerateClassesDTO, campaignId: number, onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<ClassDataReturn[]>;
   create(data: CreateClassDTO, campaignId: number, transaction?: Transaction): Promise<ClassDataReturn>;
   createBulk(data: CreateClassDTO[], campaignId: number, transaction?: Transaction): Promise<ClassDataReturn[]>;
   createResourcesBulk(data: CreateClassDTO[], createdClasses: ClassDataReturn[], transaction?: Transaction): Promise<void>;
@@ -177,6 +181,7 @@ export class ClassService implements IClassService {
   async generateClasses(
     data: GenerateClassesDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<ClassDataReturn[]> {
     const briefSystemPrompt = this.getClassBriefPrompt();
@@ -201,6 +206,7 @@ export class ClassService implements IClassService {
       worldContext,
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the class roster...', current: 0, total: 1 });
     this.logger.info('Requesting brief class list from AI...');
     const briefRaw = await this.aiProvider.chatJSON<ClassBriefListAIResponse>([
       { role: 'system', content: briefSystemPrompt },
@@ -213,9 +219,16 @@ export class ClassService implements IClassService {
     );
 
     const classesToCreate: CreateClassDTO[] = [];
+    const totalClassProgressSteps = briefParsed.classes.length * CLASS_PROMPTS_PER_CLASS;
 
     for (let i = 0; i < briefParsed.classes.length; i++) {
       const stub = briefParsed.classes[i];
+      const classProgressLabel = `class ${i + 1}/${briefParsed.classes.length} "${stub.name}"`;
+      onProgress?.({
+        message: `Forging ${classProgressLabel}: core profile`,
+        current: i * CLASS_PROMPTS_PER_CLASS,
+        total: totalClassProgressSteps,
+      });
       this.logger.info(`[${i + 1}/${briefParsed.classes.length}] Generating class "${stub.name}"...`);
 
       // 1. Class Detail Prompt (name, description, hitDie, spellcastingProperties)
@@ -250,6 +263,11 @@ export class ClassService implements IClassService {
       const detailParsed = ClassDetailAISchema.parse(detailRaw);
 
       // 2. Class Features Prompt (features up to level 20)
+      onProgress?.({
+        message: `Forging ${classProgressLabel}: level 1-20 features`,
+        current: i * CLASS_PROMPTS_PER_CLASS + 1,
+        total: totalClassProgressSteps,
+      });
       this.logger.info(`[${i + 1}/${briefParsed.classes.length}] Generating features for "${detailParsed.name}"...`);
       const featuresSystemPrompt = this.getClassFeaturesPrompt();
       const classDataContext = JSON.stringify(
@@ -280,6 +298,11 @@ export class ClassService implements IClassService {
       const featuresParsed = ClassFeaturesAISchema.parse(featuresRaw);
 
       // 3. Class Resources Prompt (custom resources with progression & recovery)
+      onProgress?.({
+        message: `Forging ${classProgressLabel}: class resources`,
+        current: i * CLASS_PROMPTS_PER_CLASS + 2,
+        total: totalClassProgressSteps,
+      });
       this.logger.info(`[${i + 1}/${briefParsed.classes.length}] Generating resources for "${detailParsed.name}"...`);
       const resourcesSystemPrompt = this.getClassResourcesPrompt();
       const classWithFeaturesContext = JSON.stringify(

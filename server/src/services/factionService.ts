@@ -4,6 +4,7 @@ import { Faction } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import {
   CreateFactionDTO,
   GenerateFactionDTO,
@@ -40,7 +41,7 @@ export interface IFactionService {
   getLanguageInstruction(): string;
   getFactionListPrompt(): string;
   getFactionDetailPrompt(): string;
-  generateFactions(data: GenerateFactionDTO, campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]>;
+  generateFactions(data: GenerateFactionDTO, campaignId: number, onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<FactionDataReturn[]>;
   create(data: CreateFactionDTO, campaignId: number, transaction?: Transaction): Promise<FactionDataReturn>;
   createBulk(data: CreateFactionDTO[], campaignId: number, transaction?: Transaction): Promise<FactionDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<FactionDataReturn[]>;
@@ -84,6 +85,7 @@ export class FactionService implements IFactionService {
   async generateFactions(
     data: GenerateFactionDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<FactionDataReturn[]> {
     const listSystemPrompt = this.getFactionListPrompt();
@@ -119,6 +121,7 @@ export class FactionService implements IFactionService {
       mapContext,
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the faction roster...', current: 0, total: 1 });
     this.logger.info('Requesting brief faction list from AI...');
     const listRaw = await this.aiProvider.chatJSON<FactionListAIResponse>([
       { role: 'system', content: listSystemPrompt },
@@ -134,6 +137,11 @@ export class FactionService implements IFactionService {
 
     for (let i = 0; i < listParsed.factions.length; i++) {
       const stub = listParsed.factions[i];
+      onProgress?.({
+        message: `Detailing faction ${i + 1}/${listParsed.factions.length}: "${stub.name}"`,
+        current: i,
+        total: listParsed.factions.length,
+      });
       this.logger.info(`[${i + 1}/${listParsed.factions.length}] Generating detailed profile for "${stub.name}"...`);
 
       const detailSystemPrompt = this.getFactionDetailPrompt();

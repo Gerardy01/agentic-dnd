@@ -5,6 +5,7 @@ import { campaignApi } from '@/api';
 import useNotification from '@/hooks/global/useNotification';
 import useStaticModal from '@/hooks/global/useStaticModal';
 import useTokenStore from '@/stores/useTokenStore';
+import { calculateCampaignProgressPercent } from '@/utils/utility';
 import { CampaignLanguageEnum } from '@/utils/enums';
 import type { CampaignDataReturn, CampaignSSEEvent } from '@/models/campaignInterfaces';
 import { CAMPAIGN_MODULE_KEYS, type CampaignModuleKey } from './useCampaignContinuation';
@@ -30,9 +31,10 @@ export default function useGenerateCampaignModal(
 
   // SSE Progress state
   const [progressStep, setProgressStep] = useState<string>('');
+  const [progressSubStep, setProgressSubStep] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [progressCurrent, setProgressCurrent] = useState<number>(0);
-  const [progressTotal, setProgressTotal] = useState<number>(13);
+  const [progressTotal, setProgressTotal] = useState<number>(12);
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -59,6 +61,7 @@ export default function useGenerateCampaignModal(
     setCreationResult(null);
     setErrorMsg('');
     setProgressStep('');
+    setProgressSubStep('');
     setProgressPercent(0);
     setProgressCurrent(0);
     onClose();
@@ -89,10 +92,10 @@ export default function useGenerateCampaignModal(
 
         if (payload.type === 'step') {
           setProgressStep(payload.message);
+          setProgressSubStep(payload.sub?.message ?? '');
           setProgressCurrent(payload.current);
           setProgressTotal(payload.total);
-          const percent = Math.min(100, Math.round((payload.current / payload.total) * 100));
-          setProgressPercent(percent);
+          setProgressPercent(calculateCampaignProgressPercent(payload));
         } else if (payload.type === 'complete') {
           es.close();
           eventSourceRef.current = null;
@@ -136,6 +139,7 @@ export default function useGenerateCampaignModal(
     setLoading(true);
     setErrorMsg('');
     setProgressStep(t('campaigns.progressInitial'));
+    setProgressSubStep('');
     setProgressPercent(3);
     setProgressCurrent(0);
 
@@ -149,6 +153,7 @@ export default function useGenerateCampaignModal(
       if (err) {
         setLoading(false);
         setProgressStep('');
+        setProgressSubStep('');
         setProgressPercent(0);
 
         if (err.status === 400) {
@@ -181,6 +186,7 @@ export default function useGenerateCampaignModal(
     } catch {
       setLoading(false);
       setProgressStep('');
+      setProgressSubStep('');
       setProgressPercent(0);
       errorModal('Campaign Creation Disturbance', t('global.serverError'));
     }
@@ -192,6 +198,7 @@ export default function useGenerateCampaignModal(
     setLoading(true);
     setErrorMsg('');
     setProgressStep(t('campaigns.progressInitial'));
+    setProgressSubStep('');
     setProgressPercent(3);
     setProgressCurrent(0);
 
@@ -203,6 +210,7 @@ export default function useGenerateCampaignModal(
       if (err) {
         setLoading(false);
         setProgressStep('');
+        setProgressSubStep('');
         setProgressPercent(0);
 
         if (err.status === 400 || err.status === 422) {
@@ -225,6 +233,7 @@ export default function useGenerateCampaignModal(
     } catch {
       setLoading(false);
       setProgressStep('');
+      setProgressSubStep('');
       setProgressPercent(0);
       errorModal('Campaign Continuation Disturbance', t('global.serverError'));
     }
@@ -243,6 +252,7 @@ export default function useGenerateCampaignModal(
     loading,
     errorMsg,
     progressStep,
+    progressSubStep,
     progressPercent,
     progressCurrent,
     progressTotal,

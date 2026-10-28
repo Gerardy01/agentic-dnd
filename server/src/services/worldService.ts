@@ -4,6 +4,7 @@ import { World, Map, Area, POI, Lore, POINPC } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import {
   CreateWorldDTO,
   CreateMapDTO,
@@ -140,6 +141,7 @@ type AreaExpansionContext = {
   totalNodes: number;
   nodeIndex: number;
   savedAreas: AreaDataReturn[];
+  onProgress?: GenerationProgressCallback;
 };
 
 // Context type for POI expansion loop
@@ -155,6 +157,7 @@ type POIExpansionContext = {
   poiIndex: number;
   savedPOIs: POIDataReturn[];
   poisToCreate: (CreatePOIDTO & { lore?: { title: string; content: string } | null })[];
+  onProgress?: GenerationProgressCallback;
 };
 
 // ==========================================
@@ -173,9 +176,9 @@ export interface IWorldService {
   getPOIAsciiPrompt(): string;
   generateWorld(data: GenerateWorldDTO, campaignId: number, transaction?: Transaction): Promise<WorldDataReturn>;
   generateMap(data: GenerateMapDTO, worldId: number, transaction?: Transaction): Promise<MapDataReturn>;
-  generateAreas(data: GenerateAreasDTO, campaignId: number, mapId: number, transaction?: Transaction): Promise<AreaDataReturn[]>;
-  generateSubAreas(data: GenerateSubAreasDTO, campaignId: number, mapId: number, leafAreas: AreaDataReturn[], transaction?: Transaction): Promise<AreaDataReturn[]>;
-  generatePOIs(data: GeneratePOIsDTO, campaignId: number, leafAreas: AreaDataReturn[], transaction?: Transaction): Promise<POIDataReturn[]>;
+  generateAreas(data: GenerateAreasDTO, campaignId: number, mapId: number, onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<AreaDataReturn[]>;
+  generateSubAreas(data: GenerateSubAreasDTO, campaignId: number, mapId: number, leafAreas: AreaDataReturn[], onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<AreaDataReturn[]>;
+  generatePOIs(data: GeneratePOIsDTO, campaignId: number, leafAreas: AreaDataReturn[], onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<POIDataReturn[]>;
   createWorld(data: CreateWorldDTO, campaignId: number, transaction?: Transaction): Promise<WorldDataReturn>;
   createMap(data: CreateMapDTO, worldId: number, transaction?: Transaction): Promise<MapDataReturn>;
   createArea(data: CreateAreaDTO, mapId: number, transaction?: Transaction): Promise<AreaDataReturn>;
@@ -329,7 +332,7 @@ export class WorldService implements IWorldService {
    *    Faction names returned by the AI are resolved to {id, name} objects from the provided list.
    *    If the AI returns a lore entry for an area, it is persisted via loreService inline.
    */
-  async generateAreas(data: GenerateAreasDTO, campaignId: number, mapId: number, transaction?: Transaction): Promise<AreaDataReturn[]> {
+  async generateAreas(data: GenerateAreasDTO, campaignId: number, mapId: number, onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<AreaDataReturn[]> {
     // ---- Phase 1: Brief pass ----
     const worldContext = JSON.stringify({
       name: data.world.name,
@@ -363,6 +366,7 @@ export class WorldService implements IWorldService {
       factionsContext,
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the area hierarchy...', current: 0, total: 1 });
     this.logger.info('Requesting area brief tree from AI...');
     const briefRaw = await this.aiProvider.chatJSON<AreaBriefListAIResponse>([
       { role: 'system', content: this.getAreaBriefPrompt() },
@@ -388,6 +392,7 @@ export class WorldService implements IWorldService {
       totalNodes,
       nodeIndex: 0,
       savedAreas: [],
+      onProgress,
     };
 
     for (const rootNode of briefParsed.areas) {
@@ -409,6 +414,7 @@ export class WorldService implements IWorldService {
     campaignId: number,
     mapId: number,
     leafAreas: AreaDataReturn[],
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<AreaDataReturn[]> {
     const systemPrompt = this.getSubAreaBriefPrompt();
@@ -427,6 +433,11 @@ export class WorldService implements IWorldService {
 
     for (let i = 0; i < leafAreas.length; i++) {
       const leaf = leafAreas[i];
+      onProgress?.({
+        message: `Checking sub-areas ${i + 1}/${leafAreas.length}: "${leaf.name}"`,
+        current: i,
+        total: leafAreas.length,
+      });
       this.logger.info(`[${i + 1}/${leafAreas.length}] Checking sub-areas for "${leaf.name}" (${leaf.levelType})...`);
 
       const parentAreaContext = JSON.stringify({
@@ -505,6 +516,7 @@ export class WorldService implements IWorldService {
     data: GeneratePOIsDTO,
     campaignId: number,
     leafAreas: AreaDataReturn[],
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<POIDataReturn[]> {
     const worldContext = JSON.stringify({
@@ -529,6 +541,7 @@ export class WorldService implements IWorldService {
       poiIndex: 0,
       savedPOIs: [],
       poisToCreate: [],
+      onProgress,
     };
 
     for (let i = 0; i < leafAreas.length; i++) {
@@ -696,6 +709,11 @@ export class WorldService implements IWorldService {
     ctx: AreaExpansionContext
   ): Promise<void> {
     ctx.nodeIndex++;
+    ctx.onProgress?.({
+      message: `Detailing area ${ctx.nodeIndex}/${ctx.totalNodes}: "${node.name}"`,
+      current: ctx.nodeIndex - 1,
+      total: ctx.totalNodes,
+    });
     this.logger.info(`[${ctx.nodeIndex}/${ctx.totalNodes}] Expanding area "${node.name}" (depth ${depth})...`);
 
     const targetBriefContext = JSON.stringify({
@@ -803,6 +821,11 @@ export class WorldService implements IWorldService {
     totalAreas: number,
     ctx: POIExpansionContext
   ): Promise<void> {
+    ctx.onProgress?.({
+      message: `Planning points of interest for area ${areaIndex + 1}/${totalAreas}: "${area.name}"`,
+      current: areaIndex,
+      total: totalAreas,
+    });
     this.logger.info(`[Area ${areaIndex + 1}/${totalAreas}] Generating POI brief list for "${area.name}"...`);
 
     const areaContext = JSON.stringify({
@@ -845,6 +868,13 @@ export class WorldService implements IWorldService {
     for (let j = 0; j < briefParsed.pois.length; j++) {
       ctx.poiIndex++;
       const stub = briefParsed.pois[j];
+      // Fractional area progress: finished areas + share of this area's POIs already done
+      const areaProgress = areaIndex + j / briefParsed.pois.length;
+      ctx.onProgress?.({
+        message: `Area ${areaIndex + 1}/${totalAreas}, POI ${j + 1}/${briefParsed.pois.length}: detailing "${stub.name}" (${stub.type})`,
+        current: areaProgress,
+        total: totalAreas,
+      });
       this.logger.info(`[POI ${ctx.poiIndex}] Expanding "${stub.name}" (${stub.type})...`);
 
       // -- Detail call --
@@ -878,6 +908,11 @@ export class WorldService implements IWorldService {
       const detail = POIDetailSchema.parse(detailRaw);
 
       // -- ASCII call --
+      ctx.onProgress?.({
+        message: `Area ${areaIndex + 1}/${totalAreas}, POI ${j + 1}/${briefParsed.pois.length}: drawing ASCII map of "${detail.name}"`,
+        current: areaProgress,
+        total: totalAreas,
+      });
       const asciiMap = await this._generatePOIAscii(stub.type, detail, ctx.asciiSystemPrompt);
 
       // -- Persist --

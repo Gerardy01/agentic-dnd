@@ -4,6 +4,7 @@ import { campaignApi } from '@/api';
 import useNotification from '@/hooks/global/useNotification';
 import useStaticModal from '@/hooks/global/useStaticModal';
 import useTokenStore from '@/stores/useTokenStore';
+import { calculateCampaignProgressPercent } from '@/utils/utility';
 import type { CampaignDataReturn, CampaignSSEEvent, CampaignSuccessParameter } from '@/models/campaignInterfaces';
 
 export const CAMPAIGN_MODULE_KEYS = [
@@ -31,9 +32,10 @@ export default function useCampaignContinuation(
 
   // SSE Progress state
   const [progressStep, setProgressStep] = useState<string>('');
+  const [progressSubStep, setProgressSubStep] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [progressCurrent, setProgressCurrent] = useState<number>(0);
-  const [progressTotal, setProgressTotal] = useState<number>(13);
+  const [progressTotal, setProgressTotal] = useState<number>(12);
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -74,10 +76,10 @@ export default function useCampaignContinuation(
 
         if (payload.type === 'step') {
           setProgressStep(payload.message);
+          setProgressSubStep(payload.sub?.message ?? '');
           setProgressCurrent(payload.current);
           setProgressTotal(payload.total);
-          const percent = Math.min(100, Math.round((payload.current / payload.total) * 100));
-          setProgressPercent(percent);
+          setProgressPercent(calculateCampaignProgressPercent(payload));
         } else if (payload.type === 'complete') {
           es.close();
           eventSourceRef.current = null;
@@ -127,6 +129,7 @@ export default function useCampaignContinuation(
     setLoading(true);
     setErrorMsg('');
     setProgressStep(t('campaigns.progressInitial'));
+    setProgressSubStep('');
     setProgressPercent(3);
     setProgressCurrent(0);
 
@@ -138,6 +141,7 @@ export default function useCampaignContinuation(
       if (err) {
         setLoading(false);
         setProgressStep('');
+        setProgressSubStep('');
         setProgressPercent(0);
 
         if (err.status === 400 || err.status === 422) {
@@ -160,6 +164,7 @@ export default function useCampaignContinuation(
     } catch {
       setLoading(false);
       setProgressStep('');
+      setProgressSubStep('');
       setProgressPercent(0);
       errorModal('Campaign Continuation Disturbance', t('global.serverError'));
     }
@@ -172,6 +177,7 @@ export default function useCampaignContinuation(
     loading,
     errorMsg,
     progressStep,
+    progressSubStep,
     progressPercent,
     progressCurrent,
     progressTotal,

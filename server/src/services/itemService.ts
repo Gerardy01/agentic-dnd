@@ -4,6 +4,7 @@ import { Item } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import {
   CreateItemDTO,
   GenerateItemsDTO,
@@ -80,6 +81,7 @@ export interface IItemService {
   generateItems(
     data: GenerateItemsDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<ItemDataReturn[]>;
   create(data: CreateItemDTO, campaignId: number, transaction?: Transaction): Promise<ItemDataReturn>;
@@ -125,6 +127,7 @@ export class ItemService implements IItemService {
   async generateItems(
     data: GenerateItemsDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<ItemDataReturn[]> {
     const briefSystemPrompt = this.getItemBriefPrompt();
@@ -149,6 +152,7 @@ export class ItemService implements IItemService {
       worldContext,
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the item roster...', current: 0, total: 1 });
     this.logger.info('Requesting brief item roster from AI...');
     const briefRaw = await this.aiProvider.chatJSON<ItemBriefListAIResponse>([
       { role: 'system', content: briefSystemPrompt },
@@ -165,6 +169,11 @@ export class ItemService implements IItemService {
 
     for (let i = 0; i < briefParsed.items.length; i++) {
       const stub = briefParsed.items[i];
+      onProgress?.({
+        message: `Detailing item ${i + 1}/${briefParsed.items.length}: "${stub.name}"`,
+        current: i,
+        total: briefParsed.items.length,
+      });
       this.logger.info(`[${i + 1}/${briefParsed.items.length}] Generating details for item "${stub.name}"...`);
 
       const detailSystemPrompt = this.getItemDetailPrompt();

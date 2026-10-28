@@ -4,6 +4,7 @@ import { NPC, NPCCombatProfile, Race, POINPC, POI } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import {
   CreateNpcDTO,
   GenerateNpcsDTO,
@@ -127,6 +128,7 @@ export interface INpcService {
   generateNpcs(
     data: GenerateNpcsDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<GeneratedNpcWithPoiReturn[]>;
   create(data: CreateNpcDTO, campaignId: number, transaction?: Transaction): Promise<NpcDataReturn>;
@@ -178,6 +180,7 @@ export class NpcService implements INpcService {
   async generateNpcs(
     data: GenerateNpcsDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<GeneratedNpcWithPoiReturn[]> {
     const briefSystemPrompt = this.getNpcBriefPrompt();
@@ -210,6 +213,7 @@ export class NpcService implements INpcService {
       JSON.stringify(formattedPois, null, 2),
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the NPC roster...', current: 0, total: 1 });
     this.logger.info('Requesting brief NPC roster from AI...');
     const briefRaw = await this.aiProvider.chatJSON<NpcBriefListAIResponse>([
       { role: 'system', content: briefSystemPrompt },
@@ -234,6 +238,11 @@ export class NpcService implements INpcService {
       const resolvedRaceId = validRaceIds.has(stub.raceId) ? stub.raceId : fallbackRaceId;
       const resolvedPoiId = validPoiIds.has(stub.poiId) ? stub.poiId : fallbackPoiId;
 
+      onProgress?.({
+        message: `Detailing NPC ${i + 1}/${briefParsed.npcs.length}: "${stub.name}"`,
+        current: i,
+        total: briefParsed.npcs.length,
+      });
       this.logger.info(`[${i + 1}/${briefParsed.npcs.length}] Generating details for NPC "${stub.name}"...`);
 
       const selectedRace = data.races.find((r) => r.id === resolvedRaceId);

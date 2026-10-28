@@ -4,6 +4,7 @@ import { Spell } from '@/models';
 import { IAIProvider } from '@/provider/aiProvider';
 import { loadPrompt } from '@/utils/promptLoader';
 import { LoggerService } from '@/services/loggerService';
+import { GenerationProgressCallback } from '@/interfaces/IProgress';
 import {
   CreateSpellDTO,
   CreateSpellRecord,
@@ -82,7 +83,7 @@ export interface ISpellService {
   getLanguageInstruction(): string;
   getSpellBriefPrompt(): string;
   getSpellDetailPrompt(): string;
-  generateSpells(data: GenerateSpellsDTO, campaignId: number, transaction?: Transaction): Promise<GeneratedSpellReturn[]>;
+  generateSpells(data: GenerateSpellsDTO, campaignId: number, onProgress?: GenerationProgressCallback, transaction?: Transaction): Promise<GeneratedSpellReturn[]>;
   create(data: CreateSpellDTO, campaignId: number, transaction?: Transaction): Promise<SpellDataReturn>;
   createBulk(data: CreateSpellDTO[], campaignId: number, transaction?: Transaction): Promise<SpellDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<SpellDataReturn[]>;
@@ -129,9 +130,10 @@ export class SpellService implements ISpellService {
   async generateSpells(
     data: GenerateSpellsDTO,
     campaignId: number,
+    onProgress?: GenerationProgressCallback,
     transaction?: Transaction
   ): Promise<GeneratedSpellReturn[]> {
-    const drafts = await this.generateSpellDrafts(data);
+    const drafts = await this.generateSpellDrafts(data, onProgress);
     if (drafts.length === 0) return [];
 
     const spells = await this.createBulk(
@@ -145,7 +147,10 @@ export class SpellService implements ISpellService {
     return spells.map((spell, index) => ({ spell, classIds: drafts[index].classIds }));
   }
 
-  private async generateSpellDrafts(data: GenerateSpellsDTO): Promise<GeneratedSpellDraft[]> {
+  private async generateSpellDrafts(
+    data: GenerateSpellsDTO,
+    onProgress?: GenerationProgressCallback
+  ): Promise<GeneratedSpellDraft[]> {
     if (data.classes.length === 0) {
       return [];
     }
@@ -173,6 +178,7 @@ export class SpellService implements ISpellService {
       JSON.stringify(data.classes, null, 2),
     ].join('\n');
 
+    onProgress?.({ message: 'Drafting the spell roster...', current: 0, total: 1 });
     this.logger.info(`Requesting brief spell roster for ${data.classes.length} spellcasting class(es) from AI...`);
     const briefRaw = await this.aiProvider.chatJSON([
       { role: 'system', content: this.getSpellBriefPrompt() },
@@ -197,6 +203,11 @@ export class SpellService implements ISpellService {
 
     for (let index = 0; index < stubs.length; index++) {
       const stub = stubs[index];
+      onProgress?.({
+        message: `Detailing spell ${index + 1}/${stubs.length}: "${stub.name}"`,
+        current: index,
+        total: stubs.length,
+      });
       this.logger.info(`[${index + 1}/${stubs.length}] Generating details for spell "${stub.name}"...`);
 
       const owningClasses = stub.classIds
