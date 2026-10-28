@@ -19,6 +19,12 @@ import {
   NpcCombatProfileDataReturn,
 } from '@/interfaces/INpc';
 
+type NpcWithAssociations = NPC & {
+  race?: Race | null;
+  combatProfile?: NPCCombatProfile | null;
+  poiNpcs?: (POINPC & { poi?: POI | null })[];
+};
+
 // ==========================================
 // Zod schemas for AI response validation
 // ==========================================
@@ -514,7 +520,7 @@ export class NpcService implements INpcService {
       order: [['created_at', 'ASC']],
     });
 
-    return npcs.map((npc: any) => {
+    return (npcs as NpcWithAssociations[]).map((npc) => {
       const base = this.toReturn(npc);
       const poiEntry = npc.poiNpcs?.[0];
       return {

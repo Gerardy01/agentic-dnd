@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
+import { SpellSlot } from '@/interfaces/ICharacter';
 import Character from '@/models/character/character.model';
 
 class CharacterSpellcasting extends Model {
@@ -7,7 +8,7 @@ class CharacterSpellcasting extends Model {
   declare public character_id: number;
   declare public max_cantrip: number;
   declare public max_spell: number;
-  declare public spell_slots: any;
+  declare public spell_slots: SpellSlot[];
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
+import { ChapterRelatedIds } from '@/interfaces/IChapter';
 import Campaign from '@/models/campaign/campaign.model';
 
 class Chapter extends Model {
@@ -8,16 +9,16 @@ class Chapter extends Model {
   declare public chapter_number: number;
   declare public title: string | null;
   declare public narrative_summary: string | null;
-  declare public player_decisions: any;
-  declare public narrative_summary_embedding: any;
+  declare public player_decisions: string[];
+  declare public narrative_summary_embedding: string | null;
   declare public prev_chapter_id: number | null;
   declare public next_chapter_id: number | null;
-  declare public related_npc: any;
-  declare public related_monsters: any;
-  declare public related_items: any;
-  declare public related_pois: any;
-  declare public related_factions: any;
-  declare public related_quests: any;
+  declare public related_npc: ChapterRelatedIds;
+  declare public related_monsters: ChapterRelatedIds;
+  declare public related_items: ChapterRelatedIds;
+  declare public related_pois: ChapterRelatedIds;
+  declare public related_factions: ChapterRelatedIds;
+  declare public related_quests: ChapterRelatedIds;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

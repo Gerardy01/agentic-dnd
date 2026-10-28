@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
+import { QuestPrerequisites } from '@/interfaces/IQuest';
 import Campaign from '@/models/campaign/campaign.model';
 import NPC from '@/models/npc/npc.model';
 import POI from '@/models/poi/poi.model';
@@ -14,8 +15,9 @@ class Quest extends Model {
   declare public quest_location: number | null;
   declare public quest_difficulty: string | null;
   declare public quest_tag: string | null;
-  declare public quest_prerequisites: any;
+  declare public quest_prerequisites: QuestPrerequisites | null;
   declare public status: string;
+  declare public readonly createdAt: Date;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

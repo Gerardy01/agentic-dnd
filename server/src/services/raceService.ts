@@ -227,7 +227,7 @@ export class RaceService implements IRaceService {
     return races.map((race) => this.toReturn(race));
   }
 
-  private toReturn(race: any): RaceDataReturn {
+  private toReturn(race: Race): RaceDataReturn {
     return {
       id: race.id,
       campaignId: race.campaign_id,
@@ -236,7 +236,7 @@ export class RaceService implements IRaceService {
       speed: race.speed,
       languages: race.languages,
       traits: race.traits,
-      createdAt: race.createdAt ?? race.created_at,
+      createdAt: race.createdAt,
     };
   }
 }

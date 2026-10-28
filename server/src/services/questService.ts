@@ -51,7 +51,7 @@ export class QuestService implements IQuestService {
     return results;
   }
 
-  private toReturn(quest: any): QuestDataReturn {
+  private toReturn(quest: Quest): QuestDataReturn {
     return {
       id: quest.id,
       campaignId: quest.campaign_id,

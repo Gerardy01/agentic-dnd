@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
+import { RaceTrait } from '@/interfaces/IRace';
 import Campaign from '@/models/campaign/campaign.model';
 
 class Race extends Model {
@@ -8,8 +9,9 @@ class Race extends Model {
   declare public name: string;
   declare public description: string | null;
   declare public speed: number;
-  declare public languages: any;
-  declare public traits: any;
+  declare public languages: string[];
+  declare public traits: RaceTrait[];
+  declare public readonly createdAt: Date;
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

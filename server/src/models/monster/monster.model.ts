@@ -1,5 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
+import { AbilityScores, CreatureAction } from '@/interfaces/ICommon';
+import { MonsterSpeed, MonsterSenses, MonsterAdditionalProperties } from '@/interfaces/IMonster';
 import Campaign from '@/models/campaign/campaign.model';
 
 class Monster extends Model {
@@ -8,7 +10,7 @@ class Monster extends Model {
   declare public name: string;
   declare public description: string | null;
   declare public appearance: string | null;
-  declare public languages: any;
+  declare public languages: string[];
   declare public alignment: string | null;
   declare public size: string | null;
   declare public type: string | null;
@@ -16,11 +18,11 @@ class Monster extends Model {
   declare public max_hp: number;
   declare public ac: number;
   declare public cr: number;
-  declare public stat: any;
-  declare public speed: any;
-  declare public senses: any;
-  declare public additional_properties: any;
-  declare public actions: any;
+  declare public stat: AbilityScores;
+  declare public speed: MonsterSpeed | null;
+  declare public senses: MonsterSenses | null;
+  declare public additional_properties: MonsterAdditionalProperties | null;
+  declare public actions: CreatureAction[];
   declare public readonly created_at: Date;
   declare public readonly updated_at: Date;
 }

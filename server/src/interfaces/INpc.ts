@@ -1,3 +1,5 @@
+import { AbilityScores, CreatureAction } from '@/interfaces/ICommon';
+
 // ==========================================
 // Sub-types
 // ==========================================
@@ -37,19 +39,9 @@ export interface NpcPosition {
   y: number;
 }
 
-export interface NpcStat {
-  str: number;
-  dex: number;
-  con: number;
-  int: number;
-  wis: number;
-  cha: number;
-}
+export type NpcStat = AbilityScores;
 
-export interface NpcAction {
-  name: string;
-  description: string;
-}
+export type NpcAction = CreatureAction;
 
 export interface CreateNpcCombatProfileDTO {
   npcId: number;

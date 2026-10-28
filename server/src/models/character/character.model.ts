@@ -1,5 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '@/config/database';
+import { AbilityScores } from '@/interfaces/ICommon';
+import { CharacterSkill } from '@/interfaces/ICharacter';
 import Campaign from '@/models/campaign/campaign.model';
 import Race from '@/models/race/race.model';
 import ClassModel from '@/models/class/class.model';
@@ -16,10 +18,10 @@ class Character extends Model {
   declare public hp: number;
   declare public ac: number;
   declare public speed: number;
-  declare public stat: any;
-  declare public skills: any;
+  declare public stat: AbilityScores;
+  declare public skills: CharacterSkill[];
   declare public balance: number;
-  declare public languages: any;
+  declare public languages: string[];
   declare public appearance: string | null;
   declare public personality: string | null;
   declare public backstory: string | null;

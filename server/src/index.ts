@@ -28,8 +28,8 @@ app.get('/api/health', async (_req: Request, res: Response) => {
   try {
     await sequelize.authenticate();
     dbStatus = 'connected';
-  } catch (error: any) {
-    dbStatus = `error: ${error?.message || 'cannot connect'}`;
+  } catch (error) {
+    dbStatus = `error: ${error instanceof Error ? error.message : 'cannot connect'}`;
   }
 
   res.json({

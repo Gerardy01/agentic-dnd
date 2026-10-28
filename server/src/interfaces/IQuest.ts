@@ -1,4 +1,13 @@
 // ==========================================
+// Sub-types
+// ==========================================
+
+export interface QuestPrerequisites {
+  levelReq?: number;
+  questReq?: number[];
+}
+
+// ==========================================
 // DTOs
 // ==========================================
 
@@ -10,7 +19,7 @@ export interface CreateQuestDTO {
   questLocation?: number | null;
   questDifficulty?: string | null;
   questTag?: string | null;
-  questPrerequisites?: any;
+  questPrerequisites?: QuestPrerequisites | null;
   status?: string;
 }
 
@@ -28,7 +37,7 @@ export type QuestDataReturn = {
   questLocation: number | null;
   questDifficulty: string | null;
   questTag: string | null;
-  questPrerequisites: any;
+  questPrerequisites: QuestPrerequisites | null;
   status: string;
   createdAt: Date;
 };
