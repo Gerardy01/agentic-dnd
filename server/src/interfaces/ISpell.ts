@@ -1,4 +1,4 @@
-import { SpellcastingAbilityType, SpellcastingProperties } from '@/interfaces/IClass';
+import { ClassDataReturn, SpellcastingAbilityType, SpellcastingProperties } from '@/interfaces/IClass';
 
 // ==========================================
 // Sub-types
@@ -98,11 +98,6 @@ export type CreateSpellRecord = {
 // Return Types
 // ==========================================
 
-export type SpellClassReturn = {
-  id: number;
-  name: string;
-};
-
 export type SpellDataReturn = {
   id: number;
   campaignId: number;
@@ -116,6 +111,6 @@ export type SpellDataReturn = {
   createdAt: Date;
 };
 
-export type SpellWithClassesReturn = SpellDataReturn & {
-  classes: SpellClassReturn[];
+export type ClassWithSpellsReturn = ClassDataReturn & {
+  spells: SpellDataReturn[];
 };

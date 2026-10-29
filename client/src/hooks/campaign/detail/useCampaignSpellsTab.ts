@@ -17,16 +17,13 @@ interface UseCampaignSpellsTabReturn {
   searchQuery: string;
   levelFilter: string;
   schoolFilter: string;
-  classFilter: string;
   levelOptions: FilterOption[];
   schoolOptions: FilterOption[];
-  classOptions: FilterOption[];
   filteredSpells: SpellDataReturn[];
   selectedSpell: SpellDataReturn | null;
   setSearchQuery: (query: string) => void;
   setLevelFilter: (level: string) => void;
   setSchoolFilter: (school: string) => void;
-  setClassFilter: (classId: string) => void;
   getLevelLabel: (level: number) => string;
   handleSelectSpell: (spell: SpellDataReturn) => void;
   handleCloseSpell: () => void;
@@ -39,7 +36,6 @@ export default function useCampaignSpellsTab(spells: SpellDataReturn[]): UseCamp
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [levelFilter, setLevelFilter] = useState<string>(ALL_FILTER);
   const [schoolFilter, setSchoolFilter] = useState<string>(ALL_FILTER);
-  const [classFilter, setClassFilter] = useState<string>(ALL_FILTER);
   const [selectedSpell, setSelectedSpell] = useState<SpellDataReturn | null>(null);
 
   const getLevelLabel = (level: number): string =>
@@ -64,15 +60,6 @@ export default function useCampaignSpellsTab(spells: SpellDataReturn[]): UseCamp
     ];
   }, [spells, t]);
 
-  const classOptions = useMemo<FilterOption[]>(() => {
-    const classNameById = new Map(spells.flatMap((spell) => spell.classes).map((cls) => [cls.id, cls.name]));
-    const sortedClasses = [...classNameById.entries()].sort((a, b) => a[1].localeCompare(b[1]));
-    return [
-      { value: ALL_FILTER, label: t('campaignDetail.spells.allClasses') },
-      ...sortedClasses.map(([id, name]) => ({ value: String(id), label: name })),
-    ];
-  }, [spells, t]);
-
   const filteredSpells = useMemo<SpellDataReturn[]>(() => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -81,16 +68,14 @@ export default function useCampaignSpellsTab(spells: SpellDataReturn[]): UseCamp
         !query ||
         spell.name.toLowerCase().includes(query) ||
         (spell.description?.toLowerCase().includes(query) ?? false) ||
-        (spell.school?.toLowerCase().includes(query) ?? false) ||
-        spell.classes.some((cls) => cls.name.toLowerCase().includes(query));
+        (spell.school?.toLowerCase().includes(query) ?? false);
 
       const matchesLevel = levelFilter === ALL_FILTER || String(spell.level) === levelFilter;
       const matchesSchool = schoolFilter === ALL_FILTER || spell.school === schoolFilter;
-      const matchesClass = classFilter === ALL_FILTER || spell.classes.some((cls) => String(cls.id) === classFilter);
 
-      return matchesSearch && matchesLevel && matchesSchool && matchesClass;
+      return matchesSearch && matchesLevel && matchesSchool;
     });
-  }, [spells, searchQuery, levelFilter, schoolFilter, classFilter]);
+  }, [spells, searchQuery, levelFilter, schoolFilter]);
 
   const handleSelectSpell = (spell: SpellDataReturn): void => {
     setSelectedSpell(spell);
@@ -104,16 +89,13 @@ export default function useCampaignSpellsTab(spells: SpellDataReturn[]): UseCamp
     searchQuery,
     levelFilter,
     schoolFilter,
-    classFilter,
     levelOptions,
     schoolOptions,
-    classOptions,
     filteredSpells,
     selectedSpell,
     setSearchQuery,
     setLevelFilter,
     setSchoolFilter,
-    setClassFilter,
     getLevelLabel,
     handleSelectSpell,
     handleCloseSpell,

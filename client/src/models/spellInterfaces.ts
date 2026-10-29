@@ -21,11 +21,6 @@ export interface SpellSaveProperties {
   onFailDamagePercentage: number;
 }
 
-export interface SpellClassReturn {
-  id: number;
-  name: string;
-}
-
 export type SpellDataReturn = {
   id: number;
   campaignId: number;
@@ -36,6 +31,5 @@ export type SpellDataReturn = {
   school: SpellSchool | null;
   attackProperties: SpellAttackProperties | null;
   spellSaveProperties: SpellSaveProperties | null;
-  classes: SpellClassReturn[];
   createdAt: string;
 };

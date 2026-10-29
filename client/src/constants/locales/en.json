@@ -287,7 +287,13 @@
         "passive": "Passive",
         "active": "Active",
         "noFeatures": "No progression features inscribed for this class.",
-        "noResources": "This class does not utilize dedicated resource pools."
+        "noResources": "This class does not utilize dedicated resource pools.",
+        "tabFeatures": "Class Features",
+        "tabResources": "Class Resources",
+        "unlocksAtLevel": "Unlocks at Level {{level}}",
+        "tabSpells": "Spells",
+        "spellCount_one": "{{count}} Spell",
+        "spellCount_other": "{{count}} Spells"
       }
     },
     "races": {
@@ -371,21 +377,19 @@
     },
     "spells": {
       "title": "Grimoire & Incantations",
-      "subtitle": "Spells and cantrips, and the classes that can learn them",
-      "searchPlaceholder": "Filter spells by name, school, class, or description...",
+      "subtitle": "Spells and cantrips known across the realm",
+      "searchPlaceholder": "Filter spells by name, school, or description...",
       "emptyTitle": "No Spells Inscribed",
       "emptySubtitle": "This campaign does not currently feature any recorded spells.",
       "cantrip": "Cantrip",
       "level": "Level {{level}}",
       "allLevels": "All Levels",
       "allSchools": "All Schools",
-      "allClasses": "All Classes",
       "rangedAttack": "Ranged Attack",
       "meleeAttack": "Melee Attack",
       "noDamage": "No damage",
       "saveShort": "{{stat}} Save",
       "noDescription": "No incantation recorded.",
-      "noClasses": "Not assigned to any class",
       "inspectCodex": "Inspect Spell Details",
       "modal": {
         "level": "Spell Level",
@@ -399,8 +403,7 @@
         "saveTitle": "Saving Throw",
         "saveStat": "{{stat}} saving throw",
         "onSuccess": "On success: {{percentage}}% damage",
-        "onFail": "On failure: {{percentage}}% damage",
-        "classesTitle": "Learned By"
+        "onFail": "On failure: {{percentage}}% damage"
       }
     },
     "delete": {

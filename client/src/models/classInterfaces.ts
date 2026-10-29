@@ -1,3 +1,5 @@
+import type { SpellDataReturn } from '@/models/spellInterfaces';
+
 export type SpellcastingAbilityType = 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha';
 export type SpellcastingType = 'full' | 'half' | 'third' | 'pact_magic';
 
@@ -67,5 +69,6 @@ export type ClassDataReturn = {
   features: ClassFeature[];
   spellcastingProperties: SpellcastingProperties | null;
   resources: ClassResourceDataReturn[];
+  spells: SpellDataReturn[];
   createdAt: string;
 };

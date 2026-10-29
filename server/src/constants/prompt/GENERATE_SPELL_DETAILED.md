@@ -28,7 +28,7 @@ Casting range as a short string (max 50 chars), for example `"Self"`, `"Touch"`,
 Must be the same as the brief: `"abjuration"` | `"conjuration"` | `"divination"` | `"enchantment"` | `"evocation"` | `"illusion"` | `"necromancy"` | `"transmutation"`.
 
 ### attackProperties
-ONLY include this if the caster makes a spell attack roll against the target's AC. Otherwise set to `null`.
+ONLY include this if this spell allow the caster makes a spell attack roll against the target's AC. Otherwise set to `null`.
 JSON object with:
 - `requiresRangedAttackRoll`: `true` for a ranged spell attack, `false` for a melee spell attack.
 - `damages`: Array of damage strings, each formatted as dice and damage type, for example `"1d6 slashing"`, `"1d8 piercing"`, `"2d10 fire"`. Use an empty array if the attack deals no damage.

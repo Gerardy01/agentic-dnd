@@ -12,6 +12,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import useCampaignSpellsTab from '@/hooks/campaign/detail/useCampaignSpellsTab';
 
+// constants
+import { getSchoolColor } from '@/constants/spells';
+
 // interfaces
 import type { SpellDataReturn } from '@/models/spellInterfaces';
 
@@ -21,38 +24,19 @@ interface CampaignSpellsTabProps {
   spells: SpellDataReturn[];
 }
 
-const DEFAULT_SCHOOL_COLOR = '#6B5A48';
-
-const SCHOOL_COLOR_MAP: Record<string, string> = {
-  abjuration: '#3E6A8A',
-  conjuration: '#B7791F',
-  divination: '#2F8076',
-  enchantment: '#A8336F',
-  evocation: '#A33A2E',
-  illusion: '#7A4B8F',
-  necromancy: '#3F7D4A',
-  transmutation: '#8B5E2B',
-};
-
-const getSchoolColor = (school: string | null): string =>
-  (school && SCHOOL_COLOR_MAP[school]) || DEFAULT_SCHOOL_COLOR;
-
 export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): React.JSX.Element {
 
   const {
     searchQuery,
     levelFilter,
     schoolFilter,
-    classFilter,
     levelOptions,
     schoolOptions,
-    classOptions,
     filteredSpells,
     selectedSpell,
     setSearchQuery,
     setLevelFilter,
     setSchoolFilter,
-    setClassFilter,
     getLevelLabel,
     handleSelectSpell,
     handleCloseSpell,
@@ -77,7 +61,6 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
         <div style={styles.filterGroup}>
           <Select value={levelFilter} onChange={setLevelFilter} style={styles.filterSelect} options={levelOptions} />
           <Select value={schoolFilter} onChange={setSchoolFilter} style={styles.filterSelect} options={schoolOptions} />
-          <Select value={classFilter} onChange={setClassFilter} style={styles.filterSelect} options={classOptions} />
           <Input
             prefix={<SearchOutlined style={{ color: '#8A7A66' }} />}
             placeholder={t('campaignDetail.spells.searchPlaceholder')}
@@ -159,19 +142,6 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
                   <Paragraph style={styles.description} ellipsis={{ rows: 2 }}>
                     {spell.description || t('campaignDetail.spells.noDescription')}
                   </Paragraph>
-
-                  {/* Classes that learn this spell */}
-                  <div style={styles.classRow}>
-                    {spell.classes.length > 0 ? (
-                      spell.classes.map((cls) => (
-                        <Tag key={cls.id} color="cyan" style={styles.classTag}>
-                          {cls.name}
-                        </Tag>
-                      ))
-                    ) : (
-                      <Text style={styles.noClassText}>{t('campaignDetail.spells.noClasses')}</Text>
-                    )}
-                  </div>
 
                   <div style={styles.cardFooter}>
                     <Text style={styles.inspectText}>{t('campaignDetail.spells.inspectCodex')}</Text>
@@ -324,21 +294,6 @@ export default function CampaignSpellsTab({ spells }: CampaignSpellsTabProps): R
                 </Space>
               </div>
             )}
-
-            <div style={styles.modalSection}>
-              <Text style={styles.modalSectionTitle}>{t('campaignDetail.spells.modal.classesTitle')}</Text>
-              <Space size={[6, 6]} wrap>
-                {selectedSpell.classes.length > 0 ? (
-                  selectedSpell.classes.map((cls) => (
-                    <Tag key={cls.id} color="cyan" style={styles.modalPropTag}>
-                      {cls.name}
-                    </Tag>
-                  ))
-                ) : (
-                  <Text style={styles.noClassText}>{t('campaignDetail.spells.noClasses')}</Text>
-                )}
-              </Space>
-            </div>
           </div>
         </Modal>
       )}
@@ -484,21 +439,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '12.5px',
     lineHeight: 1.5,
     marginBottom: '10px',
-  },
-  classRow: {
-    display: 'flex',
-    gap: '4px',
-    flexWrap: 'wrap',
-    marginBottom: '10px',
-  },
-  classTag: {
-    fontSize: '10.5px',
-    margin: 0,
-    borderRadius: '4px',
-  },
-  noClassText: {
-    color: '#8A7A66',
-    fontSize: '13px',
   },
   cardFooter: {
     display: 'flex',

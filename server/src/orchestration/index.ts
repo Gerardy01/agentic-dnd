@@ -57,6 +57,7 @@ export const worldOrchestration = new WorldOrchestration(
 
 export const classOrchestration = new ClassOrchestration(
   classService,
+  spellService,
   campaignService
 );
 
@@ -77,6 +78,5 @@ export const itemOrchestration = new ItemOrchestration(
 
 export const spellOrchestration = new SpellOrchestration(
   spellService,
-  classService,
   campaignService
 );

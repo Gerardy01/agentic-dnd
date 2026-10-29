@@ -87,6 +87,7 @@ export interface ISpellService {
   create(data: CreateSpellDTO, campaignId: number, transaction?: Transaction): Promise<SpellDataReturn>;
   createBulk(data: CreateSpellDTO[], campaignId: number, transaction?: Transaction): Promise<SpellDataReturn[]>;
   getByCampaignId(campaignId: number): Promise<SpellDataReturn[]>;
+  getByIds(spellIds: number[]): Promise<SpellDataReturn[]>;
   countByCampaignId(campaignId: number): Promise<number>;
 }
 
@@ -338,6 +339,17 @@ export class SpellService implements ISpellService {
     const spells = await Spell.findAll({
       where: { campaign_id: campaignId },
       order: [['created_at', 'ASC']],
+    });
+
+    return spells.map((spell) => this.toReturn(spell));
+  }
+
+  async getByIds(spellIds: number[]): Promise<SpellDataReturn[]> {
+    if (spellIds.length === 0) return [];
+
+    const spells = await Spell.findAll({
+      where: { id: spellIds },
+      order: [['level', 'ASC'], ['name', 'ASC']],
     });
 
     return spells.map((spell) => this.toReturn(spell));
